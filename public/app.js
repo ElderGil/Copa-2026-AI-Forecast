@@ -103,6 +103,39 @@ function closePanel() {
   panel.setAttribute('aria-hidden', 'true');
 }
 
+// Share FAB
+const shareBtn = document.getElementById('share-btn');
+const shareToast = document.getElementById('share-toast');
+let toastTimer = null;
+
+function showToast(msg) {
+  shareToast.textContent = msg;
+  shareToast.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => shareToast.classList.remove('visible'), 3000);
+}
+
+if (shareBtn) {
+  shareBtn.addEventListener('click', async () => {
+    const shareData = {
+      title: 'Copa 2026 AI Forecast',
+      text: '⚽ Veja as previsões de título da Copa 2026 geradas por IA com dados oficiais da FIFA!',
+      url: window.location.href,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(window.location.href);
+        showToast('✅ Link copiado! Compartilhe com um amigo 🏆');
+      }
+    } catch {
+      await navigator.clipboard.writeText(window.location.href).catch(() => {});
+      showToast('✅ Link copiado!');
+    }
+  });
+}
+
 document.addEventListener('click', (event) => {
   const card = event.target.closest('[data-team]');
   if (card) openPanel(card.dataset.team);
