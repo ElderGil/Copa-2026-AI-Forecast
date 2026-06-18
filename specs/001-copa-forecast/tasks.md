@@ -212,11 +212,14 @@ dataset is match-level evidence for the 2026 field.
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T058 [P] Update project README in `README.md`
-- [ ] T059 [P] Add architecture decision records in `docs/adr/`
-- [ ] T060 Add sample data fixtures in `tests/fixtures/`
-- [ ] T061 Run all tests and document validation output in `docs/validation.md`
-- [ ] T062 Review all outputs for constitution compliance in `specs/001-copa-forecast/plan.md`
+- [x] T058 [P] Update project README in `README.md`
+- [x] T059 [P] Add architecture decision records in `docs/adr/`
+- [x] T060 Add sample data fixtures in `tests/fixtures/`
+- [x] T061 Run all tests and document validation output in `docs/validation.md`
+- [x] T062 Review all outputs for constitution compliance in `specs/001-copa-forecast/plan.md`
+- [x] T063 Add dated daily config preparation in `scripts/prepare_daily_config.py`
+- [x] T064 Add scheduled/manual GitHub Pages workflow in `.github/workflows/daily-forecast.yml`
+- [x] T065 Document daily operation and publication in `docs/operations.md`
 
 ---
 

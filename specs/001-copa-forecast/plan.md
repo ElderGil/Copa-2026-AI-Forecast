@@ -148,6 +148,13 @@ tests/
 separate services in the MVP. The pipeline is modular enough to split later, but
 GitHub Pages publication does not need a backend service.
 
+**Operational Decision**: Daily updates run as a GitHub Actions batch workflow.
+The workflow creates a dated config, runs official FIFA ETL, regenerates the
+forecast and static HTML, updates README validation statistics, executes the
+reviewer quality gate, and publishes `public/` to GitHub Pages. This preserves
+the single-package architecture while giving the project a reproducible public
+release loop.
+
 ## Complexity Tracking
 
 No constitution violations require justification.

@@ -3,6 +3,7 @@
 [![Automated Review](https://img.shields.io/badge/Reviewer_Gate-Passed-success?style=flat-square)](#-o-experimento-multi-agente-builder--reviewer)
 [![Python Version](https://img.shields.io/badge/Python-3.11+-blue?style=flat-square)](https://www.python.org/)
 [![Spec Kit Method](https://img.shields.io/badge/Workflow-Speckit_/_Specify-blueviolet?style=flat-square)](#-especificações-e-artefatos-do-spec-kit)
+[![Daily Forecast](https://github.com/ElderGil/Copa-2026-AI-Forecast/actions/workflows/daily-forecast.yml/badge.svg)](https://github.com/ElderGil/Copa-2026-AI-Forecast/actions/workflows/daily-forecast.yml)
 
 Um projeto analítico para prever o campeão da **Copa do Mundo FIFA 2026** utilizando ingestão oficial de dados da FIFA e modelagem probabilística baseada em recência esportiva.
 
@@ -38,13 +39,14 @@ Muitos modelos de previsão de futebol falham por usar estatísticas históricas
 
 Todo o planejamento e pesquisa do projeto estão disponíveis de forma transparente:
 
-* **Constituição do Projeto**: [.specify/memory/constitution.md](file:///.specify/memory/constitution.md)
-* **Especificação de Funcionalidades**: [specs/001-copa-forecast/spec.md](file:///specs/001-copa-forecast/spec.md)
-* **Plano de Implementação**: [specs/001-copa-forecast/plan.md](file:///specs/001-copa-forecast/plan.md)
-* **Notas de Pesquisa Matemática**: [specs/001-copa-forecast/research.md](file:///specs/001-copa-forecast/research.md)
-* **Modelagem de Entidades de Dados**: [specs/001-copa-forecast/data-model.md](file:///specs/001-copa-forecast/data-model.md)
-* **Contratos de Configuração**: [specs/001-copa-forecast/contracts/forecast-config.schema.yaml](file:///specs/001-copa-forecast/contracts/forecast-config.schema.yaml)
-* **Lista de Tarefas da Spec**: [specs/001-copa-forecast/tasks.md](file:///specs/001-copa-forecast/tasks.md)
+* **Constituição do Projeto**: [.specify/memory/constitution.md](.specify/memory/constitution.md)
+* **Especificação de Funcionalidades**: [specs/001-copa-forecast/spec.md](specs/001-copa-forecast/spec.md)
+* **Plano de Implementação**: [specs/001-copa-forecast/plan.md](specs/001-copa-forecast/plan.md)
+* **Notas de Pesquisa Matemática**: [specs/001-copa-forecast/research.md](specs/001-copa-forecast/research.md)
+* **Modelagem de Entidades de Dados**: [specs/001-copa-forecast/data-model.md](specs/001-copa-forecast/data-model.md)
+* **Contratos de Configuração**: [specs/001-copa-forecast/contracts/forecast-config.schema.yaml](specs/001-copa-forecast/contracts/forecast-config.schema.yaml)
+* **Lista de Tarefas da Spec**: [specs/001-copa-forecast/tasks.md](specs/001-copa-forecast/tasks.md)
+* **Operação diária e publicação**: [docs/operations.md](docs/operations.md)
 
 ---
 
@@ -68,6 +70,15 @@ Para manter o ciclo de auto-revisão ativo durante o desenvolvimento:
 ```bash
 .venv/bin/python scripts/watch_and_verify.py
 ```
+
+### 4. Atualizar Previsões e Publicar
+O repositório contém um workflow diário em `.github/workflows/daily-forecast.yml`.
+Ele prepara uma configuração datada, roda ETL FIFA, gera o forecast, atualiza as
+estatísticas de validação do README, executa `scripts/verify_implementation.py`
+e publica `public/` no GitHub Pages.
+
+O agendamento padrão é `04:17 America/Sao_Paulo`, com acionamento manual pela aba
+Actions. Detalhes operacionais estão em [docs/operations.md](docs/operations.md).
 
 ---
 
