@@ -5,11 +5,14 @@ import json
 from pathlib import Path
 from typing import Any
 
+from copa_forecast.reporting.countries import display_team_name, flag_emoji
+
 
 def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: str | Path) -> None:
     target = Path(output_dir)
     data_dir = target / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
+    latest = _enrich_display_payload(latest)
     (data_dir / "latest.json").write_text(
         json.dumps(latest, indent=2, sort_keys=True), encoding="utf-8"
     )
@@ -94,21 +97,52 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
 
 def _team_card(team: dict[str, Any], *, large: bool) -> str:
     klass = "team-card large" if large else "team-card"
+    display_name = _display_name(team)
     return (
         f'<button class="{klass}" type="button" data-team="{html.escape(team["team"])}">'
         f'<span class="rank">#{team["rank"]}</span>'
-        f'<span class="flag-badge">{html.escape(team.get("flag", ""))}</span>'
-        f'<span class="name">{html.escape(team["team"])}</span>'
+        f'{_flag_badge(team)}'
+        f'<span class="name">{html.escape(display_name)}</span>'
         f'<strong>{team["champion_probability"]:.1%}</strong>'
         "</button>"
     )
 
 
 def _ranking_row(team: dict[str, Any]) -> str:
+    display_name = _display_name(team)
     return (
         f'<li><button type="button" data-team="{html.escape(team["team"])}">'
-        f'<span>#{team["rank"]} {html.escape(team["team"])}</span>'
+        f'<span class="top-team"><span>#{team["rank"]}</span>{_flag_badge(team)}'
+        f'<span>{html.escape(display_name)}</span></span>'
         f'<strong>{team["champion_probability"]:.1%}</strong></button></li>'
+    )
+
+
+def _enrich_display_payload(latest: dict[str, Any]) -> dict[str, Any]:
+    enriched = dict(latest)
+    teams = []
+    for team in latest.get("teams", []):
+        item = dict(team)
+        item["display_name"] = display_team_name(str(item.get("team", "")))
+        item["flag_emoji"] = flag_emoji(str(item.get("flag", "")))
+        teams.append(item)
+    enriched["teams"] = teams
+    return enriched
+
+
+def _display_name(team: dict[str, Any]) -> str:
+    return str(team.get("display_name") or display_team_name(str(team.get("team", ""))))
+
+
+def _flag_badge(team: dict[str, Any]) -> str:
+    code = str(team.get("flag") or "")
+    emoji = str(team.get("flag_emoji") or flag_emoji(code))
+    label = " ".join(part for part in (emoji, code) if part)
+    return (
+        f'<span class="flag-badge" aria-label="{html.escape(label)}">'
+        f'<span class="flag-emoji" aria-hidden="true">{html.escape(emoji)}</span>'
+        f'<span class="flag-code">{html.escape(code)}</span>'
+        "</span>"
     )
 
 
@@ -133,12 +167,16 @@ h1 { font-size: 58px; line-height:1; margin:0; max-width: 680px; }
 .team-card .name { font-weight:800; font-size:20px; overflow-wrap:anywhere; }
 .team-card strong { font-size:28px; }
 .team-card.large strong { font-size:34px; }
-.flag-badge { min-width:44px; min-height:34px; width:max-content; display:inline-grid; place-items:center; border-radius:4px; padding:5px 8px; background:#f4c430; color:#17211b; font-weight:900; }
+.flag-badge { min-width:54px; min-height:42px; width:max-content; display:inline-grid; grid-template-columns:auto auto; align-items:center; justify-content:center; gap:6px; border-radius:4px; padding:5px 8px; background:#f4c430; color:#17211b; font-weight:900; }
+.flag-emoji { font-size:24px; line-height:1; filter:saturate(1.08); }
+.flag-code { font-size:12px; letter-spacing:0; }
 .rank { color:#6e786f; font-weight:800; }
 .team-card.large .rank { color:#f7e9b5; }
 .top-list { list-style:none; padding:0; margin:0; display:grid; gap:10px; }
 .top-list li { margin:0; }
-.top-list button { width:100%; min-height:52px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid #d8d0bf; background:#fffdf8; color:#17211b; padding:14px; border-radius:8px; cursor:pointer; }
+.top-list button { width:100%; min-height:56px; display:flex; align-items:center; justify-content:space-between; gap:12px; border:1px solid #d8d0bf; background:#fffdf8; color:#17211b; padding:10px 14px; border-radius:8px; cursor:pointer; }
+.top-team { display:flex; align-items:center; gap:10px; min-width:0; font-weight:800; }
+.top-team > span:last-child { overflow-wrap:anywhere; }
 .top-list strong { color:#8b1e22; }
 .all-teams { padding: 30px 28px 46px; }
 .section-heading { display:flex; align-items:end; justify-content:space-between; gap:18px; margin-bottom:18px; }
@@ -263,8 +301,9 @@ function openPanel(teamName) {
   const signal = team.tournament_signal || {};
   const advancement = team.advancement_probabilities || {};
   setText('[data-panel-rank]', `#${team.rank}`);
-  setText('[data-panel-flag]', team.flag);
-  setText('[data-panel-team]', team.team);
+  const flagTarget = panel.querySelector('[data-panel-flag]');
+  if (flagTarget) flagTarget.textContent = [team.flag_emoji, team.flag].filter(Boolean).join(' ');
+  setText('[data-panel-team]', team.display_name || team.team);
   setText('[data-panel-probability]', percent(team.champion_probability));
   setText('[data-panel-group]', team.group);
   setText('[data-panel-points]', signal.points);

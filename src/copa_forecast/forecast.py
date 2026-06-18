@@ -19,6 +19,7 @@ from copa_forecast.features.pillars import (
 )
 from copa_forecast.features.recent import RecentTeamFeatures, build_recent_team_features
 from copa_forecast.reporting.explanations import build_team_explanation
+from copa_forecast.reporting.countries import display_team_name, flag_emoji
 from copa_forecast.simulation.monte_carlo import (
     simulate_tournament_distribution,
 )
@@ -348,8 +349,10 @@ def _team_row(
     return {
         "rank": rank,
         "team": team.name,
+        "display_name": display_team_name(team.name),
         "team_id": team.team_id,
         "flag": team.flag_code or "",
+        "flag_emoji": flag_emoji(team.flag_code),
         "group": team.group,
         "champion_probability": probability,
         "advancement_probabilities": {
