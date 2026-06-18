@@ -22,7 +22,7 @@ O projeto segue a filosofia rigorosa de desenvolvimento baseado em especificaç�
 
 ---
 
-## ⚽ Premissas de Modelagem Esportiva (Blindagem contra Críticas)
+## ⚽ Premissas de Modelagem Esportiva
 
 Muitos modelos de previsão de futebol falham por usar estatísticas históricas antigas e ignorar o chaveamento do torneio. Este projeto adota cinco decisões metodológicas estritas para garantir rigor estatístico:
 
@@ -68,3 +68,21 @@ Para manter o ciclo de auto-revisão ativo durante o desenvolvimento:
 ```bash
 .venv/bin/python scripts/watch_and_verify.py
 ```
+
+---
+
+## 👥 Equipe de Desenvolvimento (Experimento Multi-Agente)
+
+Este repositório foi construído de forma colaborativa por um desenvolvedor humano coordenando agentes autônomos de IA sob a metodologia Speckit:
+
+| Contribuidor | Função | Natureza | Provedor |
+| :--- | :--- | :--- | :--- |
+| 🧑‍💻 **Elder Gil** | Human Tech Lead & Product Owner | Humano | Engenharia Geral |
+| 🤖 **Agente Construtor (Codex/Constructor)** | Engenheiro de Software | Agente de IA | OpenAI / Gemini |
+| 🤖 **Agente Revisor (Antigravity/Gemini 3.5)** | Arquiteto de Software & QA Gatekeeper | Agente de IA | Google DeepMind |
+
+
+Co-authored-by: Antigravity Revisor <antigravity-agent@google.com>
+Co-authored-by: Codex Construtor <codex-agent@openai.com>
+```
+
