@@ -4,6 +4,7 @@ import argparse
 import json
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 from copa_forecast.config import load_config
 from copa_forecast.data.contracts import OfficialCompetitionState
@@ -225,6 +226,12 @@ def backtest(
     samples_csv = run_dir / "samples.csv"
     calibration_csv = run_dir / "calibration_bins.csv"
     readme_path = config.site.output_dir.parent / "README.md"
+    previous_report = _read_json_if_exists(report_json)
+    if previous_report:
+        report["previous_model_comparison"] = _compare_backtest_reports(
+            previous=previous_report,
+            current=report,
+        )
     write_backtest_report(report_json, report)
     write_backtest_samples_csv(samples_csv, report)
     write_calibration_bins_csv(calibration_csv, report)
@@ -247,6 +254,87 @@ def backtest(
         )
     )
     return 0
+
+
+def _read_json_if_exists(path: Path) -> dict[str, Any] | None:
+    if not path.exists():
+        return None
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _compare_backtest_reports(
+    *, previous: dict[str, Any], current: dict[str, Any]
+) -> dict[str, Any]:
+    previous_reference = previous.get("previous_model_comparison")
+    if isinstance(previous_reference, dict) and isinstance(
+        previous_reference.get("previous"), dict
+    ):
+        previous_metrics = previous_reference["previous"]
+        previous_model_name = previous_reference.get("previous_model_name", "unknown")
+        previous_sample_count = previous_reference.get("previous_sample_count")
+    else:
+        previous_metrics = {
+            **previous.get("metrics", {}),
+            "expected_calibration_error": previous.get("calibration", {}).get(
+                "expected_calibration_error"
+            ),
+            "maximum_calibration_error": previous.get("calibration", {}).get(
+                "maximum_calibration_error"
+            ),
+        }
+        previous_model_name = previous.get("model_name", "unknown")
+        previous_sample_count = previous.get("sample_count")
+    current_metrics = current.get("metrics", {})
+    current_calibration = current.get("calibration", {})
+    return {
+        "previous_model_name": previous_model_name,
+        "current_model_name": current.get("model_name", "unknown"),
+        "previous_sample_count": previous_sample_count,
+        "current_sample_count": current.get("sample_count"),
+        "deltas": {
+            "accuracy": _metric_delta(current_metrics, previous_metrics, "accuracy"),
+            "brier_score": _metric_delta(current_metrics, previous_metrics, "brier_score"),
+            "log_loss": _metric_delta(current_metrics, previous_metrics, "log_loss"),
+            "expected_calibration_error": _metric_delta(
+                current_calibration,
+                previous_metrics,
+                "expected_calibration_error",
+            ),
+            "maximum_calibration_error": _metric_delta(
+                current_calibration,
+                previous_metrics,
+                "maximum_calibration_error",
+            ),
+        },
+        "previous": {
+            "accuracy": previous_metrics.get("accuracy"),
+            "brier_score": previous_metrics.get("brier_score"),
+            "log_loss": previous_metrics.get("log_loss"),
+            "expected_calibration_error": previous_metrics.get("expected_calibration_error"),
+            "maximum_calibration_error": previous_metrics.get("maximum_calibration_error"),
+        },
+        "current": {
+            "accuracy": current_metrics.get("accuracy"),
+            "brier_score": current_metrics.get("brier_score"),
+            "log_loss": current_metrics.get("log_loss"),
+            "expected_calibration_error": current_calibration.get(
+                "expected_calibration_error"
+            ),
+            "maximum_calibration_error": current_calibration.get(
+                "maximum_calibration_error"
+            ),
+        },
+    }
+
+
+def _metric_delta(
+    current: dict[str, Any], previous: dict[str, Any], key: str
+) -> float | None:
+    current_value = current.get(key)
+    previous_value = previous.get(key)
+    if current_value is None or previous_value is None:
+        return None
+    return float(current_value) - float(previous_value)
 
 
 def explain(

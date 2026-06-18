@@ -1,0 +1,3375 @@
+{
+  "as_of_date": "2026-06-18",
+  "benchmarks": [
+    {
+      "key": "fifa_power_rankings_aramco",
+      "label": "FIFA Power Rankings by Aramco",
+      "model_use": "benchmark_and_explainability_candidate_not_active_feature",
+      "source": "FIFA",
+      "source_url": "https://www.fifa.com/pt/tournaments/mens/worldcup/canadamexicousa2026/power-rankings",
+      "status": "official_candidate_pending_structured_etl"
+    }
+  ],
+  "calibration_status": "not_calibrated_mvp_baseline",
+  "metadata": {
+    "as_of_date": "2026-06-18",
+    "feature_windows": {
+      "current_months": 12,
+      "decay_half_life_days": 180,
+      "max_months": 24
+    },
+    "generated_at": "2026-06-18T16:23:10.474948+00:00",
+    "model_version": "mvp-recency-normalized-sum-v2",
+    "official_state": {
+      "degraded": false,
+      "fifa_extract_ids": [
+        "fifa-world-cup-2026-calendar-20260618T162310Z"
+      ],
+      "fixture_count": 72,
+      "is_official": true,
+      "recent_match_count": 902,
+      "team_count": 48
+    },
+    "run_id": "fifa-real-2026-06-18",
+    "simulation": {
+      "bracket_model": "fifa_2026_round_of_32_slots_with_deterministic_third_assignment",
+      "method": "monte_carlo_tournament_path",
+      "random_seed": 20260618,
+      "ruleset": "fifa-world-cup-2026",
+      "runs": 10000
+    }
+  },
+  "model_version": "mvp-recency-normalized-sum-v2",
+  "pillars": [
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "official_competition_state",
+      "label": "Estado oficial FIFA",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "tournament_path",
+      "label": "Caminho e resultados do torneio",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA fixtures/results",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "recent_form_window",
+      "label": "Forma recente em janela temporal",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA calendar official match records",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "current_form_12m",
+      "label": "Forma atual nos ultimos 12 meses",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA calendar official match records",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "attacking_trend",
+      "label": "Tendencia ofensiva",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA calendar official match records",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "defensive_trend",
+      "label": "Tendencia defensiva",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA calendar official match records",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "match_importance",
+      "label": "Peso competitivo das partidas",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA competition/stage metadata",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "venue_context",
+      "label": "Contexto de mando e neutralidade",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA stadium metadata",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 48,
+      "coverage": 1.0,
+      "key": "fifa_sum_rating_prior",
+      "label": "Prior FIFA/SUM de forca relativa",
+      "missing_teams": 0,
+      "reason": "coverage_ok",
+      "source": "FIFA/Coca-Cola SUM-style rating computed from FIFA match records",
+      "status": "used",
+      "total_teams": 48
+    },
+    {
+      "available_teams": 0,
+      "coverage": 0.0,
+      "key": "squad_context",
+      "label": "Contexto de elenco",
+      "missing_teams": 48,
+      "reason": "ten_or_more_teams_missing",
+      "source": "official squad reports - pending ETL",
+      "status": "excluded_low_coverage",
+      "total_teams": 48
+    }
+  ],
+  "run_id": "fifa-real-2026-06-18",
+  "teams": [
+    {
+      "advancement_probabilities": {
+        "champion": 0.1217,
+        "final": 0.1963,
+        "quarterfinal": 0.4712,
+        "round_of_16": 0.6848,
+        "round_of_32": 0.9943,
+        "semifinal": 0.3228
+      },
+      "champion_probability": 0.1217,
+      "display_name": "Argentina",
+      "drivers": [
+        "chance_titulo=0.1217",
+        "chance_final=0.1963",
+        "pontos_torneio=3",
+        "saldo_gols=3",
+        "jogos_24m=26",
+        "pontos_por_jogo_24m=0.78",
+        "saldo_por_jogo_24m=0.67",
+        "prior_fifa_sum=1693.0",
+        "forca_modelo=1823.05"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "ARG",
+      "flag_emoji": "\ud83c\udde6\ud83c\uddf7",
+      "group": "J",
+      "rank": 1,
+      "recent_features": {
+        "away_matches": 7,
+        "fifa_sum_rating_prior": 1693.0082,
+        "home_matches": 8,
+        "matches_12m": 10,
+        "matches_24m": 26,
+        "neutral_matches": 11,
+        "weighted_goal_difference": 21.2042,
+        "weighted_goal_difference_per_match": 0.6689,
+        "weighted_goals_against": 2.3465,
+        "weighted_goals_for": 23.5507,
+        "weighted_importance": 31.7,
+        "weighted_points": 24.8756,
+        "weighted_points_per_match": 0.7847
+      },
+      "strength": 1823.0549,
+      "summary": "Argentina: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Argentina",
+      "team_id": "43922",
+      "tournament_signal": {
+        "goal_difference": 3,
+        "goals_against": 0,
+        "goals_for": 3,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0903,
+        "final": 0.1575,
+        "quarterfinal": 0.4056,
+        "round_of_16": 0.6629,
+        "round_of_32": 0.9977,
+        "semifinal": 0.253
+      },
+      "champion_probability": 0.0903,
+      "display_name": "Alemanha",
+      "drivers": [
+        "chance_titulo=0.0903",
+        "chance_final=0.1575",
+        "pontos_torneio=3",
+        "saldo_gols=6",
+        "jogos_24m=25",
+        "pontos_por_jogo_24m=0.87",
+        "saldo_por_jogo_24m=0.82",
+        "prior_fifa_sum=1640.1",
+        "forca_modelo=1808.35"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "GER",
+      "flag_emoji": "\ud83c\udde9\ud83c\uddea",
+      "group": "E",
+      "rank": 2,
+      "recent_features": {
+        "away_matches": 11,
+        "fifa_sum_rating_prior": 1640.1005,
+        "home_matches": 13,
+        "matches_12m": 11,
+        "matches_24m": 25,
+        "neutral_matches": 1,
+        "weighted_goal_difference": 23.4518,
+        "weighted_goal_difference_per_match": 0.8229,
+        "weighted_goals_against": 8.9523,
+        "weighted_goals_for": 32.404,
+        "weighted_importance": 28.5,
+        "weighted_points": 24.7866,
+        "weighted_points_per_match": 0.8697
+      },
+      "strength": 1808.345,
+      "summary": "Germany: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Germany",
+      "team_id": "43948",
+      "tournament_signal": {
+        "goal_difference": 6,
+        "goals_against": 1,
+        "goals_for": 7,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0803,
+        "final": 0.1372,
+        "quarterfinal": 0.3605,
+        "round_of_16": 0.5997,
+        "round_of_32": 0.9065,
+        "semifinal": 0.2152
+      },
+      "champion_probability": 0.0803,
+      "display_name": "Marrocos",
+      "drivers": [
+        "chance_titulo=0.0803",
+        "chance_final=0.1372",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=29",
+        "pontos_por_jogo_24m=1.17",
+        "saldo_por_jogo_24m=0.76",
+        "prior_fifa_sum=1687.1",
+        "forca_modelo=1815.22"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "MAR",
+      "flag_emoji": "\ud83c\uddf2\ud83c\udde6",
+      "group": "C",
+      "rank": 3,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1687.054,
+        "home_matches": 13,
+        "matches_12m": 25,
+        "matches_24m": 29,
+        "neutral_matches": 10,
+        "weighted_goal_difference": 25.1543,
+        "weighted_goal_difference_per_match": 0.7554,
+        "weighted_goals_against": 7.1141,
+        "weighted_goals_for": 32.2684,
+        "weighted_importance": 33.3,
+        "weighted_points": 39.0961,
+        "weighted_points_per_match": 1.1741
+      },
+      "strength": 1815.2199,
+      "summary": "Morocco: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Morocco",
+      "team_id": "43872",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0669,
+        "final": 0.1198,
+        "quarterfinal": 0.3496,
+        "round_of_16": 0.6054,
+        "round_of_32": 0.9855,
+        "semifinal": 0.2066
+      },
+      "champion_probability": 0.0669,
+      "display_name": "Noruega",
+      "drivers": [
+        "chance_titulo=0.0669",
+        "chance_final=0.1198",
+        "pontos_torneio=3",
+        "saldo_gols=3",
+        "jogos_24m=21",
+        "pontos_por_jogo_24m=0.89",
+        "saldo_por_jogo_24m=0.83",
+        "prior_fifa_sum=1633.9",
+        "forca_modelo=1780.62"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "NOR",
+      "flag_emoji": "\ud83c\uddf3\ud83c\uddf4",
+      "group": "I",
+      "rank": 4,
+      "recent_features": {
+        "away_matches": 7,
+        "fifa_sum_rating_prior": 1633.911,
+        "home_matches": 11,
+        "matches_12m": 11,
+        "matches_24m": 21,
+        "neutral_matches": 3,
+        "weighted_goal_difference": 19.6722,
+        "weighted_goal_difference_per_match": 0.8336,
+        "weighted_goals_against": 7.9376,
+        "weighted_goals_for": 27.6098,
+        "weighted_importance": 23.6,
+        "weighted_points": 20.9567,
+        "weighted_points_per_match": 0.888
+      },
+      "strength": 1780.625,
+      "summary": "Norway: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Norway",
+      "team_id": "43961",
+      "tournament_signal": {
+        "goal_difference": 3,
+        "goals_against": 1,
+        "goals_for": 4,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0604,
+        "final": 0.1134,
+        "quarterfinal": 0.3693,
+        "round_of_16": 0.6479,
+        "round_of_32": 0.9869,
+        "semifinal": 0.2012
+      },
+      "champion_probability": 0.0604,
+      "display_name": "Inglaterra",
+      "drivers": [
+        "chance_titulo=0.0604",
+        "chance_final=0.1134",
+        "pontos_torneio=3",
+        "saldo_gols=2",
+        "jogos_24m=27",
+        "pontos_por_jogo_24m=0.76",
+        "saldo_por_jogo_24m=0.54",
+        "prior_fifa_sum=1651.2",
+        "forca_modelo=1764.18"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "ENG",
+      "flag_emoji": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f",
+      "group": "L",
+      "rank": 5,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1651.2309,
+        "home_matches": 11,
+        "matches_12m": 11,
+        "matches_24m": 27,
+        "neutral_matches": 10,
+        "weighted_goal_difference": 17.2733,
+        "weighted_goal_difference_per_match": 0.5449,
+        "weighted_goals_against": 6.1678,
+        "weighted_goals_for": 23.4412,
+        "weighted_importance": 31.7,
+        "weighted_points": 24.0453,
+        "weighted_points_per_match": 0.7585
+      },
+      "strength": 1764.1754,
+      "summary": "England: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "England",
+      "team_id": "43942",
+      "tournament_signal": {
+        "goal_difference": 2,
+        "goals_against": 2,
+        "goals_for": 4,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.058,
+        "final": 0.11,
+        "quarterfinal": 0.3281,
+        "round_of_16": 0.571,
+        "round_of_32": 0.9789,
+        "semifinal": 0.1912
+      },
+      "champion_probability": 0.058,
+      "display_name": "Costa do Marfim",
+      "drivers": [
+        "chance_titulo=0.0580",
+        "chance_final=0.1100",
+        "pontos_torneio=3",
+        "saldo_gols=1",
+        "jogos_24m=19",
+        "pontos_por_jogo_24m=1.16",
+        "saldo_por_jogo_24m=0.65",
+        "prior_fifa_sum=1631.0",
+        "forca_modelo=1760.04"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "CIV",
+      "flag_emoji": "\ud83c\udde8\ud83c\uddee",
+      "group": "E",
+      "rank": 6,
+      "recent_features": {
+        "away_matches": 5,
+        "fifa_sum_rating_prior": 1630.9708,
+        "home_matches": 3,
+        "matches_12m": 15,
+        "matches_24m": 19,
+        "neutral_matches": 11,
+        "weighted_goal_difference": 14.8415,
+        "weighted_goal_difference_per_match": 0.6495,
+        "weighted_goals_against": 5.9179,
+        "weighted_goals_for": 20.7595,
+        "weighted_importance": 22.85,
+        "weighted_points": 26.4188,
+        "weighted_points_per_match": 1.1562
+      },
+      "strength": 1760.0418,
+      "summary": "C\u00f4te d'Ivoire: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "C\u00f4te d'Ivoire",
+      "team_id": "43854",
+      "tournament_signal": {
+        "goal_difference": 1,
+        "goals_against": 0,
+        "goals_for": 1,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0576,
+        "final": 0.1076,
+        "quarterfinal": 0.361,
+        "round_of_16": 0.6244,
+        "round_of_32": 0.9784,
+        "semifinal": 0.1918
+      },
+      "champion_probability": 0.0576,
+      "display_name": "M\u00e9xico",
+      "drivers": [
+        "chance_titulo=0.0576",
+        "chance_final=0.1076",
+        "pontos_torneio=3",
+        "saldo_gols=2",
+        "jogos_24m=33",
+        "pontos_por_jogo_24m=0.81",
+        "saldo_por_jogo_24m=0.40",
+        "prior_fifa_sum=1659.0",
+        "forca_modelo=1756.85"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "MEX",
+      "flag_emoji": "\ud83c\uddf2\ud83c\uddfd",
+      "group": "A",
+      "rank": 7,
+      "recent_features": {
+        "away_matches": 4,
+        "fifa_sum_rating_prior": 1658.9962,
+        "home_matches": 9,
+        "matches_12m": 20,
+        "matches_24m": 33,
+        "neutral_matches": 20,
+        "weighted_goal_difference": 14.768,
+        "weighted_goal_difference_per_match": 0.4018,
+        "weighted_goals_against": 7.603,
+        "weighted_goals_for": 22.3709,
+        "weighted_importance": 36.75,
+        "weighted_points": 29.9084,
+        "weighted_points_per_match": 0.8138
+      },
+      "strength": 1756.8466,
+      "summary": "Mexico: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Mexico",
+      "team_id": "43911",
+      "tournament_signal": {
+        "goal_difference": 2,
+        "goals_against": 0,
+        "goals_for": 2,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0555,
+        "final": 0.1072,
+        "quarterfinal": 0.354,
+        "round_of_16": 0.5697,
+        "round_of_32": 0.9526,
+        "semifinal": 0.208
+      },
+      "champion_probability": 0.0555,
+      "display_name": "\u00c1ustria",
+      "drivers": [
+        "chance_titulo=0.0555",
+        "chance_final=0.1072",
+        "pontos_torneio=3",
+        "saldo_gols=2",
+        "jogos_24m=23",
+        "pontos_por_jogo_24m=0.81",
+        "saldo_por_jogo_24m=0.61",
+        "prior_fifa_sum=1627.2",
+        "forca_modelo=1743.36"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "AUT",
+      "flag_emoji": "\ud83c\udde6\ud83c\uddf9",
+      "group": "J",
+      "rank": 8,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1627.198,
+        "home_matches": 11,
+        "matches_12m": 10,
+        "matches_24m": 23,
+        "neutral_matches": 4,
+        "weighted_goal_difference": 16.1319,
+        "weighted_goal_difference_per_match": 0.6053,
+        "weighted_goals_against": 5.4621,
+        "weighted_goals_for": 21.5941,
+        "weighted_importance": 26.65,
+        "weighted_points": 21.6295,
+        "weighted_points_per_match": 0.8116
+      },
+      "strength": 1743.36,
+      "summary": "Austria: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Austria",
+      "team_id": "43934",
+      "tournament_signal": {
+        "goal_difference": 2,
+        "goals_against": 1,
+        "goals_for": 3,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.04,
+        "final": 0.0807,
+        "quarterfinal": 0.2791,
+        "round_of_16": 0.5311,
+        "round_of_32": 0.9776,
+        "semifinal": 0.1518
+      },
+      "champion_probability": 0.04,
+      "display_name": "Fran\u00e7a",
+      "drivers": [
+        "chance_titulo=0.0400",
+        "chance_final=0.0807",
+        "pontos_torneio=3",
+        "saldo_gols=2",
+        "jogos_24m=26",
+        "pontos_por_jogo_24m=0.76",
+        "saldo_por_jogo_24m=0.44",
+        "prior_fifa_sum=1625.1",
+        "forca_modelo=1725.52"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "FRA",
+      "flag_emoji": "\ud83c\uddeb\ud83c\uddf7",
+      "group": "I",
+      "rank": 9,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1625.1495,
+        "home_matches": 9,
+        "matches_12m": 11,
+        "matches_24m": 26,
+        "neutral_matches": 11,
+        "weighted_goal_difference": 13.1167,
+        "weighted_goal_difference_per_match": 0.4394,
+        "weighted_goals_against": 10.147,
+        "weighted_goals_for": 23.2638,
+        "weighted_importance": 29.85,
+        "weighted_points": 22.6934,
+        "weighted_points_per_match": 0.7602
+      },
+      "strength": 1725.5167,
+      "summary": "France: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "France",
+      "team_id": "43946",
+      "tournament_signal": {
+        "goal_difference": 2,
+        "goals_against": 1,
+        "goals_for": 3,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0395,
+        "final": 0.0766,
+        "quarterfinal": 0.2605,
+        "round_of_16": 0.4251,
+        "round_of_32": 0.8671,
+        "semifinal": 0.1529
+      },
+      "champion_probability": 0.0395,
+      "display_name": "Espanha",
+      "drivers": [
+        "chance_titulo=0.0395",
+        "chance_final=0.0766",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=27",
+        "pontos_por_jogo_24m=0.65",
+        "saldo_por_jogo_24m=0.47",
+        "prior_fifa_sum=1675.8",
+        "forca_modelo=1740.25"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "ESP",
+      "flag_emoji": "\ud83c\uddea\ud83c\uddf8",
+      "group": "H",
+      "rank": 10,
+      "recent_features": {
+        "away_matches": 7,
+        "fifa_sum_rating_prior": 1675.7899,
+        "home_matches": 11,
+        "matches_12m": 11,
+        "matches_24m": 27,
+        "neutral_matches": 9,
+        "weighted_goal_difference": 14.6963,
+        "weighted_goal_difference_per_match": 0.471,
+        "weighted_goals_against": 6.0525,
+        "weighted_goals_for": 20.7488,
+        "weighted_importance": 31.2,
+        "weighted_points": 20.2843,
+        "weighted_points_per_match": 0.6501
+      },
+      "strength": 1740.2518,
+      "summary": "Spain: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Spain",
+      "team_id": "43969",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 0,
+        "goals_for": 0,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0299,
+        "final": 0.0627,
+        "quarterfinal": 0.2875,
+        "round_of_16": 0.5559,
+        "round_of_32": 0.9474,
+        "semifinal": 0.1292
+      },
+      "champion_probability": 0.0299,
+      "display_name": "Coreia do Sul",
+      "drivers": [
+        "chance_titulo=0.0299",
+        "chance_final=0.0627",
+        "pontos_torneio=3",
+        "saldo_gols=1",
+        "jogos_24m=21",
+        "pontos_por_jogo_24m=0.80",
+        "saldo_por_jogo_24m=0.29",
+        "prior_fifa_sum=1616.0",
+        "forca_modelo=1688.59"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "KOR",
+      "flag_emoji": "\ud83c\uddf0\ud83c\uddf7",
+      "group": "A",
+      "rank": 11,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1615.9902,
+        "home_matches": 9,
+        "matches_12m": 11,
+        "matches_24m": 21,
+        "neutral_matches": 6,
+        "weighted_goal_difference": 6.971,
+        "weighted_goal_difference_per_match": 0.2893,
+        "weighted_goals_against": 8.8466,
+        "weighted_goals_for": 15.8176,
+        "weighted_importance": 24.1,
+        "weighted_points": 19.3233,
+        "weighted_points_per_match": 0.8018
+      },
+      "strength": 1688.5885,
+      "summary": "Korea Republic: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Korea Republic",
+      "team_id": "43822",
+      "tournament_signal": {
+        "goal_difference": 1,
+        "goals_against": 1,
+        "goals_for": 2,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0251,
+        "final": 0.0477,
+        "quarterfinal": 0.1884,
+        "round_of_16": 0.3203,
+        "round_of_32": 0.5538,
+        "semifinal": 0.1011
+      },
+      "champion_probability": 0.0251,
+      "display_name": "Arg\u00e9lia",
+      "drivers": [
+        "chance_titulo=0.0251",
+        "chance_final=0.0477",
+        "pontos_torneio=0",
+        "saldo_gols=-3",
+        "jogos_24m=24",
+        "pontos_por_jogo_24m=1.08",
+        "saldo_por_jogo_24m=0.63",
+        "prior_fifa_sum=1631.9",
+        "forca_modelo=1708.28"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "ALG",
+      "flag_emoji": "\ud83c\udde9\ud83c\uddff",
+      "group": "J",
+      "rank": 12,
+      "recent_features": {
+        "away_matches": 5,
+        "fifa_sum_rating_prior": 1631.9195,
+        "home_matches": 4,
+        "matches_12m": 20,
+        "matches_24m": 24,
+        "neutral_matches": 15,
+        "weighted_goal_difference": 17.4432,
+        "weighted_goal_difference_per_match": 0.6263,
+        "weighted_goals_against": 10.6282,
+        "weighted_goals_for": 28.0714,
+        "weighted_importance": 27.85,
+        "weighted_points": 30.0746,
+        "weighted_points_per_match": 1.0799
+      },
+      "strength": 1708.2753,
+      "summary": "Algeria: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Algeria",
+      "team_id": "43843",
+      "tournament_signal": {
+        "goal_difference": -3,
+        "goals_against": 3,
+        "goals_for": 0,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0221,
+        "final": 0.0514,
+        "quarterfinal": 0.2389,
+        "round_of_16": 0.5192,
+        "round_of_32": 0.9716,
+        "semifinal": 0.1183
+      },
+      "champion_probability": 0.0221,
+      "display_name": "Austr\u00e1lia",
+      "drivers": [
+        "chance_titulo=0.0221",
+        "chance_final=0.0514",
+        "pontos_torneio=3",
+        "saldo_gols=2",
+        "jogos_24m=21",
+        "pontos_por_jogo_24m=0.71",
+        "saldo_por_jogo_24m=0.30",
+        "prior_fifa_sum=1585.3",
+        "forca_modelo=1657.05"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "AUS",
+      "flag_emoji": "\ud83c\udde6\ud83c\uddfa",
+      "group": "D",
+      "rank": 13,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1585.3139,
+        "home_matches": 8,
+        "matches_12m": 11,
+        "matches_24m": 21,
+        "neutral_matches": 5,
+        "weighted_goal_difference": 7.1564,
+        "weighted_goal_difference_per_match": 0.2969,
+        "weighted_goals_against": 6.6303,
+        "weighted_goals_for": 13.7868,
+        "weighted_importance": 24.1,
+        "weighted_points": 17.1467,
+        "weighted_points_per_match": 0.7115
+      },
+      "strength": 1657.0485,
+      "summary": "Australia: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Australia",
+      "team_id": "43976",
+      "tournament_signal": {
+        "goal_difference": 2,
+        "goals_against": 0,
+        "goals_for": 2,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0219,
+        "final": 0.0486,
+        "quarterfinal": 0.218,
+        "round_of_16": 0.4477,
+        "round_of_32": 0.8063,
+        "semifinal": 0.1044
+      },
+      "champion_probability": 0.0219,
+      "display_name": "B\u00e9lgica",
+      "drivers": [
+        "chance_titulo=0.0219",
+        "chance_final=0.0486",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=24",
+        "pontos_por_jogo_24m=0.69",
+        "saldo_por_jogo_24m=0.68",
+        "prior_fifa_sum=1577.0",
+        "forca_modelo=1665.38"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "BEL",
+      "flag_emoji": "\ud83c\udde7\ud83c\uddea",
+      "group": "G",
+      "rank": 14,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1577.0258,
+        "home_matches": 8,
+        "matches_12m": 11,
+        "matches_24m": 24,
+        "neutral_matches": 8,
+        "weighted_goal_difference": 18.912,
+        "weighted_goal_difference_per_match": 0.684,
+        "weighted_goals_against": 7.9136,
+        "weighted_goals_for": 26.8256,
+        "weighted_importance": 27.65,
+        "weighted_points": 19.1926,
+        "weighted_points_per_match": 0.6941
+      },
+      "strength": 1665.3769,
+      "summary": "Belgium: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Belgium",
+      "team_id": "43935",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0183,
+        "final": 0.0461,
+        "quarterfinal": 0.2082,
+        "round_of_16": 0.4309,
+        "round_of_32": 0.7816,
+        "semifinal": 0.0994
+      },
+      "champion_probability": 0.0183,
+      "display_name": "Portugal",
+      "drivers": [
+        "chance_titulo=0.0183",
+        "chance_final=0.0461",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=26",
+        "pontos_por_jogo_24m=0.66",
+        "saldo_por_jogo_24m=0.38",
+        "prior_fifa_sum=1606.7",
+        "forca_modelo=1663.24"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "POR",
+      "flag_emoji": "\ud83c\uddf5\ud83c\uddf9",
+      "group": "K",
+      "rank": 15,
+      "recent_features": {
+        "away_matches": 10,
+        "fifa_sum_rating_prior": 1606.6769,
+        "home_matches": 9,
+        "matches_12m": 11,
+        "matches_24m": 26,
+        "neutral_matches": 7,
+        "weighted_goal_difference": 11.2142,
+        "weighted_goal_difference_per_match": 0.3757,
+        "weighted_goals_against": 8.9111,
+        "weighted_goals_for": 20.1253,
+        "weighted_importance": 29.85,
+        "weighted_points": 19.8108,
+        "weighted_points_per_match": 0.6637
+      },
+      "strength": 1663.2423,
+      "summary": "Portugal: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Portugal",
+      "team_id": "43963",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0182,
+        "final": 0.0406,
+        "quarterfinal": 0.2007,
+        "round_of_16": 0.4127,
+        "round_of_32": 0.7707,
+        "semifinal": 0.093
+      },
+      "champion_probability": 0.0182,
+      "display_name": "RD Congo",
+      "drivers": [
+        "chance_titulo=0.0182",
+        "chance_final=0.0406",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=20",
+        "pontos_por_jogo_24m=0.94",
+        "saldo_por_jogo_24m=0.34",
+        "prior_fifa_sum=1594.0",
+        "forca_modelo=1654.47"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "COD",
+      "flag_emoji": "\ud83c\udde8\ud83c\udde9",
+      "group": "K",
+      "rank": 16,
+      "recent_features": {
+        "away_matches": 3,
+        "fifa_sum_rating_prior": 1593.995,
+        "home_matches": 3,
+        "matches_12m": 16,
+        "matches_24m": 20,
+        "neutral_matches": 14,
+        "weighted_goal_difference": 8.139,
+        "weighted_goal_difference_per_match": 0.3356,
+        "weighted_goals_against": 7.4056,
+        "weighted_goals_for": 15.5446,
+        "weighted_importance": 24.25,
+        "weighted_points": 22.8096,
+        "weighted_points_per_match": 0.9406
+      },
+      "strength": 1654.4701,
+      "summary": "Congo DR: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Congo DR",
+      "team_id": "20014",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0175,
+        "final": 0.0411,
+        "quarterfinal": 0.1983,
+        "round_of_16": 0.4109,
+        "round_of_32": 0.7868,
+        "semifinal": 0.0947
+      },
+      "champion_probability": 0.0175,
+      "display_name": "Egito",
+      "drivers": [
+        "chance_titulo=0.0175",
+        "chance_final=0.0411",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=24",
+        "pontos_por_jogo_24m=0.91",
+        "saldo_por_jogo_24m=0.25",
+        "prior_fifa_sum=1593.7",
+        "forca_modelo=1649.91"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "EGY",
+      "flag_emoji": "\ud83c\uddea\ud83c\uddec",
+      "group": "G",
+      "rank": 17,
+      "recent_features": {
+        "away_matches": 3,
+        "fifa_sum_rating_prior": 1593.6628,
+        "home_matches": 5,
+        "matches_12m": 22,
+        "matches_24m": 24,
+        "neutral_matches": 16,
+        "weighted_goal_difference": 7.2345,
+        "weighted_goal_difference_per_match": 0.2534,
+        "weighted_goals_against": 11.2776,
+        "weighted_goals_for": 18.5122,
+        "weighted_importance": 28.55,
+        "weighted_points": 25.8734,
+        "weighted_points_per_match": 0.9062
+      },
+      "strength": 1649.9149,
+      "summary": "Egypt: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Egypt",
+      "team_id": "43855",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0174,
+        "final": 0.0403,
+        "quarterfinal": 0.2131,
+        "round_of_16": 0.4863,
+        "round_of_32": 0.9687,
+        "semifinal": 0.0978
+      },
+      "champion_probability": 0.0174,
+      "display_name": "Estados Unidos",
+      "drivers": [
+        "chance_titulo=0.0174",
+        "chance_final=0.0403",
+        "pontos_torneio=3",
+        "saldo_gols=3",
+        "jogos_24m=32",
+        "pontos_por_jogo_24m=0.54",
+        "saldo_por_jogo_24m=0.15",
+        "prior_fifa_sum=1570.4",
+        "forca_modelo=1632.14"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "USA",
+      "flag_emoji": "\ud83c\uddfa\ud83c\uddf8",
+      "group": "D",
+      "rank": 18,
+      "recent_features": {
+        "away_matches": 5,
+        "fifa_sum_rating_prior": 1570.3634,
+        "home_matches": 27,
+        "matches_12m": 16,
+        "matches_24m": 32,
+        "neutral_matches": 0,
+        "weighted_goal_difference": 5.3227,
+        "weighted_goal_difference_per_match": 0.1489,
+        "weighted_goals_against": 17.8667,
+        "weighted_goals_for": 23.1894,
+        "weighted_importance": 35.75,
+        "weighted_points": 19.1855,
+        "weighted_points_per_match": 0.5367
+      },
+      "strength": 1632.1421,
+      "summary": "USA: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "USA",
+      "team_id": "43921",
+      "tournament_signal": {
+        "goal_difference": 3,
+        "goals_against": 1,
+        "goals_for": 4,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0172,
+        "final": 0.0392,
+        "quarterfinal": 0.1855,
+        "round_of_16": 0.3912,
+        "round_of_32": 0.8052,
+        "semifinal": 0.0836
+      },
+      "champion_probability": 0.0172,
+      "display_name": "Jap\u00e3o",
+      "drivers": [
+        "chance_titulo=0.0172",
+        "chance_final=0.0392",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=20",
+        "pontos_por_jogo_24m=0.73",
+        "saldo_por_jogo_24m=0.37",
+        "prior_fifa_sum=1619.1",
+        "forca_modelo=1670.24"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "JPN",
+      "flag_emoji": "\ud83c\uddef\ud83c\uddf5",
+      "group": "F",
+      "rank": 19,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1619.0537,
+        "home_matches": 10,
+        "matches_12m": 10,
+        "matches_24m": 20,
+        "neutral_matches": 2,
+        "weighted_goal_difference": 8.5069,
+        "weighted_goal_difference_per_match": 0.3683,
+        "weighted_goals_against": 5.9061,
+        "weighted_goals_for": 14.413,
+        "weighted_importance": 23.1,
+        "weighted_points": 16.9406,
+        "weighted_points_per_match": 0.7334
+      },
+      "strength": 1670.2446,
+      "summary": "Japan: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Japan",
+      "team_id": "43819",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 2,
+        "goals_for": 2,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0161,
+        "final": 0.0345,
+        "quarterfinal": 0.1478,
+        "round_of_16": 0.2792,
+        "round_of_32": 0.545,
+        "semifinal": 0.0685
+      },
+      "champion_probability": 0.0161,
+      "display_name": "Senegal",
+      "drivers": [
+        "chance_titulo=0.0161",
+        "chance_final=0.0345",
+        "pontos_torneio=0",
+        "saldo_gols=-2",
+        "jogos_24m=24",
+        "pontos_por_jogo_24m=0.97",
+        "saldo_por_jogo_24m=0.53",
+        "prior_fifa_sum=1613.3",
+        "forca_modelo=1681.49"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "SEN",
+      "flag_emoji": "\ud83c\uddf8\ud83c\uddf3",
+      "group": "I",
+      "rank": 20,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1613.3282,
+        "home_matches": 5,
+        "matches_12m": 20,
+        "matches_24m": 24,
+        "neutral_matches": 13,
+        "weighted_goal_difference": 15.2054,
+        "weighted_goal_difference_per_match": 0.5326,
+        "weighted_goals_against": 13.029,
+        "weighted_goals_for": 28.2343,
+        "weighted_importance": 28.55,
+        "weighted_points": 27.574,
+        "weighted_points_per_match": 0.9658
+      },
+      "strength": 1681.4906,
+      "summary": "Senegal: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Senegal",
+      "team_id": "43879",
+      "tournament_signal": {
+        "goal_difference": -2,
+        "goals_against": 3,
+        "goals_for": 1,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0126,
+        "final": 0.0317,
+        "quarterfinal": 0.1858,
+        "round_of_16": 0.4243,
+        "round_of_32": 0.9648,
+        "semifinal": 0.072
+      },
+      "champion_probability": 0.0126,
+      "display_name": "Su\u00e9cia",
+      "drivers": [
+        "chance_titulo=0.0126",
+        "chance_final=0.0317",
+        "pontos_torneio=3",
+        "saldo_gols=4",
+        "jogos_24m=21",
+        "pontos_por_jogo_24m=0.66",
+        "saldo_por_jogo_24m=0.25",
+        "prior_fifa_sum=1543.7",
+        "forca_modelo=1620.68"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "SWE",
+      "flag_emoji": "\ud83c\uddf8\ud83c\uddea",
+      "group": "F",
+      "rank": 21,
+      "recent_features": {
+        "away_matches": 9,
+        "fifa_sum_rating_prior": 1543.7276,
+        "home_matches": 10,
+        "matches_12m": 11,
+        "matches_24m": 21,
+        "neutral_matches": 2,
+        "weighted_goal_difference": 5.9667,
+        "weighted_goal_difference_per_match": 0.2528,
+        "weighted_goals_against": 16.3177,
+        "weighted_goals_for": 22.2845,
+        "weighted_importance": 23.6,
+        "weighted_points": 15.6056,
+        "weighted_points_per_match": 0.6613
+      },
+      "strength": 1620.6827,
+      "summary": "Sweden: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Sweden",
+      "team_id": "43970",
+      "tournament_signal": {
+        "goal_difference": 4,
+        "goals_against": 1,
+        "goals_for": 5,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0123,
+        "final": 0.0282,
+        "quarterfinal": 0.1839,
+        "round_of_16": 0.377,
+        "round_of_32": 0.8054,
+        "semifinal": 0.0732
+      },
+      "champion_probability": 0.0123,
+      "display_name": "Canad\u00e1",
+      "drivers": [
+        "chance_titulo=0.0123",
+        "chance_final=0.0282",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=31",
+        "pontos_por_jogo_24m=0.53",
+        "saldo_por_jogo_24m=0.22",
+        "prior_fifa_sum=1594.7",
+        "forca_modelo=1625.91"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "CAN",
+      "flag_emoji": "\ud83c\udde8\ud83c\udde6",
+      "group": "B",
+      "rank": 22,
+      "recent_features": {
+        "away_matches": 4,
+        "fifa_sum_rating_prior": 1594.6658,
+        "home_matches": 13,
+        "matches_12m": 16,
+        "matches_24m": 31,
+        "neutral_matches": 14,
+        "weighted_goal_difference": 7.6001,
+        "weighted_goal_difference_per_match": 0.2165,
+        "weighted_goals_against": 6.8122,
+        "weighted_goals_for": 14.4123,
+        "weighted_importance": 35.1,
+        "weighted_points": 18.587,
+        "weighted_points_per_match": 0.5295
+      },
+      "strength": 1625.9055,
+      "summary": "Canada: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Canada",
+      "team_id": "43899",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.012,
+        "final": 0.0307,
+        "quarterfinal": 0.1607,
+        "round_of_16": 0.3512,
+        "round_of_32": 0.7695,
+        "semifinal": 0.0694
+      },
+      "champion_probability": 0.012,
+      "display_name": "Pa\u00edses Baixos",
+      "drivers": [
+        "chance_titulo=0.0120",
+        "chance_final=0.0307",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=26",
+        "pontos_por_jogo_24m=0.58",
+        "saldo_por_jogo_24m=0.36",
+        "prior_fifa_sum=1590.9",
+        "forca_modelo=1642.67"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "NED",
+      "flag_emoji": "\ud83c\uddf3\ud83c\uddf1",
+      "group": "F",
+      "rank": 23,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1590.9242,
+        "home_matches": 11,
+        "matches_12m": 11,
+        "matches_24m": 26,
+        "neutral_matches": 7,
+        "weighted_goal_difference": 10.8964,
+        "weighted_goal_difference_per_match": 0.359,
+        "weighted_goals_against": 10.3316,
+        "weighted_goals_for": 21.228,
+        "weighted_importance": 30.35,
+        "weighted_points": 17.6802,
+        "weighted_points_per_match": 0.5825
+      },
+      "strength": 1642.6726,
+      "summary": "Netherlands: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Netherlands",
+      "team_id": "43960",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 2,
+        "goals_for": 2,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0107,
+        "final": 0.0258,
+        "quarterfinal": 0.1428,
+        "round_of_16": 0.2884,
+        "round_of_32": 0.7814,
+        "semifinal": 0.064
+      },
+      "champion_probability": 0.0107,
+      "display_name": "Cabo Verde",
+      "drivers": [
+        "chance_titulo=0.0107",
+        "chance_final=0.0258",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=16",
+        "pontos_por_jogo_24m=0.87",
+        "saldo_por_jogo_24m=0.44",
+        "prior_fifa_sum=1575.5",
+        "forca_modelo=1632.78"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "CPV",
+      "flag_emoji": "\ud83c\udde8\ud83c\uddfb",
+      "group": "H",
+      "rank": 24,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1575.4586,
+        "home_matches": 3,
+        "matches_12m": 11,
+        "matches_24m": 16,
+        "neutral_matches": 7,
+        "weighted_goal_difference": 8.0358,
+        "weighted_goal_difference_per_match": 0.444,
+        "weighted_goals_against": 6.1804,
+        "weighted_goals_for": 14.2162,
+        "weighted_importance": 18.1,
+        "weighted_points": 15.7473,
+        "weighted_points_per_match": 0.87
+      },
+      "strength": 1632.7824,
+      "summary": "Cabo Verde: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Cabo Verde",
+      "team_id": "43850",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 0,
+        "goals_for": 0,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.01,
+        "final": 0.0276,
+        "quarterfinal": 0.1577,
+        "round_of_16": 0.3569,
+        "round_of_32": 0.7748,
+        "semifinal": 0.0651
+      },
+      "champion_probability": 0.01,
+      "display_name": "Brasil",
+      "drivers": [
+        "chance_titulo=0.0100",
+        "chance_final=0.0276",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=25",
+        "pontos_por_jogo_24m=0.57",
+        "saldo_por_jogo_24m=0.31",
+        "prior_fifa_sum=1591.7",
+        "forca_modelo=1636.37"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "BRA",
+      "flag_emoji": "\ud83c\udde7\ud83c\uddf7",
+      "group": "C",
+      "rank": 25,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1591.6828,
+        "home_matches": 7,
+        "matches_12m": 11,
+        "matches_24m": 25,
+        "neutral_matches": 10,
+        "weighted_goal_difference": 9.356,
+        "weighted_goal_difference_per_match": 0.3119,
+        "weighted_goals_against": 10.368,
+        "weighted_goals_for": 19.7241,
+        "weighted_importance": 30.0,
+        "weighted_points": 17.233,
+        "weighted_points_per_match": 0.5744
+      },
+      "strength": 1636.3673,
+      "summary": "Brazil: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Brazil",
+      "team_id": "43924",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0087,
+        "final": 0.0209,
+        "quarterfinal": 0.1465,
+        "round_of_16": 0.3083,
+        "round_of_32": 0.703,
+        "semifinal": 0.0551
+      },
+      "champion_probability": 0.0087,
+      "display_name": "Su\u00ed\u00e7a",
+      "drivers": [
+        "chance_titulo=0.0087",
+        "chance_final=0.0209",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=25",
+        "pontos_por_jogo_24m=0.54",
+        "saldo_por_jogo_24m=0.31",
+        "prior_fifa_sum=1565.6",
+        "forca_modelo=1605.99"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "SUI",
+      "flag_emoji": "\ud83c\udde8\ud83c\udded",
+      "group": "B",
+      "rank": 26,
+      "recent_features": {
+        "away_matches": 9,
+        "fifa_sum_rating_prior": 1565.6199,
+        "home_matches": 10,
+        "matches_12m": 11,
+        "matches_24m": 25,
+        "neutral_matches": 6,
+        "weighted_goal_difference": 8.8265,
+        "weighted_goal_difference_per_match": 0.3097,
+        "weighted_goals_against": 9.8375,
+        "weighted_goals_for": 18.6641,
+        "weighted_importance": 28.5,
+        "weighted_points": 15.5008,
+        "weighted_points_per_match": 0.5439
+      },
+      "strength": 1605.9865,
+      "summary": "Switzerland: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Switzerland",
+      "team_id": "43971",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0086,
+        "final": 0.0206,
+        "quarterfinal": 0.1291,
+        "round_of_16": 0.3069,
+        "round_of_32": 0.6567,
+        "semifinal": 0.0554
+      },
+      "champion_probability": 0.0086,
+      "display_name": "Col\u00f4mbia",
+      "drivers": [
+        "chance_titulo=0.0086",
+        "chance_final=0.0206",
+        "pontos_torneio=0",
+        "saldo_gols=0",
+        "jogos_24m=26",
+        "pontos_por_jogo_24m=0.48",
+        "saldo_por_jogo_24m=0.26",
+        "prior_fifa_sum=1576.7",
+        "forca_modelo=1598.91"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "COL",
+      "flag_emoji": "\ud83c\udde8\ud83c\uddf4",
+      "group": "K",
+      "rank": 27,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1576.6674,
+        "home_matches": 7,
+        "matches_12m": 10,
+        "matches_24m": 26,
+        "neutral_matches": 13,
+        "weighted_goal_difference": 8.1581,
+        "weighted_goal_difference_per_match": 0.2623,
+        "weighted_goals_against": 8.5836,
+        "weighted_goals_for": 16.7418,
+        "weighted_importance": 31.1,
+        "weighted_points": 15.0776,
+        "weighted_points_per_match": 0.4848
+      },
+      "strength": 1598.9145,
+      "summary": "Colombia: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Colombia",
+      "team_id": "43926",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 0,
+        "goals_for": 0,
+        "played": 0,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0085,
+        "final": 0.0235,
+        "quarterfinal": 0.1416,
+        "round_of_16": 0.3111,
+        "round_of_32": 0.6248,
+        "semifinal": 0.0631
+      },
+      "champion_probability": 0.0085,
+      "display_name": "Ir\u00e3",
+      "drivers": [
+        "chance_titulo=0.0085",
+        "chance_final=0.0235",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=19",
+        "pontos_por_jogo_24m=0.68",
+        "saldo_por_jogo_24m=0.41",
+        "prior_fifa_sum=1575.4",
+        "forca_modelo=1626.50"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "IRN",
+      "flag_emoji": "\ud83c\uddee\ud83c\uddf7",
+      "group": "G",
+      "rank": 28,
+      "recent_features": {
+        "away_matches": 5,
+        "fifa_sum_rating_prior": 1575.4463,
+        "home_matches": 4,
+        "matches_12m": 9,
+        "matches_24m": 19,
+        "neutral_matches": 10,
+        "weighted_goal_difference": 8.9666,
+        "weighted_goal_difference_per_match": 0.4057,
+        "weighted_goals_against": 7.7063,
+        "weighted_goals_for": 16.6728,
+        "weighted_importance": 22.1,
+        "weighted_points": 15.1174,
+        "weighted_points_per_match": 0.684
+      },
+      "strength": 1626.5038,
+      "summary": "IR Iran: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "IR Iran",
+      "team_id": "43817",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 2,
+        "goals_for": 2,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0084,
+        "final": 0.0243,
+        "quarterfinal": 0.1616,
+        "round_of_16": 0.3885,
+        "round_of_32": 0.8693,
+        "semifinal": 0.0621
+      },
+      "champion_probability": 0.0084,
+      "display_name": "Esc\u00f3cia",
+      "drivers": [
+        "chance_titulo=0.0084",
+        "chance_final=0.0243",
+        "pontos_torneio=3",
+        "saldo_gols=1",
+        "jogos_24m=23",
+        "pontos_por_jogo_24m=0.72",
+        "saldo_por_jogo_24m=0.37",
+        "prior_fifa_sum=1542.6",
+        "forca_modelo=1620.07"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "SCO",
+      "flag_emoji": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc73\udb40\udc63\udb40\udc74\udb40\udc7f",
+      "group": "C",
+      "rank": 29,
+      "recent_features": {
+        "away_matches": 7,
+        "fifa_sum_rating_prior": 1542.6492,
+        "home_matches": 10,
+        "matches_12m": 11,
+        "matches_24m": 23,
+        "neutral_matches": 6,
+        "weighted_goal_difference": 9.5436,
+        "weighted_goal_difference_per_match": 0.3699,
+        "weighted_goals_against": 8.1918,
+        "weighted_goals_for": 17.7353,
+        "weighted_importance": 25.8,
+        "weighted_points": 18.6263,
+        "weighted_points_per_match": 0.722
+      },
+      "strength": 1620.0686,
+      "summary": "Scotland: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Scotland",
+      "team_id": "43967",
+      "tournament_signal": {
+        "goal_difference": 1,
+        "goals_against": 0,
+        "goals_for": 1,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0065,
+        "final": 0.0165,
+        "quarterfinal": 0.0902,
+        "round_of_16": 0.2269,
+        "round_of_32": 0.5449,
+        "semifinal": 0.0419
+      },
+      "champion_probability": 0.0065,
+      "display_name": "Turquia",
+      "drivers": [
+        "chance_titulo=0.0065",
+        "chance_final=0.0165",
+        "pontos_torneio=0",
+        "saldo_gols=-2",
+        "jogos_24m=21",
+        "pontos_por_jogo_24m=0.86",
+        "saldo_por_jogo_24m=0.31",
+        "prior_fifa_sum=1577.0",
+        "forca_modelo=1605.58"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "TUR",
+      "flag_emoji": "\ud83c\uddf9\ud83c\uddf7",
+      "group": "D",
+      "rank": 30,
+      "recent_features": {
+        "away_matches": 9,
+        "fifa_sum_rating_prior": 1576.9638,
+        "home_matches": 9,
+        "matches_12m": 11,
+        "matches_24m": 21,
+        "neutral_matches": 3,
+        "weighted_goal_difference": 7.3065,
+        "weighted_goal_difference_per_match": 0.3096,
+        "weighted_goals_against": 10.7574,
+        "weighted_goals_for": 18.0639,
+        "weighted_importance": 23.6,
+        "weighted_points": 20.2225,
+        "weighted_points_per_match": 0.8569
+      },
+      "strength": 1605.581,
+      "summary": "T\u00fcrkiye: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "T\u00fcrkiye",
+      "team_id": "43972",
+      "tournament_signal": {
+        "goal_difference": -2,
+        "goals_against": 2,
+        "goals_for": 0,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0058,
+        "final": 0.0162,
+        "quarterfinal": 0.1355,
+        "round_of_16": 0.3794,
+        "round_of_32": 0.8743,
+        "semifinal": 0.0506
+      },
+      "champion_probability": 0.0058,
+      "display_name": "Gana",
+      "drivers": [
+        "chance_titulo=0.0058",
+        "chance_final=0.0162",
+        "pontos_torneio=3",
+        "saldo_gols=1",
+        "jogos_24m=15",
+        "pontos_por_jogo_24m=0.72",
+        "saldo_por_jogo_24m=0.03",
+        "prior_fifa_sum=1527.9",
+        "forca_modelo=1556.16"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "GHA",
+      "flag_emoji": "\ud83c\uddec\ud83c\udded",
+      "group": "L",
+      "rank": 31,
+      "recent_features": {
+        "away_matches": 7,
+        "fifa_sum_rating_prior": 1527.9374,
+        "home_matches": 3,
+        "matches_12m": 11,
+        "matches_24m": 15,
+        "neutral_matches": 5,
+        "weighted_goal_difference": 0.5274,
+        "weighted_goal_difference_per_match": 0.0308,
+        "weighted_goals_against": 10.0305,
+        "weighted_goals_for": 10.5578,
+        "weighted_importance": 17.1,
+        "weighted_points": 12.2494,
+        "weighted_points_per_match": 0.7163
+      },
+      "strength": 1556.1582,
+      "summary": "Ghana: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Ghana",
+      "team_id": "43860",
+      "tournament_signal": {
+        "goal_difference": 1,
+        "goals_against": 0,
+        "goals_for": 1,
+        "played": 1,
+        "points": 3
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0032,
+        "final": 0.0103,
+        "quarterfinal": 0.0769,
+        "round_of_16": 0.2115,
+        "round_of_32": 0.4778,
+        "semifinal": 0.0299
+      },
+      "champion_probability": 0.0032,
+      "display_name": "Cro\u00e1cia",
+      "drivers": [
+        "chance_titulo=0.0032",
+        "chance_final=0.0103",
+        "pontos_torneio=0",
+        "saldo_gols=-2",
+        "jogos_24m=23",
+        "pontos_por_jogo_24m=0.61",
+        "saldo_por_jogo_24m=0.13",
+        "prior_fifa_sum=1552.1",
+        "forca_modelo=1554.15"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "CRO",
+      "flag_emoji": "\ud83c\udded\ud83c\uddf7",
+      "group": "L",
+      "rank": 32,
+      "recent_features": {
+        "away_matches": 7,
+        "fifa_sum_rating_prior": 1552.1214,
+        "home_matches": 10,
+        "matches_12m": 11,
+        "matches_24m": 23,
+        "neutral_matches": 6,
+        "weighted_goal_difference": 3.523,
+        "weighted_goal_difference_per_match": 0.134,
+        "weighted_goals_against": 15.4556,
+        "weighted_goals_for": 18.9786,
+        "weighted_importance": 26.3,
+        "weighted_points": 15.933,
+        "weighted_points_per_match": 0.6058
+      },
+      "strength": 1554.1505,
+      "summary": "Croatia: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Croatia",
+      "team_id": "43938",
+      "tournament_signal": {
+        "goal_difference": -2,
+        "goals_against": 4,
+        "goals_for": 2,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.003,
+        "final": 0.0088,
+        "quarterfinal": 0.0703,
+        "round_of_16": 0.1822,
+        "round_of_32": 0.4848,
+        "semifinal": 0.0249
+      },
+      "champion_probability": 0.003,
+      "display_name": "Equador",
+      "drivers": [
+        "chance_titulo=0.0030",
+        "chance_final=0.0088",
+        "pontos_torneio=0",
+        "saldo_gols=-1",
+        "jogos_24m=25",
+        "pontos_por_jogo_24m=0.49",
+        "saldo_por_jogo_24m=0.15",
+        "prior_fifa_sum=1560.4",
+        "forca_modelo=1564.36"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "ECU",
+      "flag_emoji": "\ud83c\uddea\ud83c\udde8",
+      "group": "E",
+      "rank": 33,
+      "recent_features": {
+        "away_matches": 10,
+        "fifa_sum_rating_prior": 1560.3541,
+        "home_matches": 6,
+        "matches_12m": 11,
+        "matches_24m": 25,
+        "neutral_matches": 9,
+        "weighted_goal_difference": 4.5181,
+        "weighted_goal_difference_per_match": 0.1506,
+        "weighted_goals_against": 5.3979,
+        "weighted_goals_for": 9.9161,
+        "weighted_importance": 30.0,
+        "weighted_points": 14.5996,
+        "weighted_points_per_match": 0.4867
+      },
+      "strength": 1564.3584,
+      "summary": "Ecuador: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Ecuador",
+      "team_id": "43927",
+      "tournament_signal": {
+        "goal_difference": -1,
+        "goals_against": 1,
+        "goals_for": 0,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0026,
+        "final": 0.0099,
+        "quarterfinal": 0.1021,
+        "round_of_16": 0.2667,
+        "round_of_32": 0.7109,
+        "semifinal": 0.0334
+      },
+      "champion_probability": 0.0026,
+      "display_name": "B\u00f3snia e Herzegovina",
+      "drivers": [
+        "chance_titulo=0.0026",
+        "chance_final=0.0099",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=19",
+        "pontos_por_jogo_24m=0.52",
+        "saldo_por_jogo_24m=0.12",
+        "prior_fifa_sum=1522.3",
+        "forca_modelo=1531.38"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "BIH",
+      "flag_emoji": "\ud83c\udde7\ud83c\udde6",
+      "group": "B",
+      "rank": 34,
+      "recent_features": {
+        "away_matches": 9,
+        "fifa_sum_rating_prior": 1522.2615,
+        "home_matches": 9,
+        "matches_12m": 10,
+        "matches_24m": 19,
+        "neutral_matches": 1,
+        "weighted_goal_difference": 2.6222,
+        "weighted_goal_difference_per_match": 0.1187,
+        "weighted_goals_against": 9.1044,
+        "weighted_goals_for": 11.7267,
+        "weighted_importance": 22.1,
+        "weighted_points": 11.5736,
+        "weighted_points_per_match": 0.5237
+      },
+      "strength": 1531.3834,
+      "summary": "Bosnia and Herzegovina: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Bosnia and Herzegovina",
+      "team_id": "44037",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0021,
+        "final": 0.0062,
+        "quarterfinal": 0.071,
+        "round_of_16": 0.2018,
+        "round_of_32": 0.5087,
+        "semifinal": 0.0263
+      },
+      "champion_probability": 0.0021,
+      "display_name": "Uzbequist\u00e3o",
+      "drivers": [
+        "chance_titulo=0.0021",
+        "chance_final=0.0062",
+        "pontos_torneio=0",
+        "saldo_gols=0",
+        "jogos_24m=19",
+        "pontos_por_jogo_24m=0.44",
+        "saldo_por_jogo_24m=0.06",
+        "prior_fifa_sum=1548.1",
+        "forca_modelo=1533.16"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "UZB",
+      "flag_emoji": "\ud83c\uddfa\ud83c\uddff",
+      "group": "K",
+      "rank": 35,
+      "recent_features": {
+        "away_matches": 5,
+        "fifa_sum_rating_prior": 1548.0553,
+        "home_matches": 8,
+        "matches_12m": 8,
+        "matches_24m": 19,
+        "neutral_matches": 6,
+        "weighted_goal_difference": 1.2895,
+        "weighted_goal_difference_per_match": 0.06,
+        "weighted_goals_against": 6.351,
+        "weighted_goals_for": 7.6405,
+        "weighted_importance": 21.5,
+        "weighted_points": 9.4939,
+        "weighted_points_per_match": 0.4416
+      },
+      "strength": 1533.1634,
+      "summary": "Uzbekistan: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Uzbekistan",
+      "team_id": "44005",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 0,
+        "goals_for": 0,
+        "played": 0,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0016,
+        "final": 0.0058,
+        "quarterfinal": 0.0564,
+        "round_of_16": 0.1591,
+        "round_of_32": 0.4192,
+        "semifinal": 0.0175
+      },
+      "champion_probability": 0.0016,
+      "display_name": "Tch\u00e9quia",
+      "drivers": [
+        "chance_titulo=0.0016",
+        "chance_final=0.0058",
+        "pontos_torneio=0",
+        "saldo_gols=-1",
+        "jogos_24m=24",
+        "pontos_por_jogo_24m=0.56",
+        "saldo_por_jogo_24m=0.21",
+        "prior_fifa_sum=1526.0",
+        "forca_modelo=1540.21"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "CZE",
+      "flag_emoji": "\ud83c\udde8\ud83c\uddff",
+      "group": "A",
+      "rank": 36,
+      "recent_features": {
+        "away_matches": 5,
+        "fifa_sum_rating_prior": 1526.0212,
+        "home_matches": 12,
+        "matches_12m": 11,
+        "matches_24m": 24,
+        "neutral_matches": 7,
+        "weighted_goal_difference": 5.8311,
+        "weighted_goal_difference_per_match": 0.2071,
+        "weighted_goals_against": 12.7687,
+        "weighted_goals_for": 18.5997,
+        "weighted_importance": 28.15,
+        "weighted_points": 15.8257,
+        "weighted_points_per_match": 0.5622
+      },
+      "strength": 1540.2098,
+      "summary": "Czechia: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Czechia",
+      "team_id": "43995",
+      "tournament_signal": {
+        "goal_difference": -1,
+        "goals_against": 2,
+        "goals_for": 1,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0016,
+        "final": 0.0063,
+        "quarterfinal": 0.0515,
+        "round_of_16": 0.1389,
+        "round_of_32": 0.3436,
+        "semifinal": 0.0179
+      },
+      "champion_probability": 0.0016,
+      "display_name": "Panam\u00e1",
+      "drivers": [
+        "chance_titulo=0.0016",
+        "chance_final=0.0063",
+        "pontos_torneio=0",
+        "saldo_gols=-1",
+        "jogos_24m=31",
+        "pontos_por_jogo_24m=0.55",
+        "saldo_por_jogo_24m=0.05",
+        "prior_fifa_sum=1536.8",
+        "forca_modelo=1535.03"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "PAN",
+      "flag_emoji": "\ud83c\uddf5\ud83c\udde6",
+      "group": "L",
+      "rank": 37,
+      "recent_features": {
+        "away_matches": 13,
+        "fifa_sum_rating_prior": 1536.772,
+        "home_matches": 8,
+        "matches_12m": 17,
+        "matches_24m": 31,
+        "neutral_matches": 10,
+        "weighted_goal_difference": 1.9758,
+        "weighted_goal_difference_per_match": 0.0543,
+        "weighted_goals_against": 18.6646,
+        "weighted_goals_for": 20.6404,
+        "weighted_importance": 36.4,
+        "weighted_points": 19.9354,
+        "weighted_points_per_match": 0.5477
+      },
+      "strength": 1535.0331,
+      "summary": "Panama: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Panama",
+      "team_id": "43914",
+      "tournament_signal": {
+        "goal_difference": -1,
+        "goals_against": 1,
+        "goals_for": 0,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0016,
+        "final": 0.0063,
+        "quarterfinal": 0.0525,
+        "round_of_16": 0.136,
+        "round_of_32": 0.4671,
+        "semifinal": 0.0182
+      },
+      "champion_probability": 0.0016,
+      "display_name": "Uruguai",
+      "drivers": [
+        "chance_titulo=0.0016",
+        "chance_final=0.0063",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=26",
+        "pontos_por_jogo_24m=0.33",
+        "saldo_por_jogo_24m=0.02",
+        "prior_fifa_sum=1539.4",
+        "forca_modelo=1537.44"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "URU",
+      "flag_emoji": "\ud83c\uddfa\ud83c\uddfe",
+      "group": "H",
+      "rank": 38,
+      "recent_features": {
+        "away_matches": 10,
+        "fifa_sum_rating_prior": 1539.4096,
+        "home_matches": 6,
+        "matches_12m": 9,
+        "matches_24m": 26,
+        "neutral_matches": 10,
+        "weighted_goal_difference": 0.6278,
+        "weighted_goal_difference_per_match": 0.0198,
+        "weighted_goals_against": 6.6668,
+        "weighted_goals_for": 7.2946,
+        "weighted_importance": 31.7,
+        "weighted_points": 10.4383,
+        "weighted_points_per_match": 0.3293
+      },
+      "strength": 1537.4364,
+      "summary": "Uruguay: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Uruguay",
+      "team_id": "43930",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0015,
+        "final": 0.0044,
+        "quarterfinal": 0.0482,
+        "round_of_16": 0.1306,
+        "round_of_32": 0.4412,
+        "semifinal": 0.016
+      },
+      "champion_probability": 0.0015,
+      "display_name": "Ar\u00e1bia Saudita",
+      "drivers": [
+        "chance_titulo=0.0015",
+        "chance_final=0.0044",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=38",
+        "pontos_por_jogo_24m=0.47",
+        "saldo_por_jogo_24m=-0.00",
+        "prior_fifa_sum=1517.6",
+        "forca_modelo=1521.94"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "KSA",
+      "flag_emoji": "\ud83c\uddf8\ud83c\udde6",
+      "group": "H",
+      "rank": 39,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1517.5921,
+        "home_matches": 12,
+        "matches_12m": 21,
+        "matches_24m": 38,
+        "neutral_matches": 18,
+        "weighted_goal_difference": -0.2131,
+        "weighted_goal_difference_per_match": -0.005,
+        "weighted_goals_against": 16.5036,
+        "weighted_goals_for": 16.2905,
+        "weighted_importance": 43.0,
+        "weighted_points": 20.2308,
+        "weighted_points_per_match": 0.4705
+      },
+      "strength": 1521.9373,
+      "summary": "Saudi Arabia: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Saudi Arabia",
+      "team_id": "43835",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0012,
+        "final": 0.0035,
+        "quarterfinal": 0.0374,
+        "round_of_16": 0.1322,
+        "round_of_32": 0.3977,
+        "semifinal": 0.0108
+      },
+      "champion_probability": 0.0012,
+      "display_name": "Nova Zel\u00e2ndia",
+      "drivers": [
+        "chance_titulo=0.0012",
+        "chance_final=0.0035",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=21",
+        "pontos_por_jogo_24m=0.34",
+        "saldo_por_jogo_24m=-0.09",
+        "prior_fifa_sum=1478.4",
+        "forca_modelo=1457.42"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "NZL",
+      "flag_emoji": "\ud83c\uddf3\ud83c\uddff",
+      "group": "G",
+      "rank": 40,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1478.3864,
+        "home_matches": 6,
+        "matches_12m": 11,
+        "matches_24m": 21,
+        "neutral_matches": 9,
+        "weighted_goal_difference": -2.0061,
+        "weighted_goal_difference_per_match": -0.0878,
+        "weighted_goals_against": 14.9087,
+        "weighted_goals_for": 12.9026,
+        "weighted_importance": 22.85,
+        "weighted_points": 7.7238,
+        "weighted_points_per_match": 0.338
+      },
+      "strength": 1457.418,
+      "summary": "New Zealand: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "New Zealand",
+      "team_id": "43978",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 2,
+        "goals_for": 2,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.001,
+        "final": 0.0037,
+        "quarterfinal": 0.0378,
+        "round_of_16": 0.1137,
+        "round_of_32": 0.3243,
+        "semifinal": 0.0109
+      },
+      "champion_probability": 0.001,
+      "display_name": "\u00c1frica do Sul",
+      "drivers": [
+        "chance_titulo=0.0010",
+        "chance_final=0.0037",
+        "pontos_torneio=0",
+        "saldo_gols=-2",
+        "jogos_24m=18",
+        "pontos_por_jogo_24m=0.71",
+        "saldo_por_jogo_24m=0.04",
+        "prior_fifa_sum=1516.4",
+        "forca_modelo=1504.08"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "RSA",
+      "flag_emoji": "\ud83c\uddff\ud83c\udde6",
+      "group": "A",
+      "rank": 41,
+      "recent_features": {
+        "away_matches": 3,
+        "fifa_sum_rating_prior": 1516.3925,
+        "home_matches": 9,
+        "matches_12m": 14,
+        "matches_24m": 18,
+        "neutral_matches": 6,
+        "weighted_goal_difference": 0.9092,
+        "weighted_goal_difference_per_match": 0.0423,
+        "weighted_goals_against": 11.0273,
+        "weighted_goals_for": 11.9365,
+        "weighted_importance": 21.5,
+        "weighted_points": 15.1679,
+        "weighted_points_per_match": 0.7055
+      },
+      "strength": 1504.0774,
+      "summary": "South Africa: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "South Africa",
+      "team_id": "43883",
+      "tournament_signal": {
+        "goal_difference": -2,
+        "goals_against": 2,
+        "goals_for": 0,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0008,
+        "final": 0.0027,
+        "quarterfinal": 0.0247,
+        "round_of_16": 0.0733,
+        "round_of_32": 0.2148,
+        "semifinal": 0.008
+      },
+      "champion_probability": 0.0008,
+      "display_name": "Tun\u00edsia",
+      "drivers": [
+        "chance_titulo=0.0008",
+        "chance_final=0.0027",
+        "pontos_torneio=0",
+        "saldo_gols=-4",
+        "jogos_24m=24",
+        "pontos_por_jogo_24m=0.70",
+        "saldo_por_jogo_24m=-0.08",
+        "prior_fifa_sum=1529.8",
+        "forca_modelo=1503.80"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "TUN",
+      "flag_emoji": "\ud83c\uddf9\ud83c\uddf3",
+      "group": "F",
+      "rank": 42,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1529.8487,
+        "home_matches": 7,
+        "matches_12m": 20,
+        "matches_24m": 24,
+        "neutral_matches": 9,
+        "weighted_goal_difference": -2.1324,
+        "weighted_goal_difference_per_match": -0.0775,
+        "weighted_goals_against": 21.91,
+        "weighted_goals_for": 19.7776,
+        "weighted_importance": 27.5,
+        "weighted_points": 19.3365,
+        "weighted_points_per_match": 0.7031
+      },
+      "strength": 1503.8031,
+      "summary": "Tunisia: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Tunisia",
+      "team_id": "43888",
+      "tournament_signal": {
+        "goal_difference": -4,
+        "goals_against": 5,
+        "goals_for": 1,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0007,
+        "final": 0.0016,
+        "quarterfinal": 0.0195,
+        "round_of_16": 0.0583,
+        "round_of_32": 0.2109,
+        "semifinal": 0.0051
+      },
+      "champion_probability": 0.0007,
+      "display_name": "Haiti",
+      "drivers": [
+        "chance_titulo=0.0007",
+        "chance_final=0.0016",
+        "pontos_torneio=0",
+        "saldo_gols=-1",
+        "jogos_24m=23",
+        "pontos_por_jogo_24m=0.47",
+        "saldo_por_jogo_24m=0.17",
+        "prior_fifa_sum=1492.4",
+        "forca_modelo=1493.50"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "HAI",
+      "flag_emoji": "\ud83c\udded\ud83c\uddf9",
+      "group": "C",
+      "rank": 43,
+      "recent_features": {
+        "away_matches": 8,
+        "fifa_sum_rating_prior": 1492.3729,
+        "home_matches": 2,
+        "matches_12m": 13,
+        "matches_24m": 23,
+        "neutral_matches": 13,
+        "weighted_goal_difference": 4.5891,
+        "weighted_goal_difference_per_match": 0.1722,
+        "weighted_goals_against": 10.9553,
+        "weighted_goals_for": 15.5445,
+        "weighted_importance": 26.65,
+        "weighted_points": 12.581,
+        "weighted_points_per_match": 0.4721
+      },
+      "strength": 1493.5037,
+      "summary": "Haiti: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Haiti",
+      "team_id": "43908",
+      "tournament_signal": {
+        "goal_difference": -1,
+        "goals_against": 1,
+        "goals_for": 0,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0004,
+        "final": 0.0017,
+        "quarterfinal": 0.0154,
+        "round_of_16": 0.0461,
+        "round_of_32": 0.1583,
+        "semifinal": 0.0047
+      },
+      "champion_probability": 0.0004,
+      "display_name": "Iraque",
+      "drivers": [
+        "chance_titulo=0.0004",
+        "chance_final=0.0017",
+        "pontos_torneio=0",
+        "saldo_gols=-3",
+        "jogos_24m=26",
+        "pontos_por_jogo_24m=0.53",
+        "saldo_por_jogo_24m=-0.15",
+        "prior_fifa_sum=1508.9",
+        "forca_modelo=1474.03"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "IRQ",
+      "flag_emoji": "\ud83c\uddee\ud83c\uddf6",
+      "group": "I",
+      "rank": 44,
+      "recent_features": {
+        "away_matches": 7,
+        "fifa_sum_rating_prior": 1508.9296,
+        "home_matches": 6,
+        "matches_12m": 13,
+        "matches_24m": 26,
+        "neutral_matches": 13,
+        "weighted_goal_difference": -4.4992,
+        "weighted_goal_difference_per_match": -0.1482,
+        "weighted_goals_against": 15.6142,
+        "weighted_goals_for": 11.1151,
+        "weighted_importance": 30.35,
+        "weighted_points": 16.223,
+        "weighted_points_per_match": 0.5345
+      },
+      "strength": 1474.0346,
+      "summary": "Iraq: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Iraq",
+      "team_id": "43818",
+      "tournament_signal": {
+        "goal_difference": -3,
+        "goals_against": 4,
+        "goals_for": 1,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0002,
+        "final": 0.0004,
+        "quarterfinal": 0.0091,
+        "round_of_16": 0.036,
+        "round_of_32": 0.1393,
+        "semifinal": 0.0023
+      },
+      "champion_probability": 0.0002,
+      "display_name": "Cura\u00e7ao",
+      "drivers": [
+        "chance_titulo=0.0002",
+        "chance_final=0.0004",
+        "pontos_torneio=0",
+        "saldo_gols=-6",
+        "jogos_24m=23",
+        "pontos_por_jogo_24m=0.46",
+        "saldo_por_jogo_24m=-0.18",
+        "prior_fifa_sum=1494.8",
+        "forca_modelo=1430.51"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "CUW",
+      "flag_emoji": "\ud83c\udde8\ud83c\uddfc",
+      "group": "E",
+      "rank": 45,
+      "recent_features": {
+        "away_matches": 6,
+        "fifa_sum_rating_prior": 1494.8255,
+        "home_matches": 6,
+        "matches_12m": 14,
+        "matches_24m": 23,
+        "neutral_matches": 11,
+        "weighted_goal_difference": -4.7487,
+        "weighted_goal_difference_per_match": -0.1782,
+        "weighted_goals_against": 23.148,
+        "weighted_goals_for": 18.3993,
+        "weighted_importance": 26.65,
+        "weighted_points": 12.3685,
+        "weighted_points_per_match": 0.4641
+      },
+      "strength": 1430.5084,
+      "summary": "Cura\u00e7ao: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Cura\u00e7ao",
+      "team_id": "1895293",
+      "tournament_signal": {
+        "goal_difference": -6,
+        "goals_against": 7,
+        "goals_for": 1,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0002,
+        "final": 0.0012,
+        "quarterfinal": 0.0154,
+        "round_of_16": 0.0436,
+        "round_of_32": 0.1357,
+        "semifinal": 0.0052
+      },
+      "champion_probability": 0.0002,
+      "display_name": "Jord\u00e2nia",
+      "drivers": [
+        "chance_titulo=0.0002",
+        "chance_final=0.0012",
+        "pontos_torneio=0",
+        "saldo_gols=-2",
+        "jogos_24m=32",
+        "pontos_por_jogo_24m=0.39",
+        "saldo_por_jogo_24m=-0.12",
+        "prior_fifa_sum=1496.2",
+        "forca_modelo=1462.67"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "JOR",
+      "flag_emoji": "\ud83c\uddef\ud83c\uddf4",
+      "group": "J",
+      "rank": 46,
+      "recent_features": {
+        "away_matches": 9,
+        "fifa_sum_rating_prior": 1496.1883,
+        "home_matches": 9,
+        "matches_12m": 17,
+        "matches_24m": 32,
+        "neutral_matches": 14,
+        "weighted_goal_difference": -4.0621,
+        "weighted_goal_difference_per_match": -0.1157,
+        "weighted_goals_against": 21.0356,
+        "weighted_goals_for": 16.9735,
+        "weighted_importance": 35.1,
+        "weighted_points": 13.8537,
+        "weighted_points_per_match": 0.3947
+      },
+      "strength": 1462.6692,
+      "summary": "Jordan: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Jordan",
+      "team_id": "43820",
+      "tournament_signal": {
+        "goal_difference": -2,
+        "goals_against": 3,
+        "goals_for": 1,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0002,
+        "final": 0.0012,
+        "quarterfinal": 0.0177,
+        "round_of_16": 0.0628,
+        "round_of_32": 0.2143,
+        "semifinal": 0.0052
+      },
+      "champion_probability": 0.0002,
+      "display_name": "Paraguai",
+      "drivers": [
+        "chance_titulo=0.0002",
+        "chance_final=0.0012",
+        "pontos_torneio=0",
+        "saldo_gols=-3",
+        "jogos_24m=23",
+        "pontos_por_jogo_24m=0.42",
+        "saldo_por_jogo_24m=-0.03",
+        "prior_fifa_sum=1501.4",
+        "forca_modelo=1468.68"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "PAR",
+      "flag_emoji": "\ud83c\uddf5\ud83c\uddfe",
+      "group": "D",
+      "rank": 47,
+      "recent_features": {
+        "away_matches": 11,
+        "fifa_sum_rating_prior": 1501.4017,
+        "home_matches": 7,
+        "matches_12m": 10,
+        "matches_24m": 23,
+        "neutral_matches": 5,
+        "weighted_goal_difference": -0.824,
+        "weighted_goal_difference_per_match": -0.0298,
+        "weighted_goals_against": 12.5478,
+        "weighted_goals_for": 11.7238,
+        "weighted_importance": 27.65,
+        "weighted_points": 11.5958,
+        "weighted_points_per_match": 0.4194
+      },
+      "strength": 1468.6824,
+      "summary": "Paraguay: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Paraguay",
+      "team_id": "43928",
+      "tournament_signal": {
+        "goal_difference": -3,
+        "goals_against": 4,
+        "goals_for": 1,
+        "played": 1,
+        "points": 0
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    },
+    {
+      "advancement_probabilities": {
+        "champion": 0.0001,
+        "final": 0.0015,
+        "quarterfinal": 0.0334,
+        "round_of_16": 0.112,
+        "round_of_32": 0.4199,
+        "semifinal": 0.0073
+      },
+      "champion_probability": 0.0001,
+      "display_name": "Catar",
+      "drivers": [
+        "chance_titulo=0.0001",
+        "chance_final=0.0015",
+        "pontos_torneio=1",
+        "saldo_gols=0",
+        "jogos_24m=25",
+        "pontos_por_jogo_24m=0.28",
+        "saldo_por_jogo_24m=-0.18",
+        "prior_fifa_sum=1432.8",
+        "forca_modelo=1404.22"
+      ],
+      "excluded_pillars": [
+        "squad_context"
+      ],
+      "flag": "QAT",
+      "flag_emoji": "\ud83c\uddf6\ud83c\udde6",
+      "group": "B",
+      "rank": 48,
+      "recent_features": {
+        "away_matches": 7,
+        "fifa_sum_rating_prior": 1432.8468,
+        "home_matches": 12,
+        "matches_12m": 12,
+        "matches_24m": 25,
+        "neutral_matches": 6,
+        "weighted_goal_difference": -5.2672,
+        "weighted_goal_difference_per_match": -0.1842,
+        "weighted_goals_against": 12.8561,
+        "weighted_goals_for": 7.589,
+        "weighted_importance": 28.6,
+        "weighted_points": 7.8728,
+        "weighted_points_per_match": 0.2753
+      },
+      "strength": 1404.2218,
+      "summary": "Qatar: 9 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
+      "team": "Qatar",
+      "team_id": "43834",
+      "tournament_signal": {
+        "goal_difference": 0,
+        "goals_against": 1,
+        "goals_for": 1,
+        "played": 1,
+        "points": 1
+      },
+      "used_pillars": [
+        "official_competition_state",
+        "tournament_path",
+        "recent_form_window",
+        "current_form_12m",
+        "attacking_trend",
+        "defensive_trend",
+        "match_importance",
+        "venue_context",
+        "fifa_sum_rating_prior"
+      ]
+    }
+  ],
+  "updated_at": "2026-06-18T16:23:10.474948+00:00"
+}

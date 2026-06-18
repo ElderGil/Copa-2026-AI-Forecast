@@ -3,6 +3,7 @@ from __future__ import annotations
 import html
 import json
 from pathlib import Path
+from shutil import copyfile
 from typing import Any
 
 from copa_forecast.reporting.countries import display_team_name, flag_emoji
@@ -12,6 +13,7 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
     target = Path(output_dir)
     data_dir = target / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
+    _copy_site_assets(target)
     latest = _enrich_display_payload(latest)
     (data_dir / "latest.json").write_text(
         json.dumps(latest, indent=2, sort_keys=True), encoding="utf-8"
@@ -95,6 +97,16 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
     (target / "app.js").write_text(_script(), encoding="utf-8")
 
 
+def _copy_site_assets(target: Path) -> None:
+    assets_source = Path(__file__).with_name("assets")
+    hero_source = assets_source / "hero-stadium.png"
+    if not hero_source.exists():
+        return
+    assets_target = target / "assets"
+    assets_target.mkdir(parents=True, exist_ok=True)
+    copyfile(hero_source, assets_target / "hero-stadium.png")
+
+
 def _team_card(team: dict[str, Any], *, large: bool) -> str:
     klass = "team-card large" if large else "team-card"
     display_name = _display_name(team)
@@ -153,12 +165,13 @@ body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, sans-serif; back
 button, a { font: inherit; }
 .site-header { min-height: 64px; display:flex; align-items:center; justify-content:space-between; padding:16px 28px; background:#fffaf0; border-bottom:1px solid #ded8ca; position:sticky; top:0; z-index:10; }
 a { color:#b91c1c; font-weight:800; text-decoration:none; }
-.hero { min-height: calc(100vh - 64px); padding: 34px 28px 28px; display:grid; grid-template-columns: minmax(280px, 0.72fr) minmax(420px, 1.28fr); gap:28px; align-items:center; background:#113a2b; color:#fffaf0; }
-.hero-copy { display:grid; gap:22px; align-content:center; }
-.hero-copy p { margin:0; color:#d7e3da; font-weight:700; }
-h1 { font-size: 58px; line-height:1; margin:0; max-width: 680px; }
+.hero { min-height: calc(100vh - 64px); padding: 34px 28px 28px; display:grid; grid-template-columns: minmax(280px, 0.72fr) minmax(420px, 1.28fr); gap:28px; align-items:center; color:#fffaf0; position:relative; overflow:hidden; isolation:isolate; background:linear-gradient(90deg, rgba(6,28,21,.92) 0%, rgba(6,28,21,.72) 42%, rgba(6,28,21,.48) 100%), linear-gradient(180deg, rgba(4,12,24,.72) 0%, rgba(4,12,24,.12) 46%, rgba(6,28,21,.82) 100%), url("assets/hero-stadium.png") center center / cover no-repeat; box-shadow:inset 0 -120px 120px rgba(6,28,21,.52); }
+.hero > * { position:relative; z-index:1; }
+.hero-copy { display:grid; gap:22px; align-content:center; text-shadow:0 3px 18px rgba(0,0,0,.68); }
+.hero-copy p { margin:0; color:#f7e9b5; font-weight:800; }
+h1 { font-size: 58px; line-height:1; margin:0; max-width: 680px; color:#fffaf0; text-shadow:0 5px 24px rgba(0,0,0,.78); }
 .run-meta { display:flex; flex-wrap:wrap; gap:10px; }
-.run-meta span { border:1px solid #8bb79f; border-radius:999px; padding:8px 12px; color:#f4f1ea; background:rgba(255,255,255,.08); }
+.run-meta span { border:1px solid rgba(247,233,181,.72); border-radius:999px; padding:8px 12px; color:#fffaf0; background:rgba(6,28,21,.58); box-shadow:0 8px 24px rgba(0,0,0,.22); }
 .top-board { display:grid; gap:14px; }
 .podium { display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:14px; align-items:stretch; }
 .team-card { min-height:142px; border:1px solid #d8d0bf; background:#fffdf8; color:#17211b; border-radius:8px; padding:18px; display:grid; gap:8px; text-align:left; cursor:pointer; box-shadow:0 8px 18px rgba(23,33,27,.08); }

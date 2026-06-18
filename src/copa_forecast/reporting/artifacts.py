@@ -264,6 +264,7 @@ def _validation_markdown_section(report: dict[str, Any]) -> str:
     ece = report.get("calibration", {}).get("expected_calibration_error", 0.0)
     mce = report.get("calibration", {}).get("maximum_calibration_error", 0.0)
     source_note = report.get("primary_baseline_source", "")
+    previous_section = _previous_model_section(report.get("previous_model_comparison"))
 
     rows = [
         _metric_row(
@@ -326,12 +327,79 @@ def _validation_markdown_section(report: dict[str, Any]) -> str:
             "| Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |",
             "|---|---:|---:|---:|---|",
             *rows,
+            *previous_section,
             "",
             "**Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.",
             "",
             f"<sub><em>Baseline principal: {source_note}. Não redistribuímos tabela externa de ranking ou odds; o benchmark é calculado localmente a partir dos registros oficiais FIFA já ingeridos pelo pipeline.</em></sub>",
         ]
     )
+
+
+def _previous_model_section(comparison: object) -> list[str]:
+    if not isinstance(comparison, dict):
+        return []
+    previous = comparison.get("previous", {})
+    current = comparison.get("current", {})
+    deltas = comparison.get("deltas", {})
+    if not isinstance(previous, dict) or not isinstance(current, dict) or not isinstance(deltas, dict):
+        return []
+    previous_name = comparison.get("previous_model_name", "modelo_anterior")
+    current_name = comparison.get("current_model_name", "modelo_atual")
+    previous_samples = comparison.get("previous_sample_count", "-")
+    current_samples = comparison.get("current_sample_count", "-")
+    return [
+        "",
+        "### Comparativo da Alteração do Modelo",
+        "",
+        f"<sub><em>Registro automático para auditoria futura: comparação entre `{previous_name}` e `{current_name}` usando o backtest rolling-origin salvo anteriormente para o mesmo `run_id`.</em></sub>",
+        "",
+        f"<sub><em>Amostras avaliadas: antes `{previous_samples}`, agora `{current_samples}`. Se este número mudar, a leitura deve considerar alteração de base além da alteração do modelo.</em></sub>",
+        "",
+        "| Métrica | Antes | Agora | Delta | Leitura |",
+        "|---|---:|---:|---:|---|",
+        _previous_row(
+            "Acurácia 1X2",
+            _pct_optional(previous.get("accuracy")),
+            _pct_optional(current.get("accuracy")),
+            _delta_pct_optional(deltas.get("accuracy")),
+            _change_status(deltas.get("accuracy"), higher_is_better=True),
+        ),
+        _previous_row(
+            "Brier score",
+            _num_optional(previous.get("brier_score")),
+            _num_optional(current.get("brier_score")),
+            _num_delta_optional(deltas.get("brier_score")),
+            _change_status(deltas.get("brier_score"), higher_is_better=False),
+        ),
+        _previous_row(
+            "Log loss",
+            _num_optional(previous.get("log_loss")),
+            _num_optional(current.get("log_loss")),
+            _num_delta_optional(deltas.get("log_loss")),
+            _change_status(deltas.get("log_loss"), higher_is_better=False),
+        ),
+        _previous_row(
+            "ECE calibração",
+            _num_optional(previous.get("expected_calibration_error")),
+            _num_optional(current.get("expected_calibration_error")),
+            _num_delta_optional(deltas.get("expected_calibration_error")),
+            _change_status(deltas.get("expected_calibration_error"), higher_is_better=False),
+        ),
+        _previous_row(
+            "MCE calibração",
+            _num_optional(previous.get("maximum_calibration_error")),
+            _num_optional(current.get("maximum_calibration_error")),
+            _num_delta_optional(deltas.get("maximum_calibration_error")),
+            _change_status(deltas.get("maximum_calibration_error"), higher_is_better=False),
+        ),
+    ]
+
+
+def _previous_row(
+    metric: str, previous: str, current: str, delta: str, status: str
+) -> str:
+    return f"| {metric} | {previous} | {current} | {delta} | {status} |"
 
 
 def _metric_row(
@@ -359,6 +427,42 @@ def _delta_pct(value: float) -> str:
 
 def _num(value: float) -> str:
     return f"{value:.4f}"
+
+
+def _pct_optional(value: object) -> str:
+    if value is None:
+        return "-"
+    return _pct(float(value))
+
+
+def _num_optional(value: object) -> str:
+    if value is None:
+        return "-"
+    return _num(float(value))
+
+
+def _delta_pct_optional(value: object) -> str:
+    if value is None:
+        return "-"
+    return _delta_pct(float(value))
+
+
+def _num_delta_optional(value: object) -> str:
+    if value is None:
+        return "-"
+    value = float(value)
+    sign = "+" if value >= 0 else ""
+    return f"{sign}{value:.4f}"
+
+
+def _change_status(value: object, *, higher_is_better: bool) -> str:
+    if value is None:
+        return "Sem comparação"
+    delta = float(value)
+    if abs(delta) < 0.0005:
+        return "Estável"
+    improved = delta > 0 if higher_is_better else delta < 0
+    return "Melhorou" if improved else "Piorou"
 
 
 def _status_higher_is_better(delta: float) -> str:

@@ -10,6 +10,9 @@ Official FIFA data is authoritative for World Cup 2026 competition state:
 - Match status and results.
 - Tournament regulations and advancement rules.
 - FIFA rankings when used as an official ranking input.
+- FIFA Power Rankings by Aramco as an official FIFA editorial/ranking surface
+  for benchmark and explainability candidates, once a structured, reproducible
+  extraction path is available.
 - FIFA Calendar API match records for team-level 12-24 month form, including
   official qualifiers, continental tournaments, Nations League, and friendlies
   represented in FIFA match records.
@@ -49,6 +52,7 @@ Official does not only mean FIFA. The source hierarchy is:
 | World Cup fixtures/results/status | FIFA | None unless degraded/manual |
 | World Cup rules/tie-breaks | FIFA regulations | None unless degraded/manual |
 | FIFA ranking | FIFA ranking page/procedure | None |
+| FIFA Power Rankings | FIFA Power Rankings page | Benchmark/explainability only until structured ETL is stable |
 | Recent senior men's national-team matches | FIFA Calendar API by team | Confederation official sites for reconciliation |
 | Qualifiers and continental matches | FIFA Calendar API when available | Confederation official sites for missing reports |
 | Squads and call-ups | National federations | FIFA match reports, confederations |
@@ -73,3 +77,21 @@ The current implemented pipeline uses official FIFA endpoints for:
 The model does not yet ingest federation squad reports, injuries, suspensions,
 or licensed xG/event feeds. Those remain candidate enrichment sources and must
 meet the same coverage rule before becoming active model pillars.
+
+## FIFA Power Rankings Assessment
+
+The FIFA Power Rankings page for the 2026 tournament is an official FIFA
+surface, so it is valuable as a benchmark and as a narrative validation layer
+for the public one-page output. It should not become an automatic model feature
+until the project can extract rank data through a stable, structured endpoint
+with the same raw-payload storage, checksum, timestamp, and coverage rules used
+for the rest of the FIFA ETL.
+
+Current decision:
+
+- Keep `fifa_power_rankings_aramco` as `official_candidate_pending_structured_etl`.
+- Use the locally computed FIFA SUM-style prior as the active official-strength
+  benchmark because it is reproducible from the same FIFA match records already
+  stored by the pipeline.
+- Revisit ingestion when the Power Rankings data can be retrieved without
+  brittle JavaScript scraping and with coverage for all qualified teams.

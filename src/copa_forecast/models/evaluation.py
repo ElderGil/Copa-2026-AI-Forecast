@@ -7,7 +7,7 @@ from typing import Any
 from copa_forecast.data.contracts import OfficialMatchRecord
 from copa_forecast.features.leakage import parse_record_date
 from copa_forecast.features.windows import exponential_decay_weight
-from copa_forecast.models.baselines import three_way_baseline
+from copa_forecast.models.baselines import fifa_sum_ratings, three_way_baseline
 from copa_forecast.models.calibration import (
     brier_score,
     calibration_bins,
@@ -128,28 +128,30 @@ def rolling_origin_backtest(
         if home_prior < min_prior_matches or away_prior < min_prior_matches:
             continue
 
+        fifa_sum_ratings_by_team = fifa_sum_ratings(prior)
         ratings = {
             target.home_team: _team_rating(
                 team=target.home_team,
                 prior_matches=prior,
                 as_of_date=target_date,
                 half_life_days=half_life_days,
+                fifa_sum_prior=fifa_sum_ratings_by_team.get(target.home_team, 1500.0),
             ),
             target.away_team: _team_rating(
                 team=target.away_team,
                 prior_matches=prior,
                 as_of_date=target_date,
                 half_life_days=half_life_days,
+                fifa_sum_prior=fifa_sum_ratings_by_team.get(target.away_team, 1500.0),
             ),
         }
         model = three_way_baseline(
             ratings[target.home_team], ratings[target.away_team]
         )
         baseline = three_way_baseline(1500.0, 1500.0)
-        fifa_sum_ratings = _fifa_sum_ratings(prior)
         fifa_sum = three_way_baseline(
-            fifa_sum_ratings.get(target.home_team, 1500.0),
-            fifa_sum_ratings.get(target.away_team, 1500.0),
+            fifa_sum_ratings_by_team.get(target.home_team, 1500.0),
+            fifa_sum_ratings_by_team.get(target.away_team, 1500.0),
         )
         prediction = {
             "home_win": model["win"],
@@ -203,7 +205,7 @@ def rolling_origin_backtest(
     )
 
     return {
-        "model_name": "recency_weighted_1x2_baseline",
+        "model_name": "recency_normalized_fifa_sum_prior_1x2",
         "baseline_name": "equal_strength_1x2_baseline",
         "primary_baseline_name": "fifa_sum_style_elo_baseline",
         "primary_baseline_source": "FIFA/Coca-Cola World Ranking SUM methodology; computed locally from FIFA match records",
@@ -288,8 +290,13 @@ def _team_rating(
     prior_matches: tuple[OfficialMatchRecord, ...],
     as_of_date: date,
     half_life_days: int,
+    fifa_sum_prior: float,
 ) -> float:
-    rating = 1500.0
+    weighted_points = 0.0
+    weighted_goals_for = 0.0
+    weighted_goals_against = 0.0
+    weighted_goal_difference = 0.0
+    weighted_importance = 0.0
     for match in prior_matches:
         if match.home_score is None or match.away_score is None:
             continue
@@ -308,41 +315,26 @@ def _team_rating(
             conceded = match.home_score
         points = _points(scored, conceded)
         goal_difference = scored - conceded
-        rating += points * 35.0 * weight * importance
-        rating += goal_difference * 12.0 * weight * importance
-        rating += scored * 3.5 * weight * importance
+        match_weight = weight * importance
+        weighted_points += points * match_weight
+        weighted_goals_for += scored * match_weight
+        weighted_goals_against += conceded * match_weight
+        weighted_goal_difference += goal_difference * match_weight
+        weighted_importance += match_weight
+    if weighted_importance <= 0:
+        return fifa_sum_prior
+    points_per_match = weighted_points / weighted_importance
+    goals_for_per_match = weighted_goals_for / weighted_importance
+    goals_against_per_match = weighted_goals_against / weighted_importance
+    goal_difference_per_match = weighted_goal_difference / weighted_importance
+    rating = 1500.0
+    rating += (points_per_match - 1.35) * 60.0
+    rating += goal_difference_per_match * 100.0
+    rating += goals_for_per_match * 8.0
+    rating -= goals_against_per_match * 5.0
+    rating += min(weighted_importance, 30.0) * 1.5
+    rating += fifa_sum_prior - 1500.0
     return rating
-
-
-def _fifa_sum_ratings(matches: tuple[OfficialMatchRecord, ...]) -> dict[str, float]:
-    ratings: dict[str, float] = {}
-    for match in sorted(matches, key=lambda item: (parse_record_date(item.match_date), item.match_id)):
-        if match.home_score is None or match.away_score is None:
-            continue
-        home = match.home_team
-        away = match.away_team
-        home_rating = ratings.get(home, 1500.0)
-        away_rating = ratings.get(away, 1500.0)
-        home_expected = _fifa_sum_expected_score(home_rating, away_rating)
-        home_actual = _actual_score(match.home_score, match.away_score)
-        weight = _fifa_sum_importance(match.match_importance)
-        delta = weight * (home_actual - home_expected)
-        ratings[home] = home_rating + delta
-        ratings[away] = away_rating - delta
-    return ratings
-
-
-def _fifa_sum_expected_score(team_rating: float, opponent_rating: float) -> float:
-    rating_difference = team_rating - opponent_rating
-    return 1 / (10 ** (-rating_difference / 600) + 1)
-
-
-def _actual_score(scored: int, conceded: int) -> float:
-    if scored > conceded:
-        return 1.0
-    if scored < conceded:
-        return 0.0
-    return 0.5
 
 
 def _count_team_matches(matches: tuple[OfficialMatchRecord, ...], team: str) -> int:
@@ -375,18 +367,6 @@ def _importance_weight(match_importance: str) -> float:
         "world_cup": 1.60,
     }
     return weights.get(match_importance, 1.0)
-
-
-def _fifa_sum_importance(match_importance: str) -> float:
-    weights = {
-        "friendly": 10.0,
-        "nations_league": 15.0,
-        "official_or_other": 25.0,
-        "world_cup_qualifier": 25.0,
-        "continental_final_competition": 35.0,
-        "world_cup": 50.0,
-    }
-    return weights.get(match_importance, 25.0)
 
 
 def _add_months(value: date, months: int) -> date:
