@@ -16,7 +16,9 @@ def check_file_stubs():
         "src/copa_forecast/data/contracts.py",
         "src/copa_forecast/data/ingest.py",
         "src/copa_forecast/data/normalize.py",
+        "src/copa_forecast/data/recent_matches.py",
         "src/copa_forecast/data/validate.py",
+        "src/copa_forecast/features/recent.py",
         "src/copa_forecast/features/windows.py",
         "src/copa_forecast/features/pillars.py",
         "src/copa_forecast/features/leakage.py",
@@ -53,25 +55,43 @@ def check_file_stubs():
     return failures == 0
 
 def run_tests():
-    print_header("Executing Test Suite (Pytest)")
-    try:
-        result = subprocess.run(
-            [sys.executable, "-m", "pytest", "-v"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            check=False
-        )
-        print(result.stdout)
-        if result.returncode == 0:
-            print("[+] ALL TESTS PASSED.")
-            return True
-        else:
-            print(f"[-] PYTEST FAILED with exit code {result.returncode}")
+    print_header("Executing Test Suite")
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.pathsep.join(
+        item for item in ["src", env.get("PYTHONPATH", "")] if item
+    )
+    commands = [
+        (["pytest", "-v"], "pytest"),
+        ([sys.executable, "-m", "unittest", "discover", "-s", "tests", "-v"], "unittest"),
+    ]
+    saw_missing_pytest = False
+    for command, label in commands:
+        if label == "unittest" and not saw_missing_pytest:
+            continue
+        print(f"[*] Running {label}: {' '.join(command)}")
+        try:
+            result = subprocess.run(
+                command,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                check=False,
+                env=env,
+            )
+            print(result.stdout)
+            if result.returncode == 0:
+                print(f"[+] ALL TESTS PASSED via {label}.")
+                return True
+            print(f"[-] {label.upper()} FAILED with exit code {result.returncode}")
             return False
-    except FileNotFoundError:
-        print("[-] pytest is not installed or not in PATH.")
-        return False
+        except FileNotFoundError:
+            if label != "pytest":
+                print(f"[-] {label} is not available.")
+                return False
+            print("[!] pytest is not installed or not in PATH; falling back to unittest.")
+            saw_missing_pytest = True
+            continue
+    return False
 
 def verify_data_contracts():
     print_header("Verifying Output Schemas and CSV BOMs")

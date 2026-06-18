@@ -99,6 +99,37 @@ produced.
 
 ---
 
+## Phase 4.5: Real Official Recent Match ETL (Priority: P2)
+
+**Goal**: Fetch official FIFA Calendar match history for each qualified team in
+the 12-24 month evidence window, persist lineage, and feed the model/site.
+
+**Independent Test**: With local FIFA Calendar-shaped fixtures, run recent-match
+ETL, verify deduped processed JSON/CSV with Excel-safe BOM, then verify forecast
+uses the recent pillars when team coverage is sufficient.
+
+### Tests for Real Recent ETL
+
+- [x] T063 [P] Add FIFA Calendar parser tests in `tests/unit/test_fifa_parser.py`
+- [x] T064 [P] Add recent feature engineering tests in `tests/unit/test_recent_features.py`
+- [x] T065 [P] Add recent ETL integration tests in `tests/integration/test_fifa_etl.py`
+- [x] T066 [P] Add forecast-with-recent-data integration test in `tests/integration/test_forecast_run.py`
+
+### Implementation for Real Recent ETL
+
+- [x] T067 Implement recent-match source config in `src/copa_forecast/config.py`
+- [x] T068 Implement FIFA Calendar match parser in `src/copa_forecast/data/sources/fifa.py`
+- [x] T069 Implement recent match ETL artifacts in `src/copa_forecast/data/recent_matches.py`
+- [x] T070 Implement recency/importance/venue features in `src/copa_forecast/features/recent.py`
+- [x] T071 Integrate recent pillars into forecast strengths in `src/copa_forecast/forecast.py`
+- [x] T072 Add CLI command `etl-recent-matches` in `src/copa_forecast/cli.py`
+- [x] T073 Add real FIFA config in `configs/fifa.real.forecast.json`
+
+**Checkpoint**: Forecast can run from official FIFA tournament state plus
+official FIFA per-team match history instead of sample-only evidence.
+
+---
+
 ## Phase 5: User Story 3 - Explain The Football Evidence (Priority: P3)
 
 **Goal**: Explain team probabilities through evidence pillars and missing data.
@@ -109,14 +140,14 @@ shows active pillars, missing pillars, and top drivers.
 ### Tests for User Story 3
 
 - [x] T036 [P] [US3] Add explanation tests in `tests/unit/test_explanations.py`
-- [ ] T037 [P] [US3] Add run comparison tests in `tests/unit/test_run_comparison.py`
+- [x] T037 [P] [US3] Add run comparison tests in `tests/unit/test_run_comparison.py`
 
 ### Implementation for User Story 3
 
 - [x] T038 [US3] Implement team explanation summaries in `src/copa_forecast/reporting/explanations.py`
-- [ ] T039 [US3] Implement missing-pillar reporting in `src/copa_forecast/features/pillars.py`
-- [ ] T040 [US3] Implement run-to-run comparison in `src/copa_forecast/reporting/explanations.py`
-- [ ] T041 [US3] Add CLI explanation command in `src/copa_forecast/cli.py`
+- [x] T039 [US3] Implement missing-pillar reporting in `src/copa_forecast/features/pillars.py`
+- [x] T040 [US3] Implement run-to-run comparison in `src/copa_forecast/reporting/explanations.py`
+- [x] T041 [US3] Add CLI explanation command in `src/copa_forecast/cli.py`
 
 **Checkpoint**: Team-level forecast reasoning is inspectable.
 
@@ -133,17 +164,17 @@ results, and one champion.
 
 ### Tests for User Story 4
 
-- [ ] T042 [P] [US4] Add group standings tests in `tests/unit/test_standings.py`
-- [ ] T043 [P] [US4] Add tournament rules tests in `tests/unit/test_rules.py`
-- [ ] T044 [P] [US4] Add simulation integration test in `tests/integration/test_simulation.py`
+- [x] T042 [P] [US4] Add group standings tests in `tests/unit/test_standings.py`
+- [x] T043 [P] [US4] Add tournament rules tests in `tests/unit/test_rules.py`
+- [x] T044 [P] [US4] Add simulation integration test in `tests/integration/test_simulation.py`
 
 ### Implementation for User Story 4
 
-- [ ] T045 [US4] Implement FIFA-derived tournament rules model in `src/copa_forecast/simulation/rules.py`
-- [ ] T046 [US4] Implement group standings calculation in `src/copa_forecast/simulation/standings.py`
-- [ ] T047 [US4] Implement Monte Carlo simulation in `src/copa_forecast/simulation/monte_carlo.py`
-- [ ] T048 [US4] Add advancement probability reporting in `src/copa_forecast/reporting/artifacts.py`
-- [ ] T049 [US4] Add CLI simulation command in `src/copa_forecast/cli.py`
+- [x] T045 [US4] Implement FIFA-derived tournament rules model in `src/copa_forecast/simulation/rules.py`
+- [x] T046 [US4] Implement group standings calculation in `src/copa_forecast/simulation/standings.py`
+- [x] T047 [US4] Implement Monte Carlo simulation in `src/copa_forecast/simulation/monte_carlo.py`
+- [x] T048 [US4] Add advancement probability reporting in `src/copa_forecast/reporting/artifacts.py`
+- [x] T049 [US4] Add CLI simulation command in `src/copa_forecast/cli.py`
 
 **Checkpoint**: Tournament probabilities are based on simulated official paths.
 

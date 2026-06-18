@@ -6,8 +6,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from copa_forecast.config import load_config
-from copa_forecast.data.ingest import build_competition_state, persist_raw_extract
 from copa_forecast.data.contracts import OfficialCompetitionState
+from copa_forecast.data.ingest import build_competition_state, persist_raw_extract
+from copa_forecast.data.recent_matches import load_recent_matches, run_recent_match_etl
 from copa_forecast.data.sources.fifa import JsonFifaParser, UrlOrFileFifaCrawler
 from copa_forecast.data.validate import (
     require_non_empty_state,
@@ -15,9 +16,15 @@ from copa_forecast.data.validate import (
 )
 from copa_forecast.forecast import build_latest_forecast
 from copa_forecast.reporting.artifacts import (
+    write_advancement_csv,
+    write_advancement_probabilities,
+    write_explanation_csv,
+    write_explanation_payload,
     write_forecast_run_metadata,
     write_forecast_team_csv,
+    write_pillar_report_csv,
 )
+from copa_forecast.reporting.explanations import build_explanation_payload
 from copa_forecast.site.static_page import render_static_page
 
 
@@ -26,8 +33,19 @@ def main(argv: list[str] | None = None) -> int:
     subparsers = parser.add_subparsers(dest="command", required=True)
     fetch_parser = subparsers.add_parser("fetch-fifa")
     fetch_parser.add_argument("--config", required=True)
+    recent_parser = subparsers.add_parser("etl-recent-matches")
+    recent_parser.add_argument("--config", required=True)
     forecast_parser = subparsers.add_parser("forecast")
     forecast_parser.add_argument("--config", required=True)
+    forecast_parser.add_argument("--recent-matches")
+    simulate_parser = subparsers.add_parser("simulate")
+    simulate_parser.add_argument("--config", required=True)
+    simulate_parser.add_argument("--recent-matches")
+    explain_parser = subparsers.add_parser("explain")
+    explain_parser.add_argument("--latest-json", required=True)
+    explain_parser.add_argument("--output", required=True)
+    explain_parser.add_argument("--previous-json")
+    explain_parser.add_argument("--team")
     site_parser = subparsers.add_parser("render-site")
     site_parser.add_argument("--config", required=True)
     site_parser.add_argument("--latest-json", required=True)
@@ -35,8 +53,19 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "fetch-fifa":
         return fetch_fifa(args.config)
+    if args.command == "etl-recent-matches":
+        return etl_recent_matches(args.config)
     if args.command == "forecast":
-        return forecast(args.config)
+        return forecast(args.config, recent_matches_path=args.recent_matches)
+    if args.command == "simulate":
+        return simulate(args.config, recent_matches_path=args.recent_matches)
+    if args.command == "explain":
+        return explain(
+            latest_json=args.latest_json,
+            output=args.output,
+            previous_json=args.previous_json,
+            team=args.team,
+        )
     if args.command == "render-site":
         return render_site(args.config, args.latest_json)
     return 2
@@ -48,11 +77,36 @@ def fetch_fifa(config_path: str) -> int:
     return 0
 
 
-def forecast(config_path: str) -> int:
+def etl_recent_matches(config_path: str) -> int:
     config = load_config(config_path)
     states = _load_official_states(config_path)
     state = _merge_official_states(states)
-    latest = build_latest_forecast(config=config, state=state)
+    result = run_recent_match_etl(config=config, state=state)
+    print(
+        json.dumps(
+            {
+                "run_id": config.run_id,
+                "matches": len(result.matches),
+                "latest_matches": str(result.output_json),
+                "matches_csv": str(result.output_csv),
+                "coverage": str(result.coverage_json),
+                "max_window_coverage": result.coverage.get("max_window_coverage"),
+                "current_window_coverage": result.coverage.get("current_window_coverage"),
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def forecast(config_path: str, *, recent_matches_path: str | None = None) -> int:
+    config = load_config(config_path)
+    states = _load_official_states(config_path)
+    state = _merge_official_states(states)
+    recent_matches = _load_recent_matches_for_run(
+        config_path=config_path, recent_matches_path=recent_matches_path
+    )
+    latest = build_latest_forecast(config=config, state=state, recent_matches=recent_matches)
     render_static_page(
         latest=latest,
         github_url=config.project_github_url,
@@ -75,6 +129,72 @@ def forecast(config_path: str) -> int:
                 "teams": len(latest["teams"]),
                 "latest_json": str(config.site.output_dir / "data" / "latest.json"),
                 "metadata": str(run_dir / "metadata.json"),
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def simulate(config_path: str, *, recent_matches_path: str | None = None) -> int:
+    config = load_config(config_path)
+    states = _load_official_states(config_path)
+    state = _merge_official_states(states)
+    recent_matches = _load_recent_matches_for_run(
+        config_path=config_path, recent_matches_path=recent_matches_path
+    )
+    latest = build_latest_forecast(config=config, state=state, recent_matches=recent_matches)
+    run_dir = (
+        config.site.output_dir.parent
+        / "data"
+        / "processed"
+        / "simulation_runs"
+        / config.run_id
+    )
+    advancement_json = run_dir / "advancement.json"
+    advancement_csv = run_dir / "advancement.csv"
+    write_advancement_probabilities(advancement_json, latest)
+    write_advancement_csv(advancement_csv, latest)
+    print(
+        json.dumps(
+            {
+                "run_id": config.run_id,
+                "teams": len(latest["teams"]),
+                "advancement_json": str(advancement_json),
+                "advancement_csv": str(advancement_csv),
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def explain(
+    *,
+    latest_json: str,
+    output: str,
+    previous_json: str | None = None,
+    team: str | None = None,
+) -> int:
+    latest = json.loads(Path(latest_json).read_text(encoding="utf-8"))
+    previous = (
+        json.loads(Path(previous_json).read_text(encoding="utf-8"))
+        if previous_json
+        else None
+    )
+    payload = build_explanation_payload(latest, previous=previous, team=team)
+    output_dir = Path(output)
+    write_explanation_payload(output_dir / "explanations.json", payload)
+    write_explanation_csv(output_dir / "explanations.csv", payload)
+    write_pillar_report_csv(output_dir / "pillars.csv", latest)
+    print(
+        json.dumps(
+            {
+                "run_id": payload.get("run_id"),
+                "team_count": payload.get("team_count"),
+                "explanations_json": str(output_dir / "explanations.json"),
+                "explanations_csv": str(output_dir / "explanations.csv"),
+                "pillars_csv": str(output_dir / "pillars.csv"),
             },
             sort_keys=True,
         )
@@ -131,6 +251,21 @@ def _merge_official_states(states: list[OfficialCompetitionState]) -> OfficialCo
         fixtures=tuple(fixtures),
         degraded=any(state.degraded for state in states),
     )
+
+
+def _load_recent_matches_for_run(
+    *, config_path: str, recent_matches_path: str | None
+):
+    config = load_config(config_path)
+    if recent_matches_path:
+        path = Path(recent_matches_path)
+    elif config.recent_matches.declared:
+        path = config.recent_matches.processed_output_dir / "latest_matches.json"
+    else:
+        return ()
+    if not path.exists():
+        return ()
+    return load_recent_matches(path)
 
 
 def render_site(config_path: str, latest_json: str) -> int:

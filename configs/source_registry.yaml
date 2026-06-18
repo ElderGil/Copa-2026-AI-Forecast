@@ -9,6 +9,7 @@ official:
       - kickoff_times
       - match_status
       - results
+      - recent_team_match_history
       - regulations
       - power_rankings_benchmark
   confederations:
@@ -32,4 +33,3 @@ enrichment:
       - expected_goals
       - player_minutes
       - odds_benchmark
-

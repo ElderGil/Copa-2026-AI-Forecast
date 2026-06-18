@@ -1,0 +1,33 @@
+{
+  "Results": [
+    {
+      "IdMatch": "recent-002",
+      "Date": "2025-11-18T01:00:00Z",
+      "CompetitionName": [{"Locale": "en-GB", "Description": "Concacaf Gold Cup"}],
+      "StageName": [{"Locale": "en-GB", "Description": "Group Stage"}],
+      "HomeTeamScore": 1,
+      "AwayTeamScore": 1,
+      "Home": {
+        "IdTeam": "MEX",
+        "IdCountry": "MX",
+        "TeamType": 1,
+        "Gender": 1,
+        "AgeType": 7,
+        "TeamName": [{"Locale": "en-GB", "Description": "Mexico"}]
+      },
+      "Away": {
+        "IdTeam": "RSA",
+        "IdCountry": "ZA",
+        "TeamType": 1,
+        "Gender": 1,
+        "AgeType": 7,
+        "TeamName": [{"Locale": "en-GB", "Description": "South Africa"}]
+      },
+      "Stadium": {
+        "IdCountry": "MX",
+        "Name": [{"Locale": "en-GB", "Description": "Estadio Azteca"}],
+        "CityName": [{"Locale": "en-GB", "Description": "Mexico City"}]
+      }
+    }
+  ]
+}

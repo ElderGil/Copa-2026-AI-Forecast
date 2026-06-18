@@ -49,6 +49,35 @@ class Fixture:
 
 
 @dataclass(frozen=True)
+class OfficialMatchRecord:
+    match_id: str
+    source_id: str
+    source_url: str
+    match_date: str
+    home_team: str
+    away_team: str
+    competition: str
+    match_importance: str
+    venue_context: str
+    status: str
+    home_score: int | None = None
+    away_score: int | None = None
+    home_penalty_score: int | None = None
+    away_penalty_score: int | None = None
+    venue: str | None = None
+    fifa_match_id: str | None = None
+    home_team_id: str | None = None
+    away_team_id: str | None = None
+
+    @property
+    def is_played(self) -> bool:
+        return self.home_score is not None and self.away_score is not None
+
+    def to_json_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass(frozen=True)
 class OfficialCompetitionState:
     as_of_date: str
     fifa_extract_ids: tuple[str, ...]
@@ -59,4 +88,3 @@ class OfficialCompetitionState:
     @property
     def is_official(self) -> bool:
         return bool(self.fifa_extract_ids) and not self.degraded
-

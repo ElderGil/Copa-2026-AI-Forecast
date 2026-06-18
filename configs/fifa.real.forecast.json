@@ -1,0 +1,43 @@
+{
+  "run_id": "fifa-real-2026-06-18",
+  "as_of_date": "2026-06-18",
+  "project_github_url": "https://github.com/CHANGE-ME/copa-2026-ai-forecast",
+  "official_fifa": {
+    "raw_output_dir": "data/raw/fifa",
+    "allow_cached_payloads": true,
+    "degraded_mode_allowed": false,
+    "sources": [
+      {
+        "source_id": "fifa-world-cup-2026-calendar",
+        "url": "https://api.fifa.com/api/v3/calendar/matches?language=en&count=200&idCompetition=17&from=2026-06-01&to=2026-07-31",
+        "purpose": "fixtures"
+      }
+    ]
+  },
+  "recent_matches": {
+    "raw_output_dir": "data/raw/fifa_recent_matches",
+    "processed_output_dir": "data/processed/recent_matches",
+    "sources": [
+      {
+        "source_id": "fifa-calendar-team-matches",
+        "authority": "FIFA",
+        "url_template": "https://api.fifa.com/api/v3/calendar/matches?language=en&count=200&idTeam={team_id}&from={from_date}&to={to_date}"
+      }
+    ]
+  },
+  "feature_windows": {
+    "current_months": 12,
+    "max_months": 24,
+    "decay_half_life_days": 180
+  },
+  "simulation": {
+    "tournament_ruleset": "fifa-world-cup-2026",
+    "runs": 10000,
+    "random_seed": 20260618
+  },
+  "site": {
+    "language": "pt-BR",
+    "output_dir": "public",
+    "top_count": 10
+  }
+}

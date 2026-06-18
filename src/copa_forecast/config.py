@@ -27,6 +27,21 @@ class OfficialFifaConfig:
 
 
 @dataclass(frozen=True)
+class RecentMatchSourceConfig:
+    source_id: str
+    authority: str
+    url_template: str
+
+
+@dataclass(frozen=True)
+class RecentMatchesConfig:
+    sources: tuple[RecentMatchSourceConfig, ...]
+    raw_output_dir: Path
+    processed_output_dir: Path
+    declared: bool
+
+
+@dataclass(frozen=True)
 class FeatureWindowConfig:
     current_months: int
     max_months: int
@@ -53,6 +68,7 @@ class ForecastConfig:
     as_of_date: date
     project_github_url: str
     official_fifa: OfficialFifaConfig
+    recent_matches: RecentMatchesConfig
     feature_windows: FeatureWindowConfig
     simulation: SimulationConfig
     site: SiteConfig
@@ -114,6 +130,9 @@ def parse_config(payload: dict[str, Any]) -> ForecastConfig:
             allow_cached_payloads=bool(official.get("allow_cached_payloads", True)),
             degraded_mode_allowed=bool(official.get("degraded_mode_allowed", False)),
         ),
+        recent_matches=_parse_recent_matches(
+            payload.get("recent_matches", {}), declared="recent_matches" in payload
+        ),
         feature_windows=FeatureWindowConfig(
             current_months=current_months,
             max_months=max_months,
@@ -131,3 +150,34 @@ def parse_config(payload: dict[str, Any]) -> ForecastConfig:
         ),
     )
 
+
+def _parse_recent_matches(payload: dict[str, Any], *, declared: bool) -> RecentMatchesConfig:
+    default_template = (
+        "https://api.fifa.com/api/v3/calendar/matches?"
+        "language=en&count=200&idTeam={team_id}&from={from_date}&to={to_date}"
+    )
+    sources = tuple(
+        RecentMatchSourceConfig(
+            source_id=str(item["source_id"]),
+            authority=str(item.get("authority", "fifa")),
+            url_template=str(item.get("url_template", default_template)),
+        )
+        for item in payload.get(
+            "sources",
+            [
+                {
+                    "source_id": "fifa-calendar-team-matches",
+                    "authority": "fifa",
+                    "url_template": default_template,
+                }
+            ],
+        )
+    )
+    return RecentMatchesConfig(
+        sources=sources,
+        raw_output_dir=Path(str(payload.get("raw_output_dir", "data/raw/fifa_recent_matches"))),
+        processed_output_dir=Path(
+            str(payload.get("processed_output_dir", "data/processed/recent_matches"))
+        ),
+        declared=declared,
+    )

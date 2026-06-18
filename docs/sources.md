@@ -10,6 +10,9 @@ Official FIFA data is authoritative for World Cup 2026 competition state:
 - Match status and results.
 - Tournament regulations and advancement rules.
 - FIFA rankings when used as an official ranking input.
+- FIFA Calendar API match records for team-level 12-24 month form, including
+  official qualifiers, continental tournaments, Nations League, and friendlies
+  represented in FIFA match records.
 
 Raw FIFA payloads must be stored before normalization. Each extract must record
 source URL, retrieval timestamp, checksum, payload format, and parser version.
@@ -46,7 +49,8 @@ Official does not only mean FIFA. The source hierarchy is:
 | World Cup fixtures/results/status | FIFA | None unless degraded/manual |
 | World Cup rules/tie-breaks | FIFA regulations | None unless degraded/manual |
 | FIFA ranking | FIFA ranking page/procedure | None |
-| Qualifiers and continental matches | Confederation official sites | FIFA match records when available |
+| Recent senior men's national-team matches | FIFA Calendar API by team | Confederation official sites for reconciliation |
+| Qualifiers and continental matches | FIFA Calendar API when available | Confederation official sites for missing reports |
 | Squads and call-ups | National federations | FIFA match reports, confederations |
 | Injuries/suspensions | National federations and official disciplinary reports | Club/league official reports |
 | xG/event data | Licensed provider if available | Public provider only if license permits |
@@ -57,3 +61,15 @@ Official does not only mean FIFA. The source hierarchy is:
 If official FIFA data is unreachable and no cached FIFA payload is available,
 the project may run only in degraded mode. Degraded runs cannot be presented as
 official competition-state forecasts.
+
+## Current Pipeline Coverage
+
+The current implemented pipeline uses official FIFA endpoints for:
+
+- World Cup 2026 fixtures, teams, groups, venues, status, and results.
+- Per-team senior men's match history in the configured 12-24 month evidence
+  window.
+
+The model does not yet ingest federation squad reports, injuries, suspensions,
+or licensed xG/event feeds. Those remain candidate enrichment sources and must
+meet the same coverage rule before becoming active model pillars.

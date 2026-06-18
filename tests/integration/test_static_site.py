@@ -23,7 +23,9 @@ class StaticSiteTest(unittest.TestCase):
             self.assertTrue((Path(tmp) / "data" / "latest.json").exists())
             self.assertIn("team-panel", index)
             self.assertIn("forecast-data", index)
+            self.assertIn("data-panel-drivers", index)
             self.assertIn("openPanel", script)
+            self.assertIn("renderDrivers", script)
             self.assertNotIn("alert(", script)
 
 

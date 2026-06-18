@@ -5,13 +5,22 @@ from datetime import date, datetime, timezone
 from typing import Any
 
 from copa_forecast.config import ForecastConfig
-from copa_forecast.data.contracts import Fixture, OfficialCompetitionState, Team
+from copa_forecast.data.contracts import (
+    Fixture,
+    OfficialCompetitionState,
+    OfficialMatchRecord,
+    Team,
+)
 from copa_forecast.features.leakage import parse_record_date
-from copa_forecast.features.pillars import EvidencePillar, split_pillars_by_coverage
+from copa_forecast.features.pillars import (
+    EvidencePillar,
+    describe_pillar_coverage,
+    split_pillars_by_coverage,
+)
+from copa_forecast.features.recent import RecentTeamFeatures, build_recent_team_features
 from copa_forecast.reporting.explanations import build_team_explanation
 from copa_forecast.simulation.monte_carlo import (
-    TeamStrength,
-    simulate_champion_distribution,
+    simulate_tournament_distribution,
 )
 
 
@@ -40,31 +49,48 @@ class TeamTournamentSignal:
 
 
 def build_latest_forecast(
-    *, config: ForecastConfig, state: OfficialCompetitionState, generated_at: datetime | None = None
+    *,
+    config: ForecastConfig,
+    state: OfficialCompetitionState,
+    generated_at: datetime | None = None,
+    recent_matches: tuple[OfficialMatchRecord, ...] = (),
 ) -> dict[str, Any]:
     """Create the public latest.json payload for the current forecast run."""
 
     generated_at = generated_at or datetime.now(timezone.utc)
     as_of_date = config.as_of_date
-    pillars = build_evidence_pillars(state)
+    recent_features = build_recent_team_features(
+        teams=state.teams,
+        matches=recent_matches,
+        as_of_date=as_of_date,
+        current_window_months=config.feature_windows.current_months,
+        max_window_months=config.feature_windows.max_months,
+        half_life_days=config.feature_windows.decay_half_life_days,
+    )
+    pillars = build_evidence_pillars(state, recent_features=recent_features)
     included_pillars, excluded_pillars = split_pillars_by_coverage(pillars)
     included_keys = [pillar.name for pillar in included_pillars]
     excluded_keys = [pillar.name for pillar in excluded_pillars]
 
     signals = build_tournament_signals(state, as_of_date=as_of_date)
     strengths = build_team_strengths(
-        state.teams, signals=signals, included_pillars=set(included_keys)
+        state.teams,
+        signals=signals,
+        included_pillars=set(included_keys),
+        recent_features=recent_features,
     )
-    distribution = simulate_champion_distribution(
-        [TeamStrength(team=name, strength=value) for name, value in strengths.items()],
+    advancement = simulate_tournament_distribution(
+        state,
+        strengths=strengths,
         runs=config.simulation.runs,
         seed=config.simulation.random_seed,
+        as_of_date=as_of_date,
     )
 
     ranked = sorted(
         state.teams,
         key=lambda team: (
-            -distribution.get(team.name, 0.0),
+            -advancement.get(team.name, {}).get("champion", 0.0),
             team.name.casefold(),
         ),
     )
@@ -72,9 +98,11 @@ def build_latest_forecast(
         _team_row(
             rank=index,
             team=team,
-            probability=distribution.get(team.name, 0.0),
+            probability=advancement.get(team.name, {}).get("champion", 0.0),
+            advancement=advancement.get(team.name, {}),
             strength=strengths[team.name],
             signal=signals.get(team.name, TeamTournamentSignal()),
+            recent_feature=recent_features.get(team.name, RecentTeamFeatures(team.name)),
             used_pillars=included_keys,
             excluded_pillars=excluded_keys,
         )
@@ -108,6 +136,7 @@ def build_latest_forecast(
                 "fifa_extract_ids": list(state.fifa_extract_ids),
                 "team_count": len(state.teams),
                 "fixture_count": len(state.fixtures),
+                "recent_match_count": len(recent_matches),
             },
             "feature_windows": {
                 "current_months": config.feature_windows.current_months,
@@ -115,7 +144,8 @@ def build_latest_forecast(
                 "decay_half_life_days": config.feature_windows.decay_half_life_days,
             },
             "simulation": {
-                "method": "weighted_monte_carlo_baseline",
+                "method": "monte_carlo_tournament_path",
+                "bracket_model": "fifa_2026_round_of_32_slots_with_deterministic_third_assignment",
                 "ruleset": config.simulation.tournament_ruleset,
                 "runs": config.simulation.runs,
                 "random_seed": config.simulation.random_seed,
@@ -124,10 +154,20 @@ def build_latest_forecast(
     }
 
 
-def build_evidence_pillars(state: OfficialCompetitionState) -> list[EvidencePillar]:
+def build_evidence_pillars(
+    state: OfficialCompetitionState,
+    *,
+    recent_features: dict[str, RecentTeamFeatures] | None = None,
+) -> list[EvidencePillar]:
     total_teams = len(state.teams)
     teams_with_path = _teams_with_tournament_path(state)
-    teams_with_recent_external_form = set()
+    recent_features = recent_features or {}
+    teams_with_recent_external_form = {
+        team for team, feature in recent_features.items() if feature.matches_24m > 0
+    }
+    teams_with_current_form = {
+        team for team, feature in recent_features.items() if feature.matches_12m > 0
+    }
     teams_with_squad_context = set()
     return [
         EvidencePillar(
@@ -146,7 +186,37 @@ def build_evidence_pillars(state: OfficialCompetitionState) -> list[EvidencePill
             "recent_form_window",
             available_teams=len(teams_with_recent_external_form),
             total_teams=total_teams,
-            source="official match records - pending ETL",
+            source="FIFA calendar official match records",
+        ),
+        EvidencePillar(
+            "current_form_12m",
+            available_teams=len(teams_with_current_form),
+            total_teams=total_teams,
+            source="FIFA calendar official match records",
+        ),
+        EvidencePillar(
+            "attacking_trend",
+            available_teams=len(teams_with_recent_external_form),
+            total_teams=total_teams,
+            source="FIFA calendar official match records",
+        ),
+        EvidencePillar(
+            "defensive_trend",
+            available_teams=len(teams_with_recent_external_form),
+            total_teams=total_teams,
+            source="FIFA calendar official match records",
+        ),
+        EvidencePillar(
+            "match_importance",
+            available_teams=len(teams_with_recent_external_form),
+            total_teams=total_teams,
+            source="FIFA competition/stage metadata",
+        ),
+        EvidencePillar(
+            "venue_context",
+            available_teams=len(teams_with_recent_external_form),
+            total_teams=total_teams,
+            source="FIFA stadium metadata",
         ),
         EvidencePillar(
             "squad_context",
@@ -185,16 +255,27 @@ def build_team_strengths(
     *,
     signals: dict[str, TeamTournamentSignal],
     included_pillars: set[str],
+    recent_features: dict[str, RecentTeamFeatures] | None = None,
 ) -> dict[str, float]:
     strengths: dict[str, float] = {}
+    recent_features = recent_features or {}
     for team in teams:
         signal = signals.get(team.name, TeamTournamentSignal())
+        recent = recent_features.get(team.name, RecentTeamFeatures(team.name))
         strength = 100.0
         if "tournament_path" in included_pillars:
             strength += signal.points * 12.0
             strength += signal.goal_difference * 4.0
             strength += signal.goals_for * 1.5
             strength -= max(signal.goals_against - signal.goals_for, 0) * 1.5
+        if "recent_form_window" in included_pillars:
+            strength += recent.weighted_points * 4.0
+        if "attacking_trend" in included_pillars:
+            strength += recent.weighted_goals_for * 1.8
+        if "defensive_trend" in included_pillars:
+            strength -= recent.weighted_goals_against * 1.2
+        if "match_importance" in included_pillars:
+            strength += recent.weighted_importance * 0.25
         strengths[team.name] = max(strength, 1.0)
     return strengths
 
@@ -245,13 +326,24 @@ def _team_row(
     rank: int,
     team: Team,
     probability: float,
+    advancement: dict[str, float],
     strength: float,
     signal: TeamTournamentSignal,
+    recent_feature: RecentTeamFeatures,
     used_pillars: list[str],
     excluded_pillars: list[str],
 ) -> dict[str, Any]:
     explanation = build_team_explanation(
-        team=team.name, used_pillars=used_pillars, excluded_pillars=excluded_pillars
+        team=team.name,
+        used_pillars=used_pillars,
+        excluded_pillars=excluded_pillars,
+        drivers=_team_drivers(
+            probability=probability,
+            advancement=advancement,
+            signal=signal,
+            strength=strength,
+            recent_feature=recent_feature,
+        ),
     )
     return {
         "rank": rank,
@@ -260,6 +352,9 @@ def _team_row(
         "flag": team.flag_code or "",
         "group": team.group,
         "champion_probability": probability,
+        "advancement_probabilities": {
+            key: round(value, 6) for key, value in sorted(advancement.items())
+        },
         "strength": round(strength, 4),
         "tournament_signal": {
             "played": signal.played,
@@ -268,22 +363,58 @@ def _team_row(
             "goals_against": signal.goals_against,
             "goal_difference": signal.goal_difference,
         },
+        "recent_features": {
+            "matches_24m": recent_feature.matches_24m,
+            "matches_12m": recent_feature.matches_12m,
+            "weighted_points": round(recent_feature.weighted_points, 4),
+            "weighted_goals_for": round(recent_feature.weighted_goals_for, 4),
+            "weighted_goals_against": round(recent_feature.weighted_goals_against, 4),
+            "weighted_goal_difference": round(recent_feature.weighted_goal_difference, 4),
+            "weighted_importance": round(recent_feature.weighted_importance, 4),
+            "home_matches": recent_feature.home_matches,
+            "away_matches": recent_feature.away_matches,
+            "neutral_matches": recent_feature.neutral_matches,
+        },
         "used_pillars": list(explanation.used_pillars),
         "excluded_pillars": list(explanation.excluded_pillars),
+        "drivers": list(explanation.drivers),
         "summary": explanation.summary,
     }
 
 
 def _pillar_payload(pillar: EvidencePillar, *, used: bool) -> dict[str, Any]:
+    report = describe_pillar_coverage(pillar)
     return {
         "key": pillar.name,
         "label": _pillar_label(pillar.name),
         "coverage": pillar.coverage,
         "available_teams": pillar.available_teams,
         "total_teams": pillar.total_teams,
+        "missing_teams": pillar.missing_teams,
         "source": pillar.source,
-        "status": "used" if used else "excluded_low_coverage",
+        "status": "used" if used else report.status,
+        "reason": report.reason,
     }
+
+
+def _team_drivers(
+    *,
+    probability: float,
+    advancement: dict[str, float],
+    signal: TeamTournamentSignal,
+    strength: float,
+    recent_feature: RecentTeamFeatures,
+) -> list[str]:
+    return [
+        f"chance_titulo={probability:.4f}",
+        f"chance_final={advancement.get('final', 0.0):.4f}",
+        f"pontos_torneio={signal.points}",
+        f"saldo_gols={signal.goal_difference}",
+        f"jogos_24m={recent_feature.matches_24m}",
+        f"pontos_ponderados_24m={recent_feature.weighted_points:.2f}",
+        f"saldo_ponderado_24m={recent_feature.weighted_goal_difference:.2f}",
+        f"forca_modelo={strength:.2f}",
+    ]
 
 
 def _pillar_label(key: str) -> str:
@@ -291,6 +422,11 @@ def _pillar_label(key: str) -> str:
         "official_competition_state": "Estado oficial FIFA",
         "tournament_path": "Caminho e resultados do torneio",
         "recent_form_window": "Forma recente em janela temporal",
+        "current_form_12m": "Forma atual nos ultimos 12 meses",
+        "attacking_trend": "Tendencia ofensiva",
+        "defensive_trend": "Tendencia defensiva",
+        "match_importance": "Peso competitivo das partidas",
+        "venue_context": "Contexto de mando e neutralidade",
         "squad_context": "Contexto de elenco",
     }
     return labels.get(key, key.replace("_", " ").title())

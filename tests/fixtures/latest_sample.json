@@ -10,8 +10,10 @@
       "coverage": 1.0,
       "available_teams": 4,
       "total_teams": 4,
+      "missing_teams": 0,
       "source": "FIFA",
-      "status": "used"
+      "status": "used",
+      "reason": "coverage_ok"
     },
     {
       "key": "recent_form_window",
@@ -19,8 +21,10 @@
       "coverage": 0.0,
       "available_teams": 0,
       "total_teams": 4,
+      "missing_teams": 4,
       "source": "official match records - pending ETL",
-      "status": "excluded_low_coverage"
+      "status": "excluded_low_coverage",
+      "reason": "below_minimum_coverage"
     }
   ],
   "benchmarks": [
@@ -39,10 +43,19 @@
       "flag": "BR",
       "group": "C",
       "champion_probability": 0.18,
+      "advancement_probabilities": {
+        "round_of_32": 1.0,
+        "round_of_16": 0.6,
+        "quarterfinal": 0.4,
+        "semifinal": 0.3,
+        "final": 0.22,
+        "champion": 0.18
+      },
       "strength": 118.0,
       "tournament_signal": {"played": 0, "points": 0, "goals_for": 0, "goals_against": 0, "goal_difference": 0},
       "used_pillars": ["official_competition_state"],
       "excluded_pillars": ["recent_form_window"],
+      "drivers": ["chance_titulo=0.1800", "chance_final=0.2200", "pontos_torneio=0", "saldo_gols=0", "forca_modelo=118.00"],
       "summary": "Brazil: 1 pilares usados; 1 pilares excluidos por cobertura ou ausencia."
     },
     {
@@ -52,10 +65,19 @@
       "flag": "FR",
       "group": "D",
       "champion_probability": 0.16,
+      "advancement_probabilities": {
+        "round_of_32": 1.0,
+        "round_of_16": 0.58,
+        "quarterfinal": 0.36,
+        "semifinal": 0.26,
+        "final": 0.2,
+        "champion": 0.16
+      },
       "strength": 112.0,
       "tournament_signal": {"played": 0, "points": 0, "goals_for": 0, "goals_against": 0, "goal_difference": 0},
       "used_pillars": ["official_competition_state"],
       "excluded_pillars": ["recent_form_window"],
+      "drivers": ["chance_titulo=0.1600", "chance_final=0.2000", "pontos_torneio=0", "saldo_gols=0", "forca_modelo=112.00"],
       "summary": "France: 1 pilares usados; 1 pilares excluidos por cobertura ou ausencia."
     },
     {
@@ -65,10 +87,19 @@
       "flag": "AR",
       "group": "E",
       "champion_probability": 0.12,
+      "advancement_probabilities": {
+        "round_of_32": 1.0,
+        "round_of_16": 0.5,
+        "quarterfinal": 0.31,
+        "semifinal": 0.22,
+        "final": 0.16,
+        "champion": 0.12
+      },
       "strength": 108.0,
       "tournament_signal": {"played": 0, "points": 0, "goals_for": 0, "goals_against": 0, "goal_difference": 0},
       "used_pillars": ["official_competition_state"],
       "excluded_pillars": ["recent_form_window"],
+      "drivers": ["chance_titulo=0.1200", "chance_final=0.1600", "pontos_torneio=0", "saldo_gols=0", "forca_modelo=108.00"],
       "summary": "Argentina: 1 pilares usados; 1 pilares excluidos por cobertura ou ausencia."
     },
     {
@@ -78,10 +109,19 @@
       "flag": "ES",
       "group": "F",
       "champion_probability": 0.10,
+      "advancement_probabilities": {
+        "round_of_32": 1.0,
+        "round_of_16": 0.45,
+        "quarterfinal": 0.28,
+        "semifinal": 0.18,
+        "final": 0.13,
+        "champion": 0.10
+      },
       "strength": 104.0,
       "tournament_signal": {"played": 0, "points": 0, "goals_for": 0, "goals_against": 0, "goal_difference": 0},
       "used_pillars": ["official_competition_state"],
       "excluded_pillars": ["recent_form_window"],
+      "drivers": ["chance_titulo=0.1000", "chance_final=0.1300", "pontos_torneio=0", "saldo_gols=0", "forca_modelo=104.00"],
       "summary": "Spain: 1 pilares usados; 1 pilares excluidos por cobertura ou ausencia."
     }
   ]

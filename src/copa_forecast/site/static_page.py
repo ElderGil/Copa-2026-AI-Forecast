@@ -69,8 +69,12 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
       <div><dt>Pontos</dt><dd data-panel-points></dd></div>
       <div><dt>Saldo</dt><dd data-panel-goal-difference></dd></div>
       <div><dt>Forca</dt><dd data-panel-strength></dd></div>
+      <div><dt>R32</dt><dd data-panel-round-of-32></dd></div>
+      <div><dt>Final</dt><dd data-panel-final></dd></div>
     </dl>
     <p class="panel-summary" data-panel-summary></p>
+    <h3>Drivers</h3>
+    <div class="pillar-list" data-panel-drivers></div>
     <h3>Pilares usados</h3>
     <div class="pillar-list" data-panel-used></div>
     <h3>Pilares excluidos</h3>
@@ -208,9 +212,21 @@ function pillarItem(key, variant) {
   const title = document.createElement('strong');
   title.textContent = pillar.label || key;
   const meta = document.createElement('span');
-  meta.textContent = `${percent(pillar.coverage)} cobertura | ${pillar.source || 'fonte pendente'}`;
+  const missing = pillar.missing_teams == null ? '-' : pillar.missing_teams;
+  meta.textContent = `${percent(pillar.coverage)} cobertura | faltantes: ${missing} | ${pillar.reason || 'coverage_ok'} | ${pillar.source || 'fonte pendente'}`;
   item.append(title, meta);
   return item;
+}
+
+function renderDrivers(keys) {
+  const target = panel.querySelector('[data-panel-drivers]');
+  target.replaceChildren();
+  (keys || []).forEach((driver) => {
+    const item = document.createElement('div');
+    item.className = 'pillar-item';
+    item.textContent = driver;
+    target.append(item);
+  });
 }
 
 function renderPillars(selector, keys, variant) {
@@ -245,6 +261,7 @@ function openPanel(teamName) {
   const team = teams.get(teamName);
   if (!team) return;
   const signal = team.tournament_signal || {};
+  const advancement = team.advancement_probabilities || {};
   setText('[data-panel-rank]', `#${team.rank}`);
   setText('[data-panel-flag]', team.flag);
   setText('[data-panel-team]', team.team);
@@ -253,7 +270,10 @@ function openPanel(teamName) {
   setText('[data-panel-points]', signal.points);
   setText('[data-panel-goal-difference]', signal.goal_difference);
   setText('[data-panel-strength]', number(team.strength));
+  setText('[data-panel-round-of-32]', percent(advancement.round_of_32));
+  setText('[data-panel-final]', percent(advancement.final));
   setText('[data-panel-summary]', team.summary);
+  renderDrivers(team.drivers || []);
   renderPillars('[data-panel-used]', team.used_pillars || [], 'used');
   renderPillars('[data-panel-excluded]', team.excluded_pillars || [], 'excluded');
   renderBenchmarks();

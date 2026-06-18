@@ -1,0 +1,33 @@
+{
+  "Results": [
+    {
+      "IdMatch": "recent-001",
+      "Date": "2026-03-25T22:00:00Z",
+      "CompetitionName": [{"Locale": "en-GB", "Description": "International Friendly"}],
+      "StageName": [{"Locale": "en-GB", "Description": "Friendly Match"}],
+      "HomeTeamScore": 2,
+      "AwayTeamScore": 1,
+      "Home": {
+        "IdTeam": "BRA",
+        "IdCountry": "BR",
+        "TeamType": 1,
+        "Gender": 1,
+        "AgeType": 7,
+        "TeamName": [{"Locale": "en-GB", "Description": "Brazil"}]
+      },
+      "Away": {
+        "IdTeam": "MAR",
+        "IdCountry": "MA",
+        "TeamType": 1,
+        "Gender": 1,
+        "AgeType": 7,
+        "TeamName": [{"Locale": "en-GB", "Description": "Morocco"}]
+      },
+      "Stadium": {
+        "IdCountry": "US",
+        "Name": [{"Locale": "en-GB", "Description": "MetLife Stadium"}],
+        "CityName": [{"Locale": "en-GB", "Description": "New York New Jersey"}]
+      }
+    }
+  ]
+}
