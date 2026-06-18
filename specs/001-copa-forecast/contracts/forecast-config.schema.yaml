@@ -1,0 +1,134 @@
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: Copa 2026 Forecast Config
+type: object
+required:
+  - run_id
+  - as_of_date
+  - official_fifa
+  - feature_windows
+  - simulation
+  - model_profile
+properties:
+  run_id:
+    type: string
+    pattern: "^[a-z0-9][a-z0-9._-]*$"
+  as_of_date:
+    type: string
+    format: date
+  official_fifa:
+    type: object
+    required:
+      - sources
+      - raw_output_dir
+      - allow_cached_payloads
+    properties:
+      sources:
+        type: array
+        minItems: 1
+        items:
+          type: object
+          required:
+            - source_id
+            - url
+            - purpose
+          properties:
+            source_id:
+              type: string
+            url:
+              type: string
+            purpose:
+              type: string
+              enum:
+                - fixtures
+                - teams
+                - match_status
+                - results
+                - regulations
+                - rankings
+      raw_output_dir:
+        type: string
+      allow_cached_payloads:
+        type: boolean
+        default: true
+      degraded_mode_allowed:
+        type: boolean
+        default: false
+  data_sources:
+    type: array
+    items:
+      type: object
+      required:
+        - source_id
+        - path
+        - retrieved_at
+        - authority_level
+      properties:
+        source_id:
+          type: string
+        path:
+          type: string
+        retrieved_at:
+          type: string
+          format: date-time
+        authority_level:
+          type: string
+          enum:
+            - enrichment
+            - benchmark
+            - manual_fallback
+        license_note:
+          type: string
+  feature_windows:
+    type: object
+    required:
+      - current_months
+      - max_months
+      - decay_half_life_days
+    properties:
+      current_months:
+        type: integer
+        minimum: 1
+        maximum: 24
+        default: 12
+      max_months:
+        type: integer
+        minimum: 1
+        maximum: 48
+        default: 24
+      decay_half_life_days:
+        type: integer
+        minimum: 7
+        default: 180
+  simulation:
+    type: object
+    required:
+      - tournament_ruleset
+      - runs
+      - random_seed
+    properties:
+      tournament_ruleset:
+        type: string
+      runs:
+        type: integer
+        minimum: 100
+        default: 10000
+      random_seed:
+        type: integer
+  model_profile:
+    type: string
+    enum:
+      - baseline
+      - ensemble
+      - diagnostic
+  reporting:
+    type: object
+    properties:
+      output_dir:
+        type: string
+      include_team_explanations:
+        type: boolean
+        default: true
+      include_calibration_report:
+        type: boolean
+        default: true
+additionalProperties: false

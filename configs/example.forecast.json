@@ -1,0 +1,33 @@
+{
+  "run_id": "example-2026-06-18",
+  "as_of_date": "2026-06-18",
+  "project_github_url": "https://github.com/CHANGE-ME/copa-2026-ai-forecast",
+  "official_fifa": {
+    "raw_output_dir": "data/raw/fifa",
+    "allow_cached_payloads": true,
+    "degraded_mode_allowed": false,
+    "sources": [
+      {
+        "source_id": "sample-fifa-fixtures",
+        "url": "tests/fixtures/fifa/sample_competition_state.json",
+        "purpose": "fixtures"
+      }
+    ]
+  },
+  "feature_windows": {
+    "current_months": 12,
+    "max_months": 24,
+    "decay_half_life_days": 180
+  },
+  "simulation": {
+    "tournament_ruleset": "fifa-world-cup-2026",
+    "runs": 10000,
+    "random_seed": 20260618
+  },
+  "site": {
+    "language": "pt-BR",
+    "output_dir": "public",
+    "top_count": 10
+  }
+}
+

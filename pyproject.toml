@@ -1,0 +1,23 @@
+[project]
+name = "copa-2026-ai-forecast"
+version = "0.1.0"
+description = "Copa 2026 forecasting pipeline with official FIFA ETL and static predictions page."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+copa-forecast = "copa_forecast.cli:main"
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

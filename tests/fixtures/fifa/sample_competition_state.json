@@ -1,0 +1,31 @@
+{
+  "teams": [
+    {"id": "BRA", "name": "Brazil", "group": "C", "code": "BR"},
+    {"id": "MAR", "name": "Morocco", "group": "C", "code": "MA"},
+    {"id": "MEX", "name": "Mexico", "group": "A", "code": "MX"},
+    {"id": "RSA", "name": "South Africa", "group": "A", "code": "ZA"}
+  ],
+  "fixtures": [
+    {
+      "id": "match-001",
+      "group": "A",
+      "home_team": "Mexico",
+      "away_team": "South Africa",
+      "kickoff": "2026-06-11T19:00:00Z",
+      "venue": "Estadio Azteca",
+      "status": "completed",
+      "home_score": 2,
+      "away_score": 1
+    },
+    {
+      "id": "match-002",
+      "group": "C",
+      "home_team": "Brazil",
+      "away_team": "Morocco",
+      "kickoff": "2026-06-13T22:00:00Z",
+      "venue": "New York New Jersey Stadium",
+      "status": "scheduled"
+    }
+  ]
+}
+

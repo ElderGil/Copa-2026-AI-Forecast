@@ -1,0 +1,88 @@
+{
+  "run_id": "sample",
+  "updated_at": "2026-06-18T01:00:00-03:00",
+  "model_version": "mvp-recency-baseline-v1",
+  "calibration_status": "not_calibrated_mvp_baseline",
+  "pillars": [
+    {
+      "key": "official_competition_state",
+      "label": "Estado oficial FIFA",
+      "coverage": 1.0,
+      "available_teams": 4,
+      "total_teams": 4,
+      "source": "FIFA",
+      "status": "used"
+    },
+    {
+      "key": "recent_form_window",
+      "label": "Forma recente em janela temporal",
+      "coverage": 0.0,
+      "available_teams": 0,
+      "total_teams": 4,
+      "source": "official match records - pending ETL",
+      "status": "excluded_low_coverage"
+    }
+  ],
+  "benchmarks": [
+    {
+      "key": "fifa_power_rankings_aramco",
+      "label": "FIFA Power Rankings by Aramco",
+      "status": "candidate_benchmark_not_model_input",
+      "source": "FIFA"
+    }
+  ],
+  "teams": [
+    {
+      "rank": 1,
+      "team": "Brazil",
+      "team_id": "BRA",
+      "flag": "BR",
+      "group": "C",
+      "champion_probability": 0.18,
+      "strength": 118.0,
+      "tournament_signal": {"played": 0, "points": 0, "goals_for": 0, "goals_against": 0, "goal_difference": 0},
+      "used_pillars": ["official_competition_state"],
+      "excluded_pillars": ["recent_form_window"],
+      "summary": "Brazil: 1 pilares usados; 1 pilares excluidos por cobertura ou ausencia."
+    },
+    {
+      "rank": 2,
+      "team": "France",
+      "team_id": "FRA",
+      "flag": "FR",
+      "group": "D",
+      "champion_probability": 0.16,
+      "strength": 112.0,
+      "tournament_signal": {"played": 0, "points": 0, "goals_for": 0, "goals_against": 0, "goal_difference": 0},
+      "used_pillars": ["official_competition_state"],
+      "excluded_pillars": ["recent_form_window"],
+      "summary": "France: 1 pilares usados; 1 pilares excluidos por cobertura ou ausencia."
+    },
+    {
+      "rank": 3,
+      "team": "Argentina",
+      "team_id": "ARG",
+      "flag": "AR",
+      "group": "E",
+      "champion_probability": 0.12,
+      "strength": 108.0,
+      "tournament_signal": {"played": 0, "points": 0, "goals_for": 0, "goals_against": 0, "goal_difference": 0},
+      "used_pillars": ["official_competition_state"],
+      "excluded_pillars": ["recent_form_window"],
+      "summary": "Argentina: 1 pilares usados; 1 pilares excluidos por cobertura ou ausencia."
+    },
+    {
+      "rank": 4,
+      "team": "Spain",
+      "team_id": "ESP",
+      "flag": "ES",
+      "group": "F",
+      "champion_probability": 0.10,
+      "strength": 104.0,
+      "tournament_signal": {"played": 0, "points": 0, "goals_for": 0, "goals_against": 0, "goal_difference": 0},
+      "used_pillars": ["official_competition_state"],
+      "excluded_pillars": ["recent_form_window"],
+      "summary": "Spain: 1 pilares usados; 1 pilares excluidos por cobertura ou ausencia."
+    }
+  ]
+}

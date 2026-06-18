@@ -1,0 +1,62 @@
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
+from datetime import datetime
+from pathlib import Path
+from typing import Any
+
+
+@dataclass(frozen=True)
+class FifaExtract:
+    extract_id: str
+    source_id: str
+    source_url: str
+    retrieved_at: datetime
+    payload_path: Path
+    payload_format: str
+    checksum: str
+    parser_version: str
+    status: str = "retrieved"
+
+    def to_json_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        payload["retrieved_at"] = self.retrieved_at.isoformat()
+        payload["payload_path"] = str(self.payload_path)
+        return payload
+
+
+@dataclass(frozen=True)
+class Team:
+    team_id: str
+    name: str
+    group: str | None = None
+    flag_code: str | None = None
+    confederation: str | None = None
+
+
+@dataclass(frozen=True)
+class Fixture:
+    match_id: str
+    home_team: str
+    away_team: str
+    group: str | None
+    kickoff: str | None
+    venue: str | None
+    status: str
+    home_score: int | None = None
+    away_score: int | None = None
+    fifa_match_id: str | None = None
+
+
+@dataclass(frozen=True)
+class OfficialCompetitionState:
+    as_of_date: str
+    fifa_extract_ids: tuple[str, ...]
+    teams: tuple[Team, ...] = field(default_factory=tuple)
+    fixtures: tuple[Fixture, ...] = field(default_factory=tuple)
+    degraded: bool = False
+
+    @property
+    def is_official(self) -> bool:
+        return bool(self.fifa_extract_ids) and not self.degraded
+

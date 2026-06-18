@@ -1,0 +1,35 @@
+official:
+  fifa:
+    role: source_of_truth
+    covers:
+      - world_cup_fixtures
+      - teams
+      - groups
+      - venues
+      - kickoff_times
+      - match_status
+      - results
+      - regulations
+      - power_rankings_benchmark
+  confederations:
+    role: official_enrichment
+    covers:
+      - qualifiers
+      - continental_tournaments
+      - disciplinary_reports
+      - lineups
+  national_federations:
+    role: official_enrichment
+    covers:
+      - callups
+      - squad_changes
+      - injuries
+      - preparation_friendlies
+enrichment:
+  licensed_data:
+    role: analytical_enrichment
+    covers:
+      - expected_goals
+      - player_minutes
+      - odds_benchmark
+
