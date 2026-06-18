@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from copa_forecast.simulation.standings import TeamStanding, rank_group
 
-
 GROUP_ORDER = tuple("ABCDEFGHIJKL")
 WORLD_CUP_2026_GROUP_COUNT = 12
 WORLD_CUP_2026_TEAMS_PER_GROUP = 4

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from datetime import date
 from typing import Any
@@ -7,38 +9,25 @@ from typing import Any
 from copa_forecast.data.contracts import OfficialMatchRecord
 from copa_forecast.features.leakage import parse_record_date
 from copa_forecast.features.windows import exponential_decay_weight
-from copa_forecast.models.baselines import fifa_sum_ratings, three_way_baseline
+from copa_forecast.models.baselines import (
+    DEFAULT_HOME_ADVANTAGE,
+    fifa_sum_ratings,
+    three_way_baseline,
+)
 from copa_forecast.models.calibration import (
-    brier_score,
+    apply_temperature,
     calibration_bins,
     classification_accuracy,
     expected_calibration_error,
-    log_loss,
+    fit_temperature,
     maximum_calibration_error,
     multiclass_brier_score,
     multiclass_log_loss,
 )
 from copa_forecast.models.strength import adjust_rates_for_schedule_strength
-
+from copa_forecast.timeutils import add_months
 
 MATCH_OUTCOME_LABELS = ("home_win", "draw", "away_win")
-
-
-@dataclass(frozen=True)
-class EvaluationReport:
-    brier_score: float
-    log_loss: float
-    sample_count: int
-
-
-def evaluate_binary_probabilities(
-    probabilities: list[float], outcomes: list[int]
-) -> EvaluationReport:
-    return EvaluationReport(
-        brier_score=brier_score(probabilities, outcomes),
-        log_loss=log_loss(probabilities, outcomes),
-        sample_count=len(probabilities),
-    )
 
 
 @dataclass(frozen=True)
@@ -48,6 +37,8 @@ class MatchBacktestSample:
     home_team: str
     away_team: str
     outcome: str
+    competition: str
+    match_importance: str
     home_score: int
     away_score: int
     home_win_probability: float
@@ -109,7 +100,7 @@ def rolling_origin_backtest(
             key=lambda item: (parse_record_date(item.match_date), item.match_id),
         )
     )
-    evaluation_start = _add_months(as_of_date, -evaluation_months)
+    evaluation_start = add_months(as_of_date, -evaluation_months)
     samples: list[MatchBacktestSample] = []
 
     for target in played:
@@ -118,7 +109,7 @@ def rolling_origin_backtest(
             continue
         if target.home_score is None or target.away_score is None:
             continue
-        lookback_start = _add_months(target_date, -lookback_months)
+        lookback_start = add_months(target_date, -lookback_months)
         prior = tuple(
             match
             for match in played
@@ -148,13 +139,17 @@ def rolling_origin_backtest(
                 fifa_sum_ratings_by_team=fifa_sum_ratings_by_team,
             ),
         }
+        home_advantage = _home_advantage(target.venue_context)
         model = three_way_baseline(
-            ratings[target.home_team], ratings[target.away_team]
+            ratings[target.home_team],
+            ratings[target.away_team],
+            home_advantage=home_advantage,
         )
         baseline = three_way_baseline(1500.0, 1500.0)
         fifa_sum = three_way_baseline(
             fifa_sum_ratings_by_team.get(target.home_team, 1500.0),
             fifa_sum_ratings_by_team.get(target.away_team, 1500.0),
+            home_advantage=home_advantage,
         )
         prediction = {
             "home_win": model["win"],
@@ -172,6 +167,8 @@ def rolling_origin_backtest(
                 home_team=target.home_team,
                 away_team=target.away_team,
                 outcome=outcome,
+                competition=target.competition,
+                match_importance=target.match_importance,
                 home_score=target.home_score,
                 away_score=target.away_score,
                 home_win_probability=prediction["home_win"],
@@ -206,6 +203,15 @@ def rolling_origin_backtest(
         [1 if sample.prediction_correct else 0 for sample in samples],
         bin_count=bin_count,
     )
+    temperature = fit_temperature(
+        model_predictions, outcomes, labels=MATCH_OUTCOME_LABELS
+    )
+    calibrated_predictions = [
+        apply_temperature(prediction, temperature, labels=MATCH_OUTCOME_LABELS)
+        for prediction in model_predictions
+    ]
+    calibrated_metrics = _multiclass_metrics(calibrated_predictions, outcomes)
+    recent_window_start = add_months(as_of_date, -(evaluation_months // 2))
 
     return {
         "model_name": "recency_sos_adjusted_fifa_sum_prior_1x2",
@@ -266,9 +272,51 @@ def rolling_origin_backtest(
             "expected_calibration_error": expected_calibration_error(confidence_bins),
             "maximum_calibration_error": maximum_calibration_error(confidence_bins),
             "bins": [item.to_json_dict() for item in confidence_bins],
+            "method": "temperature_scaling",
+            "temperature": temperature,
+            "calibrated_metrics": calibrated_metrics,
+        },
+        "breakdowns": {
+            "by_match_importance": _breakdown(
+                samples, lambda sample: sample.match_importance
+            ),
+            "by_evaluation_window": _breakdown(
+                samples,
+                lambda sample: (
+                    "recent_half"
+                    if parse_record_date(sample.match_date) >= recent_window_start
+                    else "earlier_half"
+                ),
+            ),
         },
         "samples": [sample.to_json_dict() for sample in samples],
     }
+
+
+def _home_advantage(venue_context: str) -> float:
+    if venue_context == "home":
+        return DEFAULT_HOME_ADVANTAGE
+    if venue_context == "away":
+        return -DEFAULT_HOME_ADVANTAGE
+    return 0.0
+
+
+def _breakdown(
+    samples: list[MatchBacktestSample],
+    key_fn: Callable[[MatchBacktestSample], str],
+) -> dict[str, dict[str, float]]:
+    groups: dict[str, list[MatchBacktestSample]] = defaultdict(list)
+    for sample in samples:
+        groups[key_fn(sample)].append(sample)
+    breakdown: dict[str, dict[str, float]] = {}
+    for key, items in groups.items():
+        metrics = _multiclass_metrics(
+            [item.model_prediction for item in items],
+            [item.outcome for item in items],
+        )
+        metrics["sample_count"] = len(items)
+        breakdown[key] = metrics
+    return dict(sorted(breakdown.items()))
 
 
 def _multiclass_metrics(
@@ -385,20 +433,3 @@ def _importance_weight(match_importance: str) -> float:
         "world_cup": 1.60,
     }
     return weights.get(match_importance, 1.0)
-
-
-def _add_months(value: date, months: int) -> date:
-    month = value.month - 1 + months
-    year = value.year + month // 12
-    month = month % 12 + 1
-    day = min(day_count(year, month), value.day)
-    return date(year, month, day)
-
-
-def day_count(year: int, month: int) -> int:
-    if month == 2:
-        leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-        return 29 if leap else 28
-    if month in {4, 6, 9, 11}:
-        return 30
-    return 31

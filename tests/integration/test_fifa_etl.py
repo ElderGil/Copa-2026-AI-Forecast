@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from copa_forecast.config import parse_config
@@ -23,7 +23,7 @@ class FifaEtlIntegrationTest(unittest.TestCase):
                 payload=payload,
                 output_dir=tmp,
                 parser_version=parser.parser_version,
-                retrieved_at=datetime(2026, 6, 18, tzinfo=timezone.utc),
+                retrieved_at=datetime(2026, 6, 18, tzinfo=UTC),
             )
             state = build_competition_state(
                 extract=extract, as_of_date="2026-06-18", parser=parser
@@ -44,7 +44,7 @@ class FifaEtlIntegrationTest(unittest.TestCase):
                 payload=payload,
                 output_dir=root / "raw" / "fifa",
                 parser_version=parser.parser_version,
-                retrieved_at=datetime(2026, 6, 18, tzinfo=timezone.utc),
+                retrieved_at=datetime(2026, 6, 18, tzinfo=UTC),
             )
             state = build_competition_state(
                 extract=extract, as_of_date="2026-06-18", parser=parser
@@ -84,7 +84,7 @@ class FifaEtlIntegrationTest(unittest.TestCase):
             result = run_recent_match_etl(
                 config=config,
                 state=state,
-                retrieved_at=datetime(2026, 6, 18, tzinfo=timezone.utc),
+                retrieved_at=datetime(2026, 6, 18, tzinfo=UTC),
             )
 
             self.assertEqual(len(result.matches), 2)

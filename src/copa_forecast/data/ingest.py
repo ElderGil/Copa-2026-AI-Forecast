@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from copa_forecast.data.contracts import FifaExtract, OfficialCompetitionState
@@ -21,7 +21,7 @@ def persist_raw_extract(
 ) -> FifaExtract:
     """Persist raw FIFA bytes before parsing to preserve auditability."""
 
-    retrieved_at = retrieved_at or datetime.now(timezone.utc)
+    retrieved_at = retrieved_at or datetime.now(UTC)
     checksum = hashlib.sha256(payload).hexdigest()
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)

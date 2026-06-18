@@ -6,9 +6,13 @@ from dataclasses import dataclass
 from datetime import date
 from itertools import combinations
 
-from copa_forecast.data.contracts import Fixture, OfficialCompetitionState
+from copa_forecast.data.contracts import (
+    COMPLETED_STATUSES,
+    Fixture,
+    OfficialCompetitionState,
+)
 from copa_forecast.features.leakage import parse_record_date
-from copa_forecast.models.baselines import three_way_baseline
+from copa_forecast.models.baselines import NEUTRAL_STRENGTH, three_way_baseline
 from copa_forecast.simulation.rules import (
     KnockoutMatch,
     build_world_cup_2026_round_of_32_matches,
@@ -22,16 +26,6 @@ from copa_forecast.simulation.standings import (
     rank_group,
 )
 
-
-COMPLETED_STATUSES = {
-    "completed",
-    "complete",
-    "finished",
-    "played",
-    "full_time",
-    "full-time",
-    "final",
-}
 ADVANCEMENT_ROUNDS = (
     "round_of_32",
     "round_of_16",
@@ -56,12 +50,6 @@ FINAL_SPEC = (104, 101, 102)
 
 
 @dataclass(frozen=True)
-class TeamStrength:
-    team: str
-    strength: float
-
-
-@dataclass(frozen=True)
 class SimulatedKnockoutResult:
     match_number: int
     round_name: str
@@ -79,32 +67,6 @@ class TournamentRunResult:
     knockout_results: tuple[SimulatedKnockoutResult, ...]
 
 
-def simulate_champion_once(
-    teams: list[TeamStrength], *, rng: random.Random | None = None
-) -> str:
-    rng = rng or random.Random()
-    total = sum(max(team.strength, 0.0) for team in teams)
-    if total <= 0:
-        raise ValueError("At least one team must have positive strength.")
-    pick = rng.random() * total
-    running = 0.0
-    for team in teams:
-        running += max(team.strength, 0.0)
-        if running >= pick:
-            return team.team
-    return teams[-1].team
-
-
-def simulate_champion_distribution(
-    teams: list[TeamStrength], *, runs: int, seed: int
-) -> dict[str, float]:
-    rng = random.Random(seed)
-    counts: Counter[str] = Counter(
-        simulate_champion_once(teams, rng=rng) for _ in range(runs)
-    )
-    return {team: count / runs for team, count in counts.items()}
-
-
 def simulate_tournament_distribution(
     state: OfficialCompetitionState,
     *,
@@ -112,9 +74,15 @@ def simulate_tournament_distribution(
     runs: int,
     seed: int,
     as_of_date: date,
+    temperature: float = 1.0,
 ) -> dict[str, dict[str, float]]:
     if runs <= 0:
         raise ValueError("runs must be positive.")
+    # Temperature scaling reduces to rescaling the rating spread: because the
+    # match model divides the rating gap by T, shrinking each strength toward a
+    # common center by 1/T reproduces temperature exactly (the center cancels in
+    # the difference), with no plumbing through the bracket helpers.
+    strengths = _temperature_scaled_strengths(strengths, temperature)
     rng = random.Random(seed)
     team_names = [team.name for team in state.teams]
     counts: dict[str, Counter[str]] = {
@@ -231,12 +199,16 @@ def simulate_group_tables(
     tables: dict[str, list[TeamStanding]] = {}
     for group, teams in groups.items():
         table = empty_group_table(group, teams)
+        results: list[tuple[str, str, int, int]] = []
         for fixture in fixture_pairs[group]:
             home_score, away_score = _resolve_group_fixture(
                 fixture,
                 strengths=strengths,
                 rng=rng,
                 as_of_date=as_of_date,
+            )
+            results.append(
+                (fixture.home_team, fixture.away_team, home_score, away_score)
             )
             table = apply_match_result(
                 table,
@@ -245,7 +217,7 @@ def simulate_group_tables(
                 home_score=home_score,
                 away_score=away_score,
             )
-        tables[group] = rank_group(list(table.values()))
+        tables[group] = rank_group(list(table.values()), head_to_head_matches=results)
     return tables
 
 
@@ -388,18 +360,29 @@ def _knockout_winner(
         return home_team, "regulation"
     if outcome == "away":
         return away_team, "regulation"
-    home_strength = max(strengths.get(home_team, 100.0), 1.0)
-    away_strength = max(strengths.get(away_team, 100.0), 1.0)
+    home_strength = max(strengths.get(home_team, NEUTRAL_STRENGTH), 1.0)
+    away_strength = max(strengths.get(away_team, NEUTRAL_STRENGTH), 1.0)
     home_probability = home_strength / (home_strength + away_strength)
     return (home_team if rng.random() < home_probability else away_team), "extra_time_or_penalties"
+
+
+def _temperature_scaled_strengths(
+    strengths: dict[str, float], temperature: float, *, center: float = NEUTRAL_STRENGTH
+) -> dict[str, float]:
+    if temperature in (None, 1.0) or temperature <= 0:
+        return strengths
+    return {
+        team: center + (value - center) / temperature
+        for team, value in strengths.items()
+    }
 
 
 def _sample_three_way(
     home_team: str, away_team: str, strengths: dict[str, float], rng: random.Random
 ) -> str:
     probs = three_way_baseline(
-        strengths.get(home_team, 100.0),
-        strengths.get(away_team, 100.0),
+        strengths.get(home_team, NEUTRAL_STRENGTH),
+        strengths.get(away_team, NEUTRAL_STRENGTH),
     )
     pick = rng.random()
     if pick < probs["win"]:

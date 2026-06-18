@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-import os
-import sys
-import subprocess
 import glob
+import os
+import subprocess
+import sys
+
 
 def print_header(title):
     print("=" * 60)
@@ -13,6 +14,7 @@ def check_file_stubs():
     print_header("Checking File Structure and Non-Empty Implementations")
     required_paths = [
         "src/copa_forecast/config.py",
+        "src/copa_forecast/timeutils.py",
         "src/copa_forecast/data/contracts.py",
         "src/copa_forecast/data/ingest.py",
         "src/copa_forecast/data/normalize.py",
@@ -43,10 +45,11 @@ def check_file_stubs():
         
         # Check size / content to avoid empty stubs
         size = os.path.getsize(full_path)
-        with open(full_path, "r", encoding="utf-8") as f:
+        with open(full_path, encoding="utf-8") as f:
             content = f.read().strip()
             
-        if size < 50 or len(content) < 10 or "pass" in content.lower() and len(content.split("\n")) < 5:
+        is_stub = content in {"pass", ""} or content.splitlines()[:1] == ["pass"]
+        if size < 50 or len(content) < 10 or is_stub:
             print(f"[-] STUB OR EMPTY FILE: {path} (size: {size} bytes)")
             failures += 1
         else:
@@ -118,24 +121,35 @@ def verify_data_contracts():
 
 def check_temporal_leakage_compliance():
     print_header("Sanity Checking Temporal Leakage Prevention")
-    # Look for feature leakage tests or logic implementation
-    leakage_module = "src/copa_forecast/features/leakage.py"
-    if not os.path.exists(leakage_module):
-        print("[-] Leakage prevention module missing.")
-        return False
-        
-    with open(leakage_module, "r", encoding="utf-8") as f:
-        code = f.read()
-        
-    indicators = ["as_of_date", "before", "<", "date", "temporal"]
-    found_any = any(ind in code.lower() for ind in indicators)
-    
-    if not found_any:
-        print("[-] WARNING: Leakage module does not seem to contain date constraints or filters.")
-        return False
-        
-    print("[+] Temporal leakage filter logic presence verified in codebase.")
-    return True
+    # Functionally exercise the guard instead of grepping for keywords: a
+    # future-dated record MUST raise TemporalLeakageError.
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.pathsep.join(
+        item for item in ["src", env.get("PYTHONPATH", "")] if item
+    )
+    probe = (
+        "from datetime import date\n"
+        "from copa_forecast.features.leakage import (\n"
+        "    assert_no_future_records, TemporalLeakageError,\n"
+        ")\n"
+        "records = [{'match_date': '2099-01-01'}]\n"
+        "try:\n"
+        "    assert_no_future_records(records, date_field='match_date',"
+        " as_of_date=date(2026, 1, 1))\n"
+        "    raise SystemExit(1)\n"
+        "except TemporalLeakageError:\n"
+        "    raise SystemExit(0)\n"
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", probe], env=env, capture_output=True, text=True
+    )
+    if result.returncode == 0:
+        print("[+] Leakage guard rejects future-dated records.")
+        return True
+    print("[-] Leakage guard did NOT reject a future-dated record.")
+    print(result.stdout)
+    print(result.stderr)
+    return False
 
 def main():
     print("=" * 60)

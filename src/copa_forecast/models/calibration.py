@@ -10,7 +10,7 @@ def brier_score(probabilities: list[float], outcomes: list[int]) -> float:
         raise ValueError("probabilities and outcomes must have the same length.")
     if not probabilities:
         raise ValueError("At least one probability is required.")
-    return sum((p - y) ** 2 for p, y in zip(probabilities, outcomes)) / len(probabilities)
+    return sum((p - y) ** 2 for p, y in zip(probabilities, outcomes, strict=False)) / len(probabilities)
 
 
 def log_loss(probabilities: list[float], outcomes: list[int], eps: float = 1e-15) -> float:
@@ -19,7 +19,7 @@ def log_loss(probabilities: list[float], outcomes: list[int], eps: float = 1e-15
     if not probabilities:
         raise ValueError("At least one probability is required.")
     total = 0.0
-    for p, y in zip(probabilities, outcomes):
+    for p, y in zip(probabilities, outcomes, strict=False):
         bounded = min(max(p, eps), 1 - eps)
         total += y * math.log(bounded) + (1 - y) * math.log(1 - bounded)
     return -total / len(probabilities)
@@ -53,7 +53,7 @@ def multiclass_brier_score(
 ) -> float:
     _require_multiclass_inputs(predictions, outcomes, labels=labels)
     total = 0.0
-    for prediction, outcome in zip(predictions, outcomes):
+    for prediction, outcome in zip(predictions, outcomes, strict=False):
         normalized = _normalized_prediction(prediction, labels=labels)
         total += sum(
             (normalized[label] - (1.0 if label == outcome else 0.0)) ** 2
@@ -71,7 +71,7 @@ def multiclass_log_loss(
 ) -> float:
     _require_multiclass_inputs(predictions, outcomes, labels=labels)
     total = 0.0
-    for prediction, outcome in zip(predictions, outcomes):
+    for prediction, outcome in zip(predictions, outcomes, strict=False):
         normalized = _normalized_prediction(prediction, labels=labels)
         probability = min(max(normalized[outcome], eps), 1.0)
         total += math.log(probability)
@@ -83,7 +83,7 @@ def classification_accuracy(
 ) -> float:
     _require_multiclass_inputs(predictions, outcomes, labels=labels)
     correct = 0
-    for prediction, outcome in zip(predictions, outcomes):
+    for prediction, outcome in zip(predictions, outcomes, strict=False):
         normalized = _normalized_prediction(prediction, labels=labels)
         winner = max(labels, key=lambda label: (normalized[label], label))
         correct += 1 if winner == outcome else 0
@@ -104,7 +104,7 @@ def calibration_bins(
         {"probabilities": [], "outcomes": []}
         for _ in range(bin_count)
     ]
-    for probability, outcome in zip(probabilities, outcomes):
+    for probability, outcome in zip(probabilities, outcomes, strict=False):
         if outcome not in (0, 1):
             raise ValueError("outcomes must be binary values.")
         bounded = min(max(probability, 0.0), 1.0)
@@ -150,6 +150,61 @@ def expected_calibration_error(bins: list[CalibrationBin]) -> float:
 def maximum_calibration_error(bins: list[CalibrationBin]) -> float:
     populated = [item.absolute_error for item in bins if item.sample_count > 0]
     return max(populated, default=0.0)
+
+
+def apply_temperature(
+    prediction: dict[str, float],
+    temperature: float,
+    *,
+    labels: tuple[str, ...],
+    eps: float = 1e-12,
+) -> dict[str, float]:
+    """Temperature-scale a probability vector via log-space division by T."""
+
+    if temperature <= 0:
+        raise ValueError("temperature must be positive.")
+    normalized = _normalized_prediction(prediction, labels=labels)
+    logits = {label: math.log(max(normalized[label], eps)) / temperature for label in labels}
+    max_logit = max(logits.values())
+    exps = {label: math.exp(logit - max_logit) for label, logit in logits.items()}
+    total = sum(exps.values())
+    return {label: value / total for label, value in exps.items()}
+
+
+def fit_temperature(
+    predictions: list[dict[str, float]],
+    outcomes: list[str],
+    *,
+    labels: tuple[str, ...],
+    bounds: tuple[float, float] = (0.5, 5.0),
+    iterations: int = 40,
+) -> float:
+    """Find the temperature minimizing multiclass log loss (1-D golden search)."""
+
+    _require_multiclass_inputs(predictions, outcomes, labels=labels)
+
+    def loss(temperature: float) -> float:
+        scaled = [
+            apply_temperature(prediction, temperature, labels=labels)
+            for prediction in predictions
+        ]
+        return multiclass_log_loss(scaled, outcomes, labels=labels)
+
+    low, high = bounds
+    golden = (math.sqrt(5) - 1) / 2
+    c = high - golden * (high - low)
+    d = low + golden * (high - low)
+    fc, fd = loss(c), loss(d)
+    for _ in range(iterations):
+        if fc < fd:
+            high, d, fd = d, c, fc
+            c = high - golden * (high - low)
+            fc = loss(c)
+        else:
+            low, c, fc = c, d, fd
+            d = low + golden * (high - low)
+            fd = loss(d)
+    return round((low + high) / 2, 4)
 
 
 def _require_multiclass_inputs(

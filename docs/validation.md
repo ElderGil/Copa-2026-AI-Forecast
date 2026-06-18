@@ -1,5 +1,24 @@
 # Validacao
 
+## 2026-06-18 - Phase 9: remediacao de credibilidade (feature 002)
+
+Escopo em [specs/002-credibility-remediation/](../specs/002-credibility-remediation/).
+
+- `pytest -q`: 53 testes passam (45 originais + 8 novos cobrindo empate dinamico,
+  paridade da media ponderada, join normalizado, head-to-head e temperature
+  scaling). `pytest` e `ruff` agora fazem parte das dev deps (`pip install -e
+  ".[dev]"`), entao o validador roda direto via `pytest`.
+- `ruff check .`: limpo (regras E/F/I/UP/B; E501 nao bloqueia codigo legado).
+- `scripts/verify_implementation.py`: `[SUCCESS]` com a nova checagem funcional
+  de vazamento temporal (rejeita registro datado no futuro).
+- Backtest rolling-origin (407 amostras): empates passam a ser previstos
+  (61/407), temperatura ajustada `T=2.395`; metricas calibradas
+  Brier `0.567` / Log loss `0.969`. Recortes por competicao e janela adicionados.
+- Observacao de validade de face: o ranking de campeao melhora parcialmente
+  (Brasil sai de #25 para ~#19), mas a fragilidade residual vem do prior local
+  cold-start, cuja substituicao por um Elo global historico esta listada como
+  non-goal da feature 002.
+
 ## 2026-06-18 - Phase 8: operacao diaria e publicacao
 
 Comando executado no projeto real:

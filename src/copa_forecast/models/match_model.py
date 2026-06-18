@@ -13,7 +13,7 @@ class MatchProbability:
     draw: float
     loss: float
 
-    def normalized(self) -> "MatchProbability":
+    def normalized(self) -> MatchProbability:
         total = self.win + self.draw + self.loss
         if total <= 0:
             raise ValueError("Probability total must be positive.")
@@ -27,8 +27,23 @@ class MatchProbability:
 
 
 class BaselineMatchModel:
-    def predict(self, team: str, opponent: str, ratings: dict[str, float]) -> MatchProbability:
-        probs = three_way_baseline(ratings[team], ratings[opponent])
+    """Public match-probability interface over the shared three-way model."""
+
+    def predict(
+        self,
+        team: str,
+        opponent: str,
+        ratings: dict[str, float],
+        *,
+        home_advantage: float = 0.0,
+        temperature: float = 1.0,
+    ) -> MatchProbability:
+        probs = three_way_baseline(
+            ratings[team],
+            ratings[opponent],
+            home_advantage=home_advantage,
+            temperature=temperature,
+        )
         return MatchProbability(
             team=team,
             opponent=opponent,

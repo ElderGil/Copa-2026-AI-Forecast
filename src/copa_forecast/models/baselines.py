@@ -5,19 +5,44 @@ import math
 from copa_forecast.data.contracts import OfficialMatchRecord
 from copa_forecast.features.leakage import parse_record_date
 
+# Typical international home-field edge expressed in Elo points (~0.5-0.6 goals).
+# Neutral venues (most World Cup matches) use 0.0.
+DEFAULT_HOME_ADVANTAGE = 65.0
+# Strength assigned to a team that is missing from the strengths table; kept on
+# the same ~1500 scale as real ratings so the Elo math stays meaningful.
+NEUTRAL_STRENGTH = 1500.0
+
 
 def elo_expected_score(team_rating: float, opponent_rating: float) -> float:
     return 1 / (1 + math.pow(10, (opponent_rating - team_rating) / 400))
 
 
 def three_way_baseline(
-    team_rating: float, opponent_rating: float, *, draw_probability: float = 0.26
+    team_rating: float,
+    opponent_rating: float,
+    *,
+    home_advantage: float = 0.0,
+    draw_max: float = 0.40,
+    draw_scale: float = 300.0,
+    temperature: float = 1.0,
 ) -> dict[str, float]:
-    win_share = elo_expected_score(team_rating, opponent_rating)
-    decisive = 1 - draw_probability
+    """Three-way (win/draw/loss) probabilities for regulation time.
+
+    The draw probability is no longer fixed: it peaks for level matchups (so a
+    draw can be the most likely outcome) and decays as the effective rating gap
+    grows. ``home_advantage`` shifts the gap in favor of the listed team, and
+    ``temperature`` (>1 softens, <1 sharpens) supports post-hoc calibration.
+    """
+
+    effective_diff = (team_rating - opponent_rating + home_advantage) / max(
+        temperature, 1e-6
+    )
+    win_share = 1 / (1 + math.pow(10, -effective_diff / 400))
+    draw = draw_max * math.exp(-((effective_diff / draw_scale) ** 2))
+    decisive = 1 - draw
     return {
         "win": win_share * decisive,
-        "draw": draw_probability,
+        "draw": draw,
         "loss": (1 - win_share) * decisive,
     }
 

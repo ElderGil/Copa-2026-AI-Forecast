@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from copa_forecast.config import load_config
-from copa_forecast.data.contracts import OfficialCompetitionState
+from copa_forecast.data.contracts import Fixture, OfficialCompetitionState
 from copa_forecast.data.ingest import build_competition_state, persist_raw_extract
 from copa_forecast.data.recent_matches import load_recent_matches, run_recent_match_etl
 from copa_forecast.data.sources.fifa import JsonFifaParser, UrlOrFileFifaCrawler
@@ -18,6 +18,7 @@ from copa_forecast.data.validate import (
 from copa_forecast.forecast import build_latest_forecast
 from copa_forecast.models.evaluation import rolling_origin_backtest
 from copa_forecast.reporting.artifacts import (
+    update_readme_validation_section,
     write_advancement_csv,
     write_advancement_probabilities,
     write_backtest_report,
@@ -28,7 +29,6 @@ from copa_forecast.reporting.artifacts import (
     write_forecast_run_metadata,
     write_forecast_team_csv,
     write_pillar_report_csv,
-    update_readme_validation_section,
 )
 from copa_forecast.reporting.explanations import build_explanation_payload
 from copa_forecast.site.static_page import render_static_page
@@ -128,7 +128,12 @@ def forecast(config_path: str, *, recent_matches_path: str | None = None) -> int
     recent_matches = _load_recent_matches_for_run(
         config_path=config_path, recent_matches_path=recent_matches_path
     )
-    latest = build_latest_forecast(config=config, state=state, recent_matches=recent_matches)
+    latest = build_latest_forecast(
+        config=config,
+        state=state,
+        recent_matches=recent_matches,
+        match_temperature=_load_match_temperature(config),
+    )
     render_static_page(
         latest=latest,
         github_url=config.project_github_url,
@@ -236,6 +241,7 @@ def backtest(
     write_backtest_samples_csv(samples_csv, report)
     write_calibration_bins_csv(calibration_csv, report)
     update_readme_validation_section(readme_path, report)
+    _write_match_temperature(config, report)
     print(
         json.dumps(
             {
@@ -262,22 +268,79 @@ def _read_json_if_exists(path: Path) -> dict[str, Any] | None:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _calibration_temperature_path(config) -> Path:
+    return (
+        config.site.output_dir.parent
+        / "data"
+        / "processed"
+        / "calibration"
+        / "temperature.json"
+    )
+
+
+def _write_match_temperature(config, report: dict[str, Any]) -> None:
+    """Persist the fitted temperature to a stable path the forecast can read."""
+
+    temperature = report.get("calibration", {}).get("temperature")
+    if temperature is None:
+        return
+    path = _calibration_temperature_path(config)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "temperature": temperature,
+                "run_id": report.get("model_name"),
+                "as_of_date": report.get("as_of_date"),
+                "sample_count": report.get("sample_count"),
+            },
+            indent=2,
+            sort_keys=True,
+        ),
+        encoding="utf-8",
+    )
+
+
+def _load_match_temperature(config) -> float:
+    """Read the most recent fitted temperature; default to 1.0 when absent."""
+
+    report = _read_json_if_exists(_calibration_temperature_path(config))
+    if not report:
+        return 1.0
+    try:
+        value = float(report.get("temperature"))
+    except (TypeError, ValueError):
+        return 1.0
+    return value if value > 0 else 1.0
+
+
 def _compare_backtest_reports(
     *, previous: dict[str, Any], current: dict[str, Any]
 ) -> dict[str, Any]:
-    previous_metrics = {
-        **previous.get("metrics", {}),
-        "expected_calibration_error": previous.get("calibration", {}).get(
-            "expected_calibration_error"
-        ),
-        "maximum_calibration_error": previous.get("calibration", {}).get(
-            "maximum_calibration_error"
-        ),
-    }
-    previous_model_name = previous.get("model_name", "unknown")
-    previous_sample_count = previous.get("sample_count")
-    current_metrics = current.get("metrics", {})
+    previous_reference = previous.get("previous_model_comparison")
+    if isinstance(previous_reference, dict) and isinstance(
+        previous_reference.get("previous"), dict
+    ):
+        previous_metrics = previous_reference["previous"]
+        previous_model_name = previous_reference.get("previous_model_name", "unknown")
+        previous_sample_count = previous_reference.get("previous_sample_count")
+    else:
+        previous_metrics = {
+            **previous.get("metrics", {}),
+            "expected_calibration_error": previous.get("calibration", {}).get(
+                "expected_calibration_error"
+            ),
+            "maximum_calibration_error": previous.get("calibration", {}).get(
+                "maximum_calibration_error"
+            ),
+        }
+        previous_model_name = previous.get("model_name", "unknown")
+        previous_sample_count = previous.get("sample_count")
     current_calibration = current.get("calibration", {})
+    # Compare what is actually deployed: the calibrated probabilistic metrics.
+    current_metrics = current_calibration.get("calibrated_metrics") or current.get(
+        "metrics", {}
+    )
     return {
         "previous_model_name": previous_model_name,
         "current_model_name": current.get("model_name", "unknown"),
@@ -375,7 +438,7 @@ def _load_official_states(config_path: str) -> list[OfficialCompetitionState]:
             payload=payload,
             output_dir=config.official_fifa.raw_output_dir,
             parser_version=parser.parser_version,
-            retrieved_at=datetime.now(timezone.utc),
+            retrieved_at=datetime.now(UTC),
         )
         state = build_competition_state(
             extract=extract,
@@ -397,18 +460,21 @@ def _merge_official_states(states: list[OfficialCompetitionState]) -> OfficialCo
         return states[0]
 
     team_by_id = {}
-    fixtures = []
+    fixtures_by_id: dict[str, Fixture] = {}
     extract_ids = []
     for state in states:
         extract_ids.extend(state.fifa_extract_ids)
         for team in state.teams:
             team_by_id[team.team_id] = team
-        fixtures.extend(state.fixtures)
+        for fixture in state.fixtures:
+            # Dedupe across overlapping sources so a fixture is not double-counted
+            # in tournament signals.
+            fixtures_by_id[fixture.fifa_match_id or fixture.match_id] = fixture
     return OfficialCompetitionState(
         as_of_date=states[-1].as_of_date,
         fifa_extract_ids=tuple(extract_ids),
         teams=tuple(team_by_id.values()),
-        fixtures=tuple(fixtures),
+        fixtures=tuple(fixtures_by_id.values()),
         degraded=any(state.degraded for state in states),
     )
 

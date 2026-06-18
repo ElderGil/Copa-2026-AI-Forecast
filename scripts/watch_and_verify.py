@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 import os
+import subprocess
 import sys
 import time
-import subprocess
 
 WATCH_DIRS = ["src", "tests", "specs", "configs"]
 WATCH_EXTENSIONS = (".py", ".yaml", ".json", ".md")
@@ -37,7 +37,7 @@ def trigger_verification():
     verify_script = os.path.join(os.getcwd(), "scripts", "verify_implementation.py")
     try:
         # Run verify_implementation.py using the active python interpreter
-        result = subprocess.run(
+        subprocess.run(
             [sys.executable, verify_script],
             check=False
         )
@@ -45,7 +45,7 @@ def trigger_verification():
         print(f"Error running verification script: {e}")
 
 def main():
-    print(f"Starting developer daemon watcher...")
+    print("Starting developer daemon watcher...")
     print(f"Monitoring directories: {', '.join(WATCH_DIRS)}")
     print(f"Watching extensions: {', '.join(WATCH_EXTENSIONS)}")
     print("Press Ctrl+C to stop.")

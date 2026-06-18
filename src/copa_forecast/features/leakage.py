@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping
 from datetime import date, datetime
-from typing import Iterable, Mapping
 
 
 class TemporalLeakageError(ValueError):

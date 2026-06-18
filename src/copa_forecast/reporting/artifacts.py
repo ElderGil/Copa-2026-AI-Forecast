@@ -256,15 +256,27 @@ def _validation_markdown_section(report: dict[str, Any]) -> str:
     metrics = report["metrics"]
     primary = report["primary_baseline_metrics"]
     comparison = report["primary_baseline_comparison"]
-    baseline_name = "FIFA SUM-style Elo"
+    calibration = report.get("calibration", {})
+    # The deployed forecast applies the fitted temperature, so the public table
+    # reports the calibrated probabilistic metrics (accuracy is argmax-invariant).
+    calibrated = calibration.get("calibrated_metrics", metrics)
+    temperature = calibration.get("temperature")
+    baseline_name = "Elo local estilo SUM (calculado dos jogos FIFA)"
     model_name = "Copa 2026 AI Forecast"
     updated_at = report.get("as_of_date", "")
     sample_count = report.get("sample_count", 0)
     evaluation_start = report.get("evaluation_start", "")
-    ece = report.get("calibration", {}).get("expected_calibration_error", 0.0)
-    mce = report.get("calibration", {}).get("maximum_calibration_error", 0.0)
+    ece = calibration.get("expected_calibration_error", 0.0)
+    mce = calibration.get("maximum_calibration_error", 0.0)
     source_note = report.get("primary_baseline_source", "")
     previous_section = _previous_model_section(report.get("previous_model_comparison"))
+    brier_delta = calibrated["brier_score"] - primary["brier_score"]
+    log_loss_delta = calibrated["log_loss"] - primary["log_loss"]
+    temperature_line = (
+        f"**Calibração:** temperature scaling (T={temperature})"
+        if temperature is not None
+        else "**Calibração:** não aplicada"
+    )
 
     rows = [
         _metric_row(
@@ -285,19 +297,19 @@ def _validation_markdown_section(report: dict[str, Any]) -> str:
         ),
         _metric_row(
             "Brier score",
-            _num(metrics["brier_score"]),
+            _num(calibrated["brier_score"]),
             _num(primary["brier_score"]),
-            _num(comparison["brier_delta"]),
-            _status_lower_is_better(comparison["brier_delta"]),
-            "Erro probabilístico multiclasses; quanto menor, melhor. Zero seria uma previsão perfeita.",
+            _num(brier_delta),
+            _status_lower_is_better(brier_delta),
+            "Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.",
         ),
         _metric_row(
             "Log loss",
-            _num(metrics["log_loss"]),
+            _num(calibrated["log_loss"]),
             _num(primary["log_loss"]),
-            _num(comparison["log_loss_delta"]),
-            _status_lower_is_better(comparison["log_loss_delta"]),
-            "Pune previsões confiantes e erradas; quanto menor, melhor. É mais severo que o Brier.",
+            _num(log_loss_delta),
+            _status_lower_is_better(log_loss_delta),
+            "Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.",
         ),
         _metric_row(
             "ECE calibração",
@@ -323,6 +335,7 @@ def _validation_markdown_section(report: dict[str, Any]) -> str:
             f"**Última atualização dos dados:** `{updated_at}`",
             f"**Modelo:** `{model_name}`",
             f"**Baseline principal:** `{baseline_name}`",
+            temperature_line,
             "",
             "| Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |",
             "|---|---:|---:|---:|---|",

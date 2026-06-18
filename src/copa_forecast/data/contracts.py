@@ -5,6 +5,20 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+# Canonical set of match/fixture statuses that count as "played" across the
+# pipeline. Centralized here so ingestion, forecasting, and simulation agree.
+COMPLETED_STATUSES = frozenset(
+    {
+        "completed",
+        "complete",
+        "finished",
+        "played",
+        "full_time",
+        "full-time",
+        "final",
+    }
+)
+
 
 @dataclass(frozen=True)
 class FifaExtract:

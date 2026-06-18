@@ -1,15 +1,20 @@
 from __future__ import annotations
 
 import json
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
-from urllib.request import urlopen
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 from copa_forecast.data.contracts import Fixture, OfficialMatchRecord, Team
 
-
 PARSER_VERSION = "fifa-json-parser-v1"
+USER_AGENT = (
+    "copa-2026-ai-forecast/0.1 "
+    "(+https://github.com/ElderGil/Copa-2026-AI-Forecast)"
+)
 
 
 class FifaSourceError(RuntimeError):
@@ -24,7 +29,7 @@ class FifaCrawler(Protocol):
 class FifaParser(Protocol):
     parser_version: str
 
-    def parse(self, payload: bytes) -> "ParsedFifaPayload":
+    def parse(self, payload: bytes) -> ParsedFifaPayload:
         """Parse raw bytes into normalized competition-state fragments."""
 
 
@@ -35,15 +40,55 @@ class ParsedFifaPayload:
 
 
 class UrlOrFileFifaCrawler:
-    """Crawler that is intentionally decoupled from parser volatility."""
+    """Crawler that is intentionally decoupled from parser volatility.
+
+    HTTP fetches send a User-Agent and retry with backoff so a single transient
+    failure does not abort a 48-team daily ETL. Only http(s), file://, and bare
+    local paths are accepted; any other scheme is rejected.
+    """
+
+    def __init__(
+        self,
+        *,
+        timeout: float = 30.0,
+        retries: int = 3,
+        backoff_seconds: float = 1.5,
+        user_agent: str = USER_AGENT,
+    ) -> None:
+        self._timeout = timeout
+        self._retries = max(1, retries)
+        self._backoff_seconds = backoff_seconds
+        self._user_agent = user_agent
 
     def fetch(self, url_or_path: str) -> bytes:
         if url_or_path.startswith(("https://", "http://")):
-            with urlopen(url_or_path, timeout=30) as response:
-                return response.read()
+            return self._fetch_http(url_or_path)
         if url_or_path.startswith("file://"):
             return Path(url_or_path.removeprefix("file://")).read_bytes()
+        if "://" in url_or_path.split("?", 1)[0]:
+            raise FifaSourceError(f"Unsupported source scheme: {url_or_path}")
         return Path(url_or_path).read_bytes()
+
+    def _fetch_http(self, url: str) -> bytes:
+        last_error: Exception | None = None
+        for attempt in range(self._retries):
+            try:
+                request = Request(
+                    url,
+                    headers={
+                        "User-Agent": self._user_agent,
+                        "Accept": "application/json",
+                    },
+                )
+                with urlopen(request, timeout=self._timeout) as response:
+                    return response.read()
+            except (HTTPError, URLError, TimeoutError) as exc:
+                last_error = exc
+                if attempt + 1 < self._retries:
+                    time.sleep(self._backoff_seconds * (attempt + 1))
+        raise FifaSourceError(
+            f"Failed to fetch FIFA payload after {self._retries} attempts: {url}"
+        ) from last_error
 
 
 class JsonFifaParser:

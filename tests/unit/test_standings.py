@@ -37,6 +37,21 @@ class StandingsTest(unittest.TestCase):
 
         self.assertEqual(ranked[0].team, "Alpha")
 
+    def test_head_to_head_breaks_ties_on_equal_points_gd_gf(self) -> None:
+        # Alpha and Beta are level on points, GD and GF, but Beta beat Alpha in
+        # their mutual match, so head-to-head must rank Beta first.
+        standings = [
+            TeamStanding("Alpha", points=3, goal_difference=1, goals_for=2),
+            TeamStanding("Beta", points=3, goal_difference=1, goals_for=2),
+        ]
+        matches = [("Beta", "Alpha", 1, 0)]
+
+        without_h2h = rank_group(standings)
+        with_h2h = rank_group(standings, head_to_head_matches=matches)
+
+        self.assertEqual(without_h2h[0].team, "Alpha")  # name fallback only
+        self.assertEqual(with_h2h[0].team, "Beta")
+
 
 if __name__ == "__main__":
     unittest.main()

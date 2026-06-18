@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 TEAM_DISPLAY_NAMES_PT_BR = {
     "Algeria": "Argélia",
     "Argentina": "Argentina",

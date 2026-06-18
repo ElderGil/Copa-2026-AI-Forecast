@@ -18,15 +18,76 @@ class TeamStanding:
     goals_against: int = 0
 
 
-def rank_group(standings: list[TeamStanding]) -> list[TeamStanding]:
-    """Rank teams using core FIFA-like criteria available in the MVP."""
+def rank_group(
+    standings: list[TeamStanding],
+    *,
+    head_to_head_matches: list[tuple[str, str, int, int]] | None = None,
+) -> list[TeamStanding]:
+    """Rank teams using core FIFA-like criteria.
 
+    Order: points, goal difference, goals for. When ``head_to_head_matches`` is
+    provided (a group's ``(home, away, home_score, away_score)`` results), teams
+    still tied on those three are separated by their mutual results (points, then
+    goal difference, then goals scored among the tied set) before the
+    fair-play / name fallbacks. Fair-play points and drawing of lots are not
+    modeled.
+    """
+
+    if not head_to_head_matches:
+        return sorted(standings, key=_overall_sort_key)
+
+    primary = sorted(standings, key=_overall_sort_key)
+    ordered: list[TeamStanding] = []
+    index = 0
+    while index < len(primary):
+        end = index
+        tie_key = _tie_key(primary[index])
+        while end < len(primary) and _tie_key(primary[end]) == tie_key:
+            end += 1
+        run = primary[index:end]
+        if len(run) > 1:
+            ordered.extend(_order_by_head_to_head(run, head_to_head_matches))
+        else:
+            ordered.extend(run)
+        index = end
+    return ordered
+
+
+def _overall_sort_key(row: TeamStanding) -> tuple:
+    return (
+        -row.points,
+        -row.goal_difference,
+        -row.goals_for,
+        row.fair_play_points,
+        row.team.casefold(),
+    )
+
+
+def _tie_key(row: TeamStanding) -> tuple[int, int, int]:
+    return (row.points, row.goal_difference, row.goals_for)
+
+
+def _order_by_head_to_head(
+    tied: list[TeamStanding], matches: list[tuple[str, str, int, int]]
+) -> list[TeamStanding]:
+    names = {row.team for row in tied}
+    mini: dict[str, list[int]] = {name: [0, 0, 0] for name in names}
+    for home, away, home_score, away_score in matches:
+        if home not in names or away not in names:
+            continue
+        home_points, away_points = points_for_result(home_score, away_score)
+        mini[home][0] += home_points
+        mini[home][1] += home_score - away_score
+        mini[home][2] += home_score
+        mini[away][0] += away_points
+        mini[away][1] += away_score - home_score
+        mini[away][2] += away_score
     return sorted(
-        standings,
+        tied,
         key=lambda row: (
-            -row.points,
-            -row.goal_difference,
-            -row.goals_for,
+            -mini[row.team][0],
+            -mini[row.team][1],
+            -mini[row.team][2],
             row.fair_play_points,
             row.team.casefold(),
         ),

@@ -1,17 +1,25 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from dataclasses import dataclass, fields
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
 from copa_forecast.config import ForecastConfig, RecentMatchSourceConfig
-from copa_forecast.data.contracts import OfficialCompetitionState, OfficialMatchRecord, Team
+from copa_forecast.data.contracts import (
+    OfficialCompetitionState,
+    OfficialMatchRecord,
+    Team,
+)
 from copa_forecast.data.ingest import persist_raw_extract
-from copa_forecast.data.sources.fifa import FifaCalendarMatchParser, UrlOrFileFifaCrawler
-from copa_forecast.features.leakage import parse_record_date
+from copa_forecast.data.sources.fifa import (
+    FifaCalendarMatchParser,
+    UrlOrFileFifaCrawler,
+)
+from copa_forecast.features.leakage import assert_no_future_records, parse_record_date
 from copa_forecast.reporting.artifacts import write_excel_safe_csv, write_json
+from copa_forecast.timeutils import add_months
 
 
 @dataclass(frozen=True)
@@ -29,8 +37,8 @@ def run_recent_match_etl(
     state: OfficialCompetitionState,
     retrieved_at: datetime | None = None,
 ) -> RecentMatchEtlResult:
-    retrieved_at = retrieved_at or datetime.now(timezone.utc)
-    from_date = _add_months(config.as_of_date, -config.feature_windows.max_months)
+    retrieved_at = retrieved_at or datetime.now(UTC)
+    from_date = add_months(config.as_of_date, -config.feature_windows.max_months)
     crawler = UrlOrFileFifaCrawler()
     parser = FifaCalendarMatchParser()
     records: list[OfficialMatchRecord] = []
@@ -71,6 +79,13 @@ def run_recent_match_etl(
             )
         )
     )
+    # Audited temporal guard: the processed feed must never contain a match dated
+    # on or after the run's as_of_date.
+    assert_no_future_records(
+        [match.to_json_dict() for match in matches],
+        date_field="match_date",
+        as_of_date=config.as_of_date,
+    )
     output_dir = config.recent_matches.processed_output_dir
     output_json = output_dir / "latest_matches.json"
     output_csv = output_dir / "latest_matches.csv"
@@ -105,7 +120,18 @@ def run_recent_match_etl(
 
 def load_recent_matches(path: str | Path) -> tuple[OfficialMatchRecord, ...]:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
-    return tuple(OfficialMatchRecord(**item) for item in payload.get("matches", []))
+    allowed = {field.name for field in fields(OfficialMatchRecord)}
+    records: list[OfficialMatchRecord] = []
+    for item in payload.get("matches", []):
+        if not isinstance(item, dict):
+            continue
+        kwargs = {key: value for key, value in item.items() if key in allowed}
+        try:
+            records.append(OfficialMatchRecord(**kwargs))
+        except TypeError:
+            # Skip records missing required fields rather than failing the run.
+            continue
+    return tuple(records)
 
 
 def build_recent_match_coverage(
@@ -116,8 +142,8 @@ def build_recent_match_coverage(
     current_window_months: int,
     max_window_months: int,
 ) -> dict[str, Any]:
-    max_from = _add_months(as_of_date, -max_window_months)
-    current_from = _add_months(as_of_date, -current_window_months)
+    max_from = add_months(as_of_date, -max_window_months)
+    current_from = add_months(as_of_date, -current_window_months)
     by_team = {team.name: {"max_window": 0, "current_window": 0} for team in teams}
     for match in matches:
         match_date = parse_record_date(match.match_date)
@@ -201,23 +227,6 @@ def _dedupe_matches(matches: list[OfficialMatchRecord]) -> list[OfficialMatchRec
         key = match.fifa_match_id or match.match_id
         deduped[key] = match
     return sorted(deduped.values(), key=lambda item: (item.match_date, item.match_id))
-
-
-def _add_months(value: date, months: int) -> date:
-    month = value.month - 1 + months
-    year = value.year + month // 12
-    month = month % 12 + 1
-    day = min(value.day, _days_in_month(year, month))
-    return date(year, month, day)
-
-
-def _days_in_month(year: int, month: int) -> int:
-    if month == 2:
-        leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-        return 29 if leap else 28
-    if month in {4, 6, 9, 11}:
-        return 30
-    return 31
 
 
 def _safe_id(value: str) -> str:

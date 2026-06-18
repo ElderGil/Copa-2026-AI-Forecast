@@ -4,8 +4,10 @@ from dataclasses import dataclass
 from datetime import date
 
 from copa_forecast.data.contracts import OfficialMatchRecord, Team
+from copa_forecast.data.normalize import normalize_name
 from copa_forecast.features.leakage import parse_record_date
 from copa_forecast.features.windows import exponential_decay_weight
+from copa_forecast.timeutils import add_months
 
 
 @dataclass(frozen=True)
@@ -43,46 +45,53 @@ def build_recent_team_features(
     half_life_days: int,
     opponent_ratings: dict[str, float] | None = None,
 ) -> dict[str, RecentTeamFeatures]:
-    current_start = _add_months(as_of_date, -current_window_months)
-    max_start = _add_months(as_of_date, -max_window_months)
+    current_start = add_months(as_of_date, -current_window_months)
+    max_start = add_months(as_of_date, -max_window_months)
     accumulators = {team.name: _MutableRecentFeatures(team.name) for team in teams}
     opponent_ratings = opponent_ratings or {}
+    # Deterministic, accent/case-insensitive join so localized name variants
+    # from a different FIFA endpoint still attach to the canonical team.
+    canonical_name = {normalize_name(team.name): team.name for team in teams}
     for match in matches:
         match_date = parse_record_date(match.match_date)
         if not (max_start <= match_date < as_of_date):
             continue
         if match.home_score is None or match.away_score is None:
             continue
+        home_name = canonical_name.get(normalize_name(match.home_team))
+        away_name = canonical_name.get(normalize_name(match.away_team))
         weight = exponential_decay_weight(
             match_date, as_of_date=as_of_date, half_life_days=half_life_days
         )
         importance = _importance_weight(match.match_importance)
-        _apply_match(
-            accumulators,
-            team=match.home_team,
-            points=_points(match.home_score, match.away_score),
-            goals_for=match.home_score,
-            goals_against=match.away_score,
-            weight=weight,
-            importance=importance,
-            opponent_rating=opponent_ratings.get(match.away_team, 1500.0),
-            venue_context=match.venue_context,
-            in_current_window=match_date >= current_start,
-            listed_home=True,
-        )
-        _apply_match(
-            accumulators,
-            team=match.away_team,
-            points=_points(match.away_score, match.home_score),
-            goals_for=match.away_score,
-            goals_against=match.home_score,
-            weight=weight,
-            importance=importance,
-            opponent_rating=opponent_ratings.get(match.home_team, 1500.0),
-            venue_context=match.venue_context,
-            in_current_window=match_date >= current_start,
-            listed_home=False,
-        )
+        if home_name is not None:
+            _apply_match(
+                accumulators,
+                team=home_name,
+                points=_points(match.home_score, match.away_score),
+                goals_for=match.home_score,
+                goals_against=match.away_score,
+                weight=weight,
+                importance=importance,
+                opponent_rating=opponent_ratings.get(away_name, 1500.0),
+                venue_context=match.venue_context,
+                in_current_window=match_date >= current_start,
+                listed_home=True,
+            )
+        if away_name is not None:
+            _apply_match(
+                accumulators,
+                team=away_name,
+                points=_points(match.away_score, match.home_score),
+                goals_for=match.away_score,
+                goals_against=match.home_score,
+                weight=weight,
+                importance=importance,
+                opponent_rating=opponent_ratings.get(home_name, 1500.0),
+                venue_context=match.venue_context,
+                in_current_window=match_date >= current_start,
+                listed_home=False,
+            )
     return {team: item.to_features() for team, item in accumulators.items()}
 
 
@@ -139,6 +148,9 @@ def _apply_match(
     item.weighted_points += points * match_weight
     item.weighted_goals_for += goals_for * match_weight
     item.weighted_goals_against += goals_against * match_weight
+    # Denominator must carry the same decay weight as the numerators so that
+    # weighted_*/weighted_importance is a true weighted average, matching the
+    # rating formula validated by the rolling-origin backtest.
     item.weighted_importance += match_weight
     item.weighted_opponent_rating += opponent_rating * match_weight
     if venue_context == "neutral":
@@ -167,20 +179,3 @@ def _importance_weight(match_importance: str) -> float:
         "world_cup": 1.60,
     }
     return weights.get(match_importance, 1.0)
-
-
-def _add_months(value: date, months: int) -> date:
-    month = value.month - 1 + months
-    year = value.year + month // 12
-    month = month % 12 + 1
-    day = min(value.day, _days_in_month(year, month))
-    return date(year, month, day)
-
-
-def _days_in_month(year: int, month: int) -> int:
-    if month == 2:
-        leap = year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-        return 29 if leap else 28
-    if month in {4, 6, 9, 11}:
-        return 30
-    return 31

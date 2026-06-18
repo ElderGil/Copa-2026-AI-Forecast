@@ -29,9 +29,9 @@ Muitos modelos de previsão de futebol falham por usar estatísticas históricas
 
 * **FIFA como Fonte Única da Verdade**: Tabelas, grupos, calendários e resultados oficiais em tempo real vêm diretamente da ingestão de payloads originais da FIFA (ETL auditável).
 * **Recência Esportiva com Decaimento Exponencial**: Em vez do prestígio histórico acumulado, o modelo foca no momento atual das seleções (janelas de 12 e 24 meses). Partidas mais antigas sofrem decaimento exponencial de peso (half-life parametrizável).
-* **Modelo de Partida Multiclasse ($V/E/D$)**: Calculamos as probabilidades do tempo regulamentar, permitindo empates na fase de grupos — o maior gerador de zebras e redefinições de chaves.
-* **Simulação de Chaveamento Real Monte Carlo (10.000+ rodadas)**: O motor de regras simula o torneio de ponta a ponta, implementando fielmente o novo e complexo regulamento da Copa de 2026 (48 times, 12 grupos de 4 e repescagem dos 8 melhores terceiros colocados via algoritmos de backtracking).
-* **Calibração de Probabilidades e Zero-Leakage**: Modelos de classificação sofrem calibração estrita e são avaliados via **Log Loss** e **Brier Score** para garantir que probabilidades sejam confiáveis. A validação temporal (*rolling-origin*) impede vazamento de dados do futuro.
+* **Modelo de Partida Multiclasse ($V/E/D$)**: Calculamos as probabilidades do tempo regulamentar. A probabilidade de empate é **dinâmica** — máxima em confrontos equilibrados (podendo ser o resultado mais provável) e decrescente conforme a diferença de força aumenta — e um termo de **mando de campo** ajusta jogos não neutros.
+* **Simulação de Chaveamento Real Monte Carlo (10.000+ rodadas)**: O motor de regras simula o torneio de ponta a ponta cobrindo o formato de 2026 (48 times, 12 grupos de 4 e repescagem dos 8 melhores terceiros via backtracking). Os critérios de desempate cobrem pontos, saldo, gols pró e confronto direto; *fair-play* e sorteio ainda não são modelados.
+* **Calibração de Probabilidades e Zero-Leakage**: As probabilidades 1X2 passam por **temperature scaling** ajustado no backtest *rolling-origin* e são avaliadas via **Log Loss** e **Brier Score**. A validação temporal impede vazamento de dados do futuro, com um guard auditado (`assert_no_future_records`) na saída do ETL.
 
 ---
 
@@ -46,6 +46,7 @@ Todo o planejamento e pesquisa do projeto estão disponíveis de forma transpare
 * **Modelagem de Entidades de Dados**: [specs/001-copa-forecast/data-model.md](specs/001-copa-forecast/data-model.md)
 * **Contratos de Configuração**: [specs/001-copa-forecast/contracts/forecast-config.schema.yaml](specs/001-copa-forecast/contracts/forecast-config.schema.yaml)
 * **Lista de Tarefas da Spec**: [specs/001-copa-forecast/tasks.md](specs/001-copa-forecast/tasks.md)
+* **Remediação de Credibilidade (feature 002)**: [specs/002-credibility-remediation/spec.md](specs/002-credibility-remediation/spec.md)
 * **Operação diária e publicação**: [docs/operations.md](docs/operations.md)
 
 ---
@@ -56,7 +57,7 @@ Todo o planejamento e pesquisa do projeto estão disponíveis de forma transpare
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .
+pip install -e ".[dev]"   # inclui pytest e ruff
 ```
 
 ### 2. Rodar a Validação Automatizada (Quality Gate)
@@ -77,8 +78,9 @@ Ele prepara uma configuração datada, roda ETL FIFA, gera o forecast, atualiza 
 estatísticas de validação do README, executa `scripts/verify_implementation.py`
 e publica `public/` no GitHub Pages.
 
-O agendamento padrão é `04:17 America/Sao_Paulo`, com acionamento manual pela aba
-Actions. Detalhes operacionais estão em [docs/operations.md](docs/operations.md).
+O agendamento roda às `07:17 UTC` (≈ `04:17` em America/Sao_Paulo; o cron do
+GitHub Actions é sempre UTC), com acionamento manual pela aba Actions. Detalhes
+operacionais estão em [docs/operations.md](docs/operations.md).
 
 ---
 
@@ -101,16 +103,31 @@ Co-authored-by: Codex Construtor <codex-agent@openai.com>
 
 **Última atualização dos dados:** `2026-06-18`
 **Modelo:** `Copa 2026 AI Forecast`
-**Baseline principal:** `FIFA SUM-style Elo`
+**Baseline principal:** `Elo local estilo SUM (calculado dos jogos FIFA)`
+**Calibração:** temperature scaling (T=2.2945)
 
 | Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |
 |---|---:|---:|---:|---|
 | Amostras avaliadas<br><sub><em>Partidas do período 2025-06-18 a 2026-06-18; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 407 | - | - | Info |
-| Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 57.25% | 56.27% | +0.98 p.p. | Atenção |
-| Brier score<br><sub><em>Erro probabilístico multiclasses; quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5654 | 0.6018 | -0.0364 | Bom |
-| Log loss<br><sub><em>Pune previsões confiantes e erradas; quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.9564 | 1.0082 | -0.0518 | Bom |
-| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.0718 | - | - | Atenção |
-| MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.1149 | - | - | Atenção |
+| Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 55.77% | 48.40% | +7.37 p.p. | Bom |
+| Brier score<br><sub><em>Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5665 | 0.6022 | -0.0357 | Bom |
+| Log loss<br><sub><em>Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.9676 | 1.0023 | -0.0347 | Bom |
+| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.1479 | - | - | Atenção |
+| MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.2747 | - | - | Ruim |
+
+### Comparativo da Alteração do Modelo
+
+<sub><em>Registro automático para auditoria futura: comparação entre `recency_weighted_1x2_baseline` e `recency_sos_adjusted_fifa_sum_prior_1x2` usando o backtest rolling-origin salvo anteriormente para o mesmo `run_id`.</em></sub>
+
+<sub><em>Amostras avaliadas: antes `407`, agora `407`. Se este número mudar, a leitura deve considerar alteração de base além da alteração do modelo.</em></sub>
+
+| Métrica | Antes | Agora | Delta | Leitura |
+|---|---:|---:|---:|---|
+| Acurácia 1X2 | 57.00% | 55.77% | -1.23 p.p. | Piorou |
+| Brier score | 0.5876 | 0.5665 | -0.0211 | Melhorou |
+| Log loss | 1.0556 | 0.9676 | -0.0880 | Melhorou |
+| ECE calibração | 0.1011 | 0.1479 | +0.0469 | Piorou |
+| MCE calibração | 0.2355 | 0.2747 | +0.0392 | Piorou |
 
 **Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.
 

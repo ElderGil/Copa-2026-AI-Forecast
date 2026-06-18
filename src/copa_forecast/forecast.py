@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from typing import Any
 
 from copa_forecast.config import ForecastConfig
 from copa_forecast.data.contracts import (
+    COMPLETED_STATUSES,
     Fixture,
     OfficialCompetitionState,
     OfficialMatchRecord,
@@ -29,17 +30,7 @@ from copa_forecast.simulation.monte_carlo import (
     simulate_tournament_distribution,
 )
 
-
-MODEL_VERSION = "mvp-recency-sos-sum-v3"
-COMPLETED_STATUSES = {
-    "completed",
-    "complete",
-    "finished",
-    "played",
-    "full_time",
-    "full-time",
-    "final",
-}
+MODEL_VERSION = "mvp-recency-sos-dynamic-draw-v4"
 
 
 @dataclass(frozen=True)
@@ -60,10 +51,11 @@ def build_latest_forecast(
     state: OfficialCompetitionState,
     generated_at: datetime | None = None,
     recent_matches: tuple[OfficialMatchRecord, ...] = (),
+    match_temperature: float = 1.0,
 ) -> dict[str, Any]:
     """Create the public latest.json payload for the current forecast run."""
 
-    generated_at = generated_at or datetime.now(timezone.utc)
+    generated_at = generated_at or datetime.now(UTC)
     as_of_date = config.as_of_date
     played_recent_matches = _played_recent_matches(recent_matches, as_of_date=as_of_date)
     rating_priors = fifa_sum_ratings(played_recent_matches)
@@ -99,6 +91,12 @@ def build_latest_forecast(
         runs=config.simulation.runs,
         seed=config.simulation.random_seed,
         as_of_date=as_of_date,
+        temperature=match_temperature,
+    )
+    calibration_status = (
+        f"temperature_scaled_from_backtest:T={match_temperature:.3f}"
+        if match_temperature != 1.0
+        else "uncalibrated_dynamic_draw_pending_backtest"
     )
 
     ranked = sorted(
@@ -129,7 +127,7 @@ def build_latest_forecast(
         "updated_at": generated_at.isoformat(),
         "as_of_date": as_of_date.isoformat(),
         "model_version": MODEL_VERSION,
-        "calibration_status": "not_calibrated_mvp_baseline",
+        "calibration_status": calibration_status,
         "teams": teams,
         "pillars": [_pillar_payload(pillar, used=pillar in included_pillars) for pillar in pillars],
         "benchmarks": [
@@ -166,6 +164,7 @@ def build_latest_forecast(
                 "ruleset": config.simulation.tournament_ruleset,
                 "runs": config.simulation.runs,
                 "random_seed": config.simulation.random_seed,
+                "match_probability_temperature": match_temperature,
             },
         },
     }

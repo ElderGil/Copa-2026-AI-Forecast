@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Iterable, Mapping
 from datetime import date, timedelta
-from typing import Iterable, Mapping
 
 from copa_forecast.features.leakage import parse_record_date
 

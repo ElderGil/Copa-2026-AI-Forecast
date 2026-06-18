@@ -6,7 +6,7 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
 copa-forecast = "copa_forecast.cli:main"
@@ -17,6 +17,9 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+# Line length is not enforced on the existing codebase (no auto-formatter is
+# run); ruff focuses on correctness, imports, and modernization rules.
+ignore = ["E501"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

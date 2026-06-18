@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from copa_forecast.data.ingest import persist_raw_extract
@@ -17,7 +17,7 @@ class FifaRawStoreTest(unittest.TestCase):
                 payload=b'{"fixtures":[]}',
                 output_dir=tmp,
                 parser_version="parser-test",
-                retrieved_at=datetime(2026, 6, 18, tzinfo=timezone.utc),
+                retrieved_at=datetime(2026, 6, 18, tzinfo=UTC),
             )
             self.assertTrue(extract.payload_path.exists())
             self.assertTrue(Path(str(extract.payload_path) + ".meta.json").exists())

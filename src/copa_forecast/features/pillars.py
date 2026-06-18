@@ -91,12 +91,3 @@ def describe_pillar_coverage(
         status=status,
         reason=reason,
     )
-
-
-def build_missing_pillar_report(
-    pillars: list[EvidencePillar], *, minimum_coverage: float = 0.80
-) -> list[MissingPillarReport]:
-    return [
-        describe_pillar_coverage(pillar, minimum_coverage=minimum_coverage)
-        for pillar in pillars
-    ]
