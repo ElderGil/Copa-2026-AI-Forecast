@@ -178,5 +178,247 @@ def write_pillar_report_csv(path: str | Path, latest: dict[str, Any]) -> None:
     )
 
 
+def write_backtest_report(path: str | Path, report: dict[str, Any]) -> None:
+    write_json(path, report)
+
+
+def write_backtest_samples_csv(path: str | Path, report: dict[str, Any]) -> None:
+    rows = [
+        {
+            "match_id": sample.get("match_id", ""),
+            "match_date": sample.get("match_date", ""),
+            "home_team": sample.get("home_team", ""),
+            "away_team": sample.get("away_team", ""),
+            "home_score": sample.get("home_score", ""),
+            "away_score": sample.get("away_score", ""),
+            "outcome": sample.get("outcome", ""),
+            "home_win_probability": sample.get("home_win_probability", ""),
+            "draw_probability": sample.get("draw_probability", ""),
+            "away_win_probability": sample.get("away_win_probability", ""),
+            "fifa_sum_home_win_probability": sample.get(
+                "fifa_sum_home_win_probability", ""
+            ),
+            "fifa_sum_draw_probability": sample.get("fifa_sum_draw_probability", ""),
+            "fifa_sum_away_win_probability": sample.get(
+                "fifa_sum_away_win_probability", ""
+            ),
+            "predicted_label": sample.get("predicted_label", ""),
+            "predicted_confidence": sample.get("predicted_confidence", ""),
+            "prediction_correct": sample.get("prediction_correct", ""),
+            "prior_home_matches": sample.get("prior_home_matches", ""),
+            "prior_away_matches": sample.get("prior_away_matches", ""),
+        }
+        for sample in report.get("samples", [])
+    ]
+    write_excel_safe_csv(
+        path,
+        rows,
+        fieldnames=[
+            "match_id",
+            "match_date",
+            "home_team",
+            "away_team",
+            "home_score",
+            "away_score",
+            "outcome",
+            "home_win_probability",
+            "draw_probability",
+            "away_win_probability",
+            "fifa_sum_home_win_probability",
+            "fifa_sum_draw_probability",
+            "fifa_sum_away_win_probability",
+            "predicted_label",
+            "predicted_confidence",
+            "prediction_correct",
+            "prior_home_matches",
+            "prior_away_matches",
+        ],
+    )
+
+
+def update_readme_validation_section(path: str | Path, report: dict[str, Any]) -> None:
+    target = Path(path)
+    existing = target.read_text(encoding="utf-8") if target.exists() else ""
+    section = _validation_markdown_section(report)
+    start = "<!-- validation-stats:start -->"
+    end = "<!-- validation-stats:end -->"
+    block = f"{start}\n{section}\n{end}"
+    if start in existing and end in existing:
+        before = existing.split(start, 1)[0].rstrip()
+        after = existing.split(end, 1)[1].lstrip()
+        text = f"{before}\n\n{block}\n\n{after}".rstrip() + "\n"
+    else:
+        text = f"{existing.rstrip()}\n\n{block}\n"
+    target.write_text(text, encoding="utf-8")
+
+
+def _validation_markdown_section(report: dict[str, Any]) -> str:
+    metrics = report["metrics"]
+    primary = report["primary_baseline_metrics"]
+    comparison = report["primary_baseline_comparison"]
+    baseline_name = "FIFA SUM-style Elo"
+    model_name = "Copa 2026 AI Forecast"
+    updated_at = report.get("as_of_date", "")
+    sample_count = report.get("sample_count", 0)
+    evaluation_start = report.get("evaluation_start", "")
+    ece = report.get("calibration", {}).get("expected_calibration_error", 0.0)
+    mce = report.get("calibration", {}).get("maximum_calibration_error", 0.0)
+    source_note = report.get("primary_baseline_source", "")
+
+    rows = [
+        _metric_row(
+            "Amostras avaliadas",
+            f"{sample_count}",
+            "-",
+            "-",
+            "Info",
+            f"Partidas do período {evaluation_start} a {updated_at}; cada previsão usa apenas jogos anteriores à partida avaliada.",
+        ),
+        _metric_row(
+            "Acurácia 1X2",
+            _pct(metrics["accuracy"]),
+            _pct(primary["accuracy"]),
+            _delta_pct(comparison["accuracy_delta"]),
+            _status_higher_is_better(comparison["accuracy_delta"]),
+            "Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.",
+        ),
+        _metric_row(
+            "Brier score",
+            _num(metrics["brier_score"]),
+            _num(primary["brier_score"]),
+            _num(comparison["brier_delta"]),
+            _status_lower_is_better(comparison["brier_delta"]),
+            "Erro probabilístico multiclasses; quanto menor, melhor. Zero seria uma previsão perfeita.",
+        ),
+        _metric_row(
+            "Log loss",
+            _num(metrics["log_loss"]),
+            _num(primary["log_loss"]),
+            _num(comparison["log_loss_delta"]),
+            _status_lower_is_better(comparison["log_loss_delta"]),
+            "Pune previsões confiantes e erradas; quanto menor, melhor. É mais severo que o Brier.",
+        ),
+        _metric_row(
+            "ECE calibração",
+            _num(ece),
+            "-",
+            "-",
+            _status_ece(ece),
+            "Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.",
+        ),
+        _metric_row(
+            "MCE calibração",
+            _num(mce),
+            "-",
+            "-",
+            _status_mce(mce),
+            "Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.",
+        ),
+    ]
+    return "\n".join(
+        [
+            "## Estatísticas da Validação do Modelo",
+            "",
+            f"**Última atualização dos dados:** `{updated_at}`",
+            f"**Modelo:** `{model_name}`",
+            f"**Baseline principal:** `{baseline_name}`",
+            "",
+            "| Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |",
+            "|---|---:|---:|---:|---|",
+            *rows,
+            "",
+            "**Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.",
+            "",
+            f"<sub><em>Baseline principal: {source_note}. Não redistribuímos tabela externa de ranking ou odds; o benchmark é calculado localmente a partir dos registros oficiais FIFA já ingeridos pelo pipeline.</em></sub>",
+        ]
+    )
+
+
+def _metric_row(
+    metric: str,
+    model_value: str,
+    baseline_value: str,
+    delta: str,
+    status: str,
+    explanation: str,
+) -> str:
+    return (
+        f"| {metric}<br><sub><em>{explanation}</em></sub> "
+        f"| {model_value} | {baseline_value} | {delta} | {status} |"
+    )
+
+
+def _pct(value: float) -> str:
+    return f"{value * 100:.2f}%"
+
+
+def _delta_pct(value: float) -> str:
+    sign = "+" if value >= 0 else ""
+    return f"{sign}{value * 100:.2f} p.p."
+
+
+def _num(value: float) -> str:
+    return f"{value:.4f}"
+
+
+def _status_higher_is_better(delta: float) -> str:
+    if delta >= 0.03:
+        return "Bom"
+    if delta >= 0:
+        return "Atenção"
+    return "Ruim"
+
+
+def _status_lower_is_better(delta: float) -> str:
+    if delta <= -0.03:
+        return "Bom"
+    if delta <= 0:
+        return "Atenção"
+    return "Ruim"
+
+
+def _status_ece(value: float) -> str:
+    if value <= 0.05:
+        return "Bom"
+    if value <= 0.15:
+        return "Atenção"
+    return "Ruim"
+
+
+def _status_mce(value: float) -> str:
+    if value <= 0.10:
+        return "Bom"
+    if value <= 0.25:
+        return "Atenção"
+    return "Ruim"
+
+
+def write_calibration_bins_csv(path: str | Path, report: dict[str, Any]) -> None:
+    bins = report.get("calibration", {}).get("bins", [])
+    rows = [
+        {
+            "lower_bound": item.get("lower_bound", ""),
+            "upper_bound": item.get("upper_bound", ""),
+            "sample_count": item.get("sample_count", ""),
+            "mean_probability": item.get("mean_probability", ""),
+            "observed_frequency": item.get("observed_frequency", ""),
+            "absolute_error": item.get("absolute_error", ""),
+        }
+        for item in bins
+    ]
+    write_excel_safe_csv(
+        path,
+        rows,
+        fieldnames=[
+            "lower_bound",
+            "upper_bound",
+            "sample_count",
+            "mean_probability",
+            "observed_frequency",
+            "absolute_error",
+        ],
+    )
+
+
 def _advancement(team: dict[str, Any], key: str) -> object:
     return team.get("advancement_probabilities", {}).get(key, "")

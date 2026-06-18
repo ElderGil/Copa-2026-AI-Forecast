@@ -189,19 +189,22 @@ baseline comparison, and calibration diagnostics are present.
 
 ### Tests for User Story 5
 
-- [ ] T050 [P] [US5] Add calibration metric tests in `tests/unit/test_calibration.py`
-- [ ] T051 [P] [US5] Add evaluation tests in `tests/unit/test_evaluation.py`
-- [ ] T052 [P] [US5] Add backtest integration test in `tests/integration/test_backtest.py`
+- [x] T050 [P] [US5] Add calibration metric tests in `tests/unit/test_calibration.py`
+- [x] T051 [P] [US5] Add evaluation tests in `tests/unit/test_evaluation.py`
+- [x] T052 [P] [US5] Add backtest integration test in `tests/integration/test_backtest.py`
 
 ### Implementation for User Story 5
 
-- [ ] T053 [US5] Implement probability calibration utilities in `src/copa_forecast/models/calibration.py`
-- [ ] T054 [US5] Implement rolling-origin evaluation in `src/copa_forecast/models/evaluation.py`
-- [ ] T055 [US5] Implement baseline comparison report in `src/copa_forecast/models/evaluation.py`
-- [ ] T056 [US5] Add CLI backtest command in `src/copa_forecast/cli.py`
-- [ ] T057 [US5] Persist calibration artifacts in `src/copa_forecast/reporting/artifacts.py`
+- [x] T053 [US5] Implement probability calibration utilities in `src/copa_forecast/models/calibration.py`
+- [x] T054 [US5] Implement rolling-origin evaluation in `src/copa_forecast/models/evaluation.py`
+- [x] T055 [US5] Implement baseline comparison report in `src/copa_forecast/models/evaluation.py`
+- [x] T056 [US5] Add CLI backtest command in `src/copa_forecast/cli.py`
+- [x] T057 [US5] Persist calibration artifacts in `src/copa_forecast/reporting/artifacts.py`
 
-**Checkpoint**: Forecast quality is measurable before promotion.
+**Checkpoint**: Match-level 1X2 forecast quality is measurable with strict
+rolling-origin validation before promotion. Tournament champion calibration
+remains a later historical-tournament extension because the current official
+dataset is match-level evidence for the 2026 field.
 
 ---
 

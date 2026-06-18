@@ -15,14 +15,19 @@ from copa_forecast.data.validate import (
     require_official_competition_state,
 )
 from copa_forecast.forecast import build_latest_forecast
+from copa_forecast.models.evaluation import rolling_origin_backtest
 from copa_forecast.reporting.artifacts import (
     write_advancement_csv,
     write_advancement_probabilities,
+    write_backtest_report,
+    write_backtest_samples_csv,
+    write_calibration_bins_csv,
     write_explanation_csv,
     write_explanation_payload,
     write_forecast_run_metadata,
     write_forecast_team_csv,
     write_pillar_report_csv,
+    update_readme_validation_section,
 )
 from copa_forecast.reporting.explanations import build_explanation_payload
 from copa_forecast.site.static_page import render_static_page
@@ -41,6 +46,13 @@ def main(argv: list[str] | None = None) -> int:
     simulate_parser = subparsers.add_parser("simulate")
     simulate_parser.add_argument("--config", required=True)
     simulate_parser.add_argument("--recent-matches")
+    backtest_parser = subparsers.add_parser("backtest")
+    backtest_parser.add_argument("--config", required=True)
+    backtest_parser.add_argument("--matches")
+    backtest_parser.add_argument("--evaluation-months", type=int, default=12)
+    backtest_parser.add_argument("--lookback-months", type=int, default=24)
+    backtest_parser.add_argument("--min-prior-matches", type=int, default=2)
+    backtest_parser.add_argument("--bin-count", type=int, default=10)
     explain_parser = subparsers.add_parser("explain")
     explain_parser.add_argument("--latest-json", required=True)
     explain_parser.add_argument("--output", required=True)
@@ -59,6 +71,15 @@ def main(argv: list[str] | None = None) -> int:
         return forecast(args.config, recent_matches_path=args.recent_matches)
     if args.command == "simulate":
         return simulate(args.config, recent_matches_path=args.recent_matches)
+    if args.command == "backtest":
+        return backtest(
+            args.config,
+            matches_path=args.matches,
+            evaluation_months=args.evaluation_months,
+            lookback_months=args.lookback_months,
+            min_prior_matches=args.min_prior_matches,
+            bin_count=args.bin_count,
+        )
     if args.command == "explain":
         return explain(
             latest_json=args.latest_json,
@@ -162,6 +183,65 @@ def simulate(config_path: str, *, recent_matches_path: str | None = None) -> int
                 "teams": len(latest["teams"]),
                 "advancement_json": str(advancement_json),
                 "advancement_csv": str(advancement_csv),
+            },
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def backtest(
+    config_path: str,
+    *,
+    matches_path: str | None = None,
+    evaluation_months: int = 12,
+    lookback_months: int = 24,
+    min_prior_matches: int = 2,
+    bin_count: int = 10,
+) -> int:
+    config = load_config(config_path)
+    matches = _load_recent_matches_for_run(
+        config_path=config_path, recent_matches_path=matches_path
+    )
+    if not matches:
+        raise ValueError("Backtest requires a recent-match JSON file.")
+    report = rolling_origin_backtest(
+        matches=matches,
+        as_of_date=config.as_of_date,
+        evaluation_months=evaluation_months,
+        lookback_months=lookback_months,
+        half_life_days=config.feature_windows.decay_half_life_days,
+        min_prior_matches=min_prior_matches,
+        bin_count=bin_count,
+    )
+    run_dir = (
+        config.site.output_dir.parent
+        / "data"
+        / "processed"
+        / "backtests"
+        / config.run_id
+    )
+    report_json = run_dir / "report.json"
+    samples_csv = run_dir / "samples.csv"
+    calibration_csv = run_dir / "calibration_bins.csv"
+    readme_path = config.site.output_dir.parent / "README.md"
+    write_backtest_report(report_json, report)
+    write_backtest_samples_csv(samples_csv, report)
+    write_calibration_bins_csv(calibration_csv, report)
+    update_readme_validation_section(readme_path, report)
+    print(
+        json.dumps(
+            {
+                "run_id": config.run_id,
+                "sample_count": report["sample_count"],
+                "brier_score": report["metrics"]["brier_score"],
+                "log_loss": report["metrics"]["log_loss"],
+                "accuracy": report["metrics"]["accuracy"],
+                "primary_baseline": report["primary_baseline_name"],
+                "report": str(report_json),
+                "samples_csv": str(samples_csv),
+                "calibration_csv": str(calibration_csv),
+                "readme": str(readme_path),
             },
             sort_keys=True,
         )
