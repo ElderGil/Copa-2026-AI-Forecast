@@ -19,7 +19,7 @@ from copa_forecast.features.pillars import (
     split_pillars_by_coverage,
 )
 from copa_forecast.features.recent import RecentTeamFeatures, build_recent_team_features
-from copa_forecast.models.baselines import fifa_sum_ratings
+from copa_forecast.models.prior import global_elo_ratings
 from copa_forecast.models.strength import (
     ScheduleAdjustedRates,
     adjust_rates_for_schedule_strength,
@@ -58,7 +58,7 @@ def build_latest_forecast(
     generated_at = generated_at or datetime.now(UTC)
     as_of_date = config.as_of_date
     played_recent_matches = _played_recent_matches(recent_matches, as_of_date=as_of_date)
-    rating_priors = fifa_sum_ratings(played_recent_matches)
+    rating_priors = global_elo_ratings(played_recent_matches)
     recent_features = build_recent_team_features(
         teams=state.teams,
         matches=recent_matches,
@@ -244,7 +244,7 @@ def build_evidence_pillars(
             "fifa_sum_rating_prior",
             available_teams=len(teams_with_rating_prior),
             total_teams=total_teams,
-            source="FIFA/Coca-Cola SUM-style rating computed from FIFA match records",
+            source="Iterative opponent-adjusted Elo prior computed from FIFA match records",
         ),
         EvidencePillar(
             "opponent_strength_context",
@@ -549,7 +549,7 @@ def _pillar_label(key: str) -> str:
         "defensive_trend": "Tendencia defensiva",
         "match_importance": "Peso competitivo das partidas",
         "venue_context": "Contexto de mando e neutralidade",
-        "fifa_sum_rating_prior": "Prior FIFA/SUM de forca relativa",
+        "fifa_sum_rating_prior": "Prior de forca relativa (Elo global iterativo)",
         "opponent_strength_context": "Forca media dos adversarios",
         "squad_context": "Contexto de elenco",
     }

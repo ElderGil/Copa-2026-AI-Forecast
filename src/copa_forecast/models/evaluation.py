@@ -24,6 +24,7 @@ from copa_forecast.models.calibration import (
     multiclass_brier_score,
     multiclass_log_loss,
 )
+from copa_forecast.models.prior import global_elo_ratings
 from copa_forecast.models.strength import adjust_rates_for_schedule_strength
 from copa_forecast.timeutils import add_months
 
@@ -90,6 +91,7 @@ def rolling_origin_backtest(
     as_of_date: date,
     evaluation_months: int = 12,
     lookback_months: int = 24,
+    prior_lookback_months: int = 120,
     half_life_days: int = 180,
     min_prior_matches: int = 2,
     bin_count: int = 10,
@@ -120,23 +122,34 @@ def rolling_origin_backtest(
         if home_prior < min_prior_matches or away_prior < min_prior_matches:
             continue
 
+        # Baseline ratings (single-pass fifa_sum over the recency window) stay as
+        # the public benchmark; the model uses the iterative opponent-adjusted Elo
+        # prior over the deep history window so the backtest validates the prior
+        # actually deployed by the forecast.
+        prior_lookback_start = add_months(target_date, -prior_lookback_months)
+        deep_prior = tuple(
+            match
+            for match in played
+            if prior_lookback_start <= parse_record_date(match.match_date) < target_date
+        )
         fifa_sum_ratings_by_team = fifa_sum_ratings(prior)
+        prior_elo = global_elo_ratings(deep_prior)
         ratings = {
             target.home_team: _team_rating(
                 team=target.home_team,
                 prior_matches=prior,
                 as_of_date=target_date,
                 half_life_days=half_life_days,
-                fifa_sum_prior=fifa_sum_ratings_by_team.get(target.home_team, 1500.0),
-                fifa_sum_ratings_by_team=fifa_sum_ratings_by_team,
+                fifa_sum_prior=prior_elo.get(target.home_team, 1500.0),
+                fifa_sum_ratings_by_team=prior_elo,
             ),
             target.away_team: _team_rating(
                 team=target.away_team,
                 prior_matches=prior,
                 as_of_date=target_date,
                 half_life_days=half_life_days,
-                fifa_sum_prior=fifa_sum_ratings_by_team.get(target.away_team, 1500.0),
-                fifa_sum_ratings_by_team=fifa_sum_ratings_by_team,
+                fifa_sum_prior=prior_elo.get(target.away_team, 1500.0),
+                fifa_sum_ratings_by_team=prior_elo,
             ),
         }
         home_advantage = _home_advantage(target.venue_context)

@@ -38,7 +38,9 @@ def run_recent_match_etl(
     retrieved_at: datetime | None = None,
 ) -> RecentMatchEtlResult:
     retrieved_at = retrieved_at or datetime.now(UTC)
-    from_date = add_months(config.as_of_date, -config.feature_windows.max_months)
+    # Fetch the deep history window so the opponent-adjusted Elo prior reflects
+    # multi-year pedigree; recent-form features still filter to max_months.
+    from_date = add_months(config.as_of_date, -config.feature_windows.prior_months)
     crawler = UrlOrFileFifaCrawler()
     parser = FifaCalendarMatchParser()
     records: list[OfficialMatchRecord] = []

@@ -28,7 +28,8 @@
   "feature_windows": {
     "current_months": 12,
     "max_months": 24,
-    "decay_half_life_days": 180
+    "decay_half_life_days": 180,
+    "prior_months": 120
   },
   "simulation": {
     "tournament_ruleset": "fifa-world-cup-2026",

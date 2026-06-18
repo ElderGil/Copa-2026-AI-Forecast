@@ -104,30 +104,30 @@ Co-authored-by: Codex Construtor <codex-agent@openai.com>
 **Última atualização dos dados:** `2026-06-18`
 **Modelo:** `Copa 2026 AI Forecast`
 **Baseline principal:** `Elo local estilo SUM (calculado dos jogos FIFA)`
-**Calibração:** temperature scaling (T=2.2945)
+**Calibração:** temperature scaling (T=2.7941)
 
 | Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |
 |---|---:|---:|---:|---|
-| Amostras avaliadas<br><sub><em>Partidas do período 2025-06-18 a 2026-06-18; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 407 | - | - | Info |
-| Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 55.77% | 48.40% | +7.37 p.p. | Bom |
-| Brier score<br><sub><em>Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5665 | 0.6022 | -0.0357 | Bom |
-| Log loss<br><sub><em>Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.9676 | 1.0023 | -0.0347 | Bom |
-| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.1479 | - | - | Atenção |
-| MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.2747 | - | - | Ruim |
+| Amostras avaliadas<br><sub><em>Partidas do período 2025-06-18 a 2026-06-18; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 458 | - | - | Info |
+| Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 60.70% | 52.84% | +7.86 p.p. | Bom |
+| Brier score<br><sub><em>Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5227 | 0.5815 | -0.0588 | Bom |
+| Log loss<br><sub><em>Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.9097 | 0.9742 | -0.0645 | Bom |
+| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.1474 | - | - | Atenção |
+| MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.2695 | - | - | Ruim |
 
 ### Comparativo da Alteração do Modelo
 
 <sub><em>Registro automático para auditoria futura: comparação entre `recency_weighted_1x2_baseline` e `recency_sos_adjusted_fifa_sum_prior_1x2` usando o backtest rolling-origin salvo anteriormente para o mesmo `run_id`.</em></sub>
 
-<sub><em>Amostras avaliadas: antes `407`, agora `407`. Se este número mudar, a leitura deve considerar alteração de base além da alteração do modelo.</em></sub>
+<sub><em>Amostras avaliadas: antes `407`, agora `458`. Se este número mudar, a leitura deve considerar alteração de base além da alteração do modelo.</em></sub>
 
 | Métrica | Antes | Agora | Delta | Leitura |
 |---|---:|---:|---:|---|
-| Acurácia 1X2 | 57.00% | 55.77% | -1.23 p.p. | Piorou |
-| Brier score | 0.5876 | 0.5665 | -0.0211 | Melhorou |
-| Log loss | 1.0556 | 0.9676 | -0.0880 | Melhorou |
-| ECE calibração | 0.1011 | 0.1479 | +0.0469 | Piorou |
-| MCE calibração | 0.2355 | 0.2747 | +0.0392 | Piorou |
+| Acurácia 1X2 | 57.00% | 60.70% | +3.70 p.p. | Melhorou |
+| Brier score | 0.5876 | 0.5227 | -0.0649 | Melhorou |
+| Log loss | 1.0556 | 0.9097 | -0.1459 | Melhorou |
+| ECE calibração | 0.1011 | 0.1474 | +0.0463 | Piorou |
+| MCE calibração | 0.2355 | 0.2695 | +0.0340 | Piorou |
 
 **Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.
 

@@ -46,6 +46,9 @@ class FeatureWindowConfig:
     current_months: int
     max_months: int
     decay_half_life_days: int
+    # Deep history window used only to compute the opponent-adjusted Elo prior;
+    # recent-form features still use max_months. Defaults to ~10 years.
+    prior_months: int = 120
 
 
 @dataclass(frozen=True)
@@ -137,6 +140,7 @@ def parse_config(payload: dict[str, Any]) -> ForecastConfig:
             current_months=current_months,
             max_months=max_months,
             decay_half_life_days=int(windows.get("decay_half_life_days", 180)),
+            prior_months=max(int(windows.get("prior_months", 120)), max_months),
         ),
         simulation=SimulationConfig(
             tournament_ruleset=str(simulation["tournament_ruleset"]),
