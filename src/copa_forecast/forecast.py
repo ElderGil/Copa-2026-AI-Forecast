@@ -19,6 +19,10 @@ from copa_forecast.features.pillars import (
 )
 from copa_forecast.features.recent import RecentTeamFeatures, build_recent_team_features
 from copa_forecast.models.baselines import fifa_sum_ratings
+from copa_forecast.models.strength import (
+    ScheduleAdjustedRates,
+    adjust_rates_for_schedule_strength,
+)
 from copa_forecast.reporting.countries import display_team_name, flag_emoji
 from copa_forecast.reporting.explanations import build_team_explanation
 from copa_forecast.simulation.monte_carlo import (
@@ -26,7 +30,7 @@ from copa_forecast.simulation.monte_carlo import (
 )
 
 
-MODEL_VERSION = "mvp-recency-normalized-sum-v2"
+MODEL_VERSION = "mvp-recency-sos-sum-v3"
 COMPLETED_STATUSES = {
     "completed",
     "complete",
@@ -61,6 +65,8 @@ def build_latest_forecast(
 
     generated_at = generated_at or datetime.now(timezone.utc)
     as_of_date = config.as_of_date
+    played_recent_matches = _played_recent_matches(recent_matches, as_of_date=as_of_date)
+    rating_priors = fifa_sum_ratings(played_recent_matches)
     recent_features = build_recent_team_features(
         teams=state.teams,
         matches=recent_matches,
@@ -68,8 +74,8 @@ def build_latest_forecast(
         current_window_months=config.feature_windows.current_months,
         max_window_months=config.feature_windows.max_months,
         half_life_days=config.feature_windows.decay_half_life_days,
+        opponent_ratings=rating_priors,
     )
-    rating_priors = fifa_sum_ratings(_played_recent_matches(recent_matches, as_of_date=as_of_date))
     pillars = build_evidence_pillars(
         state,
         recent_features=recent_features,
@@ -184,6 +190,7 @@ def build_evidence_pillars(
     teams_with_rating_prior = {
         team.name for team in state.teams if team.name in rating_priors
     }
+    teams_with_opponent_context = teams_with_recent_external_form & teams_with_rating_prior
     teams_with_squad_context = set()
     return [
         EvidencePillar(
@@ -241,6 +248,12 @@ def build_evidence_pillars(
             source="FIFA/Coca-Cola SUM-style rating computed from FIFA match records",
         ),
         EvidencePillar(
+            "opponent_strength_context",
+            available_teams=len(teams_with_opponent_context),
+            total_teams=total_teams,
+            source="FIFA calendar match records + local FIFA/SUM opponent ratings",
+        ),
+        EvidencePillar(
             "squad_context",
             available_teams=len(teams_with_squad_context),
             total_teams=total_teams,
@@ -286,11 +299,15 @@ def build_team_strengths(
     for team in teams:
         signal = signals.get(team.name, TeamTournamentSignal())
         recent = recent_features.get(team.name, RecentTeamFeatures(team.name))
-        weighted_denominator = max(recent.weighted_importance, 1.0)
-        points_per_match = recent.weighted_points / weighted_denominator
-        goals_for_per_match = recent.weighted_goals_for / weighted_denominator
-        goals_against_per_match = recent.weighted_goals_against / weighted_denominator
-        goal_difference_per_match = recent.weighted_goal_difference / weighted_denominator
+        rates = _recent_rates(recent)
+        if "opponent_strength_context" in included_pillars:
+            rates = adjust_rates_for_schedule_strength(
+                points_per_match=rates.points_per_match,
+                goals_for_per_match=rates.goals_for_per_match,
+                goals_against_per_match=rates.goals_against_per_match,
+                goal_difference_per_match=rates.goal_difference_per_match,
+                average_opponent_rating=rates.average_opponent_rating,
+            )
         strength = 1500.0
         if "tournament_path" in included_pillars:
             strength += signal.points * 10.0
@@ -298,12 +315,12 @@ def build_team_strengths(
             strength += signal.goals_for * 1.5
             strength -= max(signal.goals_against - signal.goals_for, 0) * 2.0
         if "recent_form_window" in included_pillars:
-            strength += (points_per_match - 1.35) * 60.0
+            strength += (rates.points_per_match - 1.35) * 60.0
         if "attacking_trend" in included_pillars:
-            strength += goals_for_per_match * 8.0
+            strength += rates.goals_for_per_match * 8.0
         if "defensive_trend" in included_pillars:
-            strength += goal_difference_per_match * 100.0
-            strength -= goals_against_per_match * 5.0
+            strength += rates.goal_difference_per_match * 100.0
+            strength -= rates.goals_against_per_match * 5.0
         if "match_importance" in included_pillars:
             strength += min(recent.weighted_importance, 30.0) * 1.5
         if "fifa_sum_rating_prior" in included_pillars:
@@ -355,6 +372,34 @@ def _add_signal(
     )
 
 
+def _recent_rates(recent_feature: RecentTeamFeatures) -> ScheduleAdjustedRates:
+    weighted_denominator = max(recent_feature.weighted_importance, 1.0)
+    return ScheduleAdjustedRates(
+        points_per_match=recent_feature.weighted_points / weighted_denominator,
+        goals_for_per_match=recent_feature.weighted_goals_for / weighted_denominator,
+        goals_against_per_match=recent_feature.weighted_goals_against / weighted_denominator,
+        goal_difference_per_match=recent_feature.weighted_goal_difference
+        / weighted_denominator,
+        average_opponent_rating=recent_feature.average_opponent_rating,
+        schedule_strength_adjustment=0.0,
+    )
+
+
+def _display_rates(
+    recent_feature: RecentTeamFeatures, *, used_pillars: list[str]
+) -> ScheduleAdjustedRates:
+    rates = _recent_rates(recent_feature)
+    if "opponent_strength_context" not in used_pillars:
+        return rates
+    return adjust_rates_for_schedule_strength(
+        points_per_match=rates.points_per_match,
+        goals_for_per_match=rates.goals_for_per_match,
+        goals_against_per_match=rates.goals_against_per_match,
+        goal_difference_per_match=rates.goal_difference_per_match,
+        average_opponent_rating=rates.average_opponent_rating,
+    )
+
+
 def _teams_with_tournament_path(state: OfficialCompetitionState) -> set[str]:
     names = {team.name for team in state.teams if team.group}
     for fixture in state.fixtures:
@@ -387,9 +432,11 @@ def _team_row(
             strength=strength,
             recent_feature=recent_feature,
             rating_prior=rating_prior,
+            used_pillars=used_pillars,
         ),
     )
     weighted_denominator = max(recent_feature.weighted_importance, 1.0)
+    adjusted_rates = _display_rates(recent_feature, used_pillars=used_pillars)
     return {
         "rank": rank,
         "team": team.name,
@@ -418,11 +465,28 @@ def _team_row(
             "weighted_goals_against": round(recent_feature.weighted_goals_against, 4),
             "weighted_goal_difference": round(recent_feature.weighted_goal_difference, 4),
             "weighted_importance": round(recent_feature.weighted_importance, 4),
+            "weighted_opponent_rating": round(recent_feature.weighted_opponent_rating, 4),
+            "average_opponent_rating": round(adjusted_rates.average_opponent_rating, 4),
+            "schedule_strength_adjustment": round(
+                adjusted_rates.schedule_strength_adjustment, 4
+            ),
             "weighted_points_per_match": round(
                 recent_feature.weighted_points / weighted_denominator, 4
             ),
             "weighted_goal_difference_per_match": round(
                 recent_feature.weighted_goal_difference / weighted_denominator, 4
+            ),
+            "sos_adjusted_points_per_match": round(
+                adjusted_rates.points_per_match, 4
+            ),
+            "sos_adjusted_goal_difference_per_match": round(
+                adjusted_rates.goal_difference_per_match, 4
+            ),
+            "sos_adjusted_goals_for_per_match": round(
+                adjusted_rates.goals_for_per_match, 4
+            ),
+            "sos_adjusted_goals_against_per_match": round(
+                adjusted_rates.goals_against_per_match, 4
             ),
             "fifa_sum_rating_prior": round(rating_prior, 4) if rating_prior is not None else None,
             "home_matches": recent_feature.home_matches,
@@ -459,16 +523,18 @@ def _team_drivers(
     strength: float,
     recent_feature: RecentTeamFeatures,
     rating_prior: float | None,
+    used_pillars: list[str],
 ) -> list[str]:
-    weighted_denominator = max(recent_feature.weighted_importance, 1.0)
+    rates = _display_rates(recent_feature, used_pillars=used_pillars)
     return [
         f"chance_titulo={probability:.4f}",
         f"chance_final={advancement.get('final', 0.0):.4f}",
         f"pontos_torneio={signal.points}",
         f"saldo_gols={signal.goal_difference}",
         f"jogos_24m={recent_feature.matches_24m}",
-        f"pontos_por_jogo_24m={recent_feature.weighted_points / weighted_denominator:.2f}",
-        f"saldo_por_jogo_24m={recent_feature.weighted_goal_difference / weighted_denominator:.2f}",
+        f"pontos_por_jogo_24m_ajustado_sos={rates.points_per_match:.2f}",
+        f"saldo_por_jogo_24m_ajustado_sos={rates.goal_difference_per_match:.2f}",
+        f"media_rating_adversarios_24m={rates.average_opponent_rating:.1f}",
         f"prior_fifa_sum={rating_prior:.1f}" if rating_prior is not None else "prior_fifa_sum=indisponivel",
         f"forca_modelo={strength:.2f}",
     ]
@@ -485,6 +551,7 @@ def _pillar_label(key: str) -> str:
         "match_importance": "Peso competitivo das partidas",
         "venue_context": "Contexto de mando e neutralidade",
         "fifa_sum_rating_prior": "Prior FIFA/SUM de forca relativa",
+        "opponent_strength_context": "Forca media dos adversarios",
         "squad_context": "Contexto de elenco",
     }
     return labels.get(key, key.replace("_", " ").title())

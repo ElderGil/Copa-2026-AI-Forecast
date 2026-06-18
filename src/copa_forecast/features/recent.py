@@ -17,6 +17,7 @@ class RecentTeamFeatures:
     weighted_goals_for: float = 0.0
     weighted_goals_against: float = 0.0
     weighted_importance: float = 0.0
+    weighted_opponent_rating: float = 0.0
     home_matches: int = 0
     away_matches: int = 0
     neutral_matches: int = 0
@@ -24,6 +25,12 @@ class RecentTeamFeatures:
     @property
     def weighted_goal_difference(self) -> float:
         return self.weighted_goals_for - self.weighted_goals_against
+
+    @property
+    def average_opponent_rating(self) -> float:
+        if self.weighted_importance <= 0:
+            return 1500.0
+        return self.weighted_opponent_rating / self.weighted_importance
 
 
 def build_recent_team_features(
@@ -34,10 +41,12 @@ def build_recent_team_features(
     current_window_months: int,
     max_window_months: int,
     half_life_days: int,
+    opponent_ratings: dict[str, float] | None = None,
 ) -> dict[str, RecentTeamFeatures]:
     current_start = _add_months(as_of_date, -current_window_months)
     max_start = _add_months(as_of_date, -max_window_months)
     accumulators = {team.name: _MutableRecentFeatures(team.name) for team in teams}
+    opponent_ratings = opponent_ratings or {}
     for match in matches:
         match_date = parse_record_date(match.match_date)
         if not (max_start <= match_date < as_of_date):
@@ -56,6 +65,7 @@ def build_recent_team_features(
             goals_against=match.away_score,
             weight=weight,
             importance=importance,
+            opponent_rating=opponent_ratings.get(match.away_team, 1500.0),
             venue_context=match.venue_context,
             in_current_window=match_date >= current_start,
             listed_home=True,
@@ -68,6 +78,7 @@ def build_recent_team_features(
             goals_against=match.home_score,
             weight=weight,
             importance=importance,
+            opponent_rating=opponent_ratings.get(match.home_team, 1500.0),
             venue_context=match.venue_context,
             in_current_window=match_date >= current_start,
             listed_home=False,
@@ -84,6 +95,7 @@ class _MutableRecentFeatures:
         self.weighted_goals_for = 0.0
         self.weighted_goals_against = 0.0
         self.weighted_importance = 0.0
+        self.weighted_opponent_rating = 0.0
         self.home_matches = 0
         self.away_matches = 0
         self.neutral_matches = 0
@@ -97,6 +109,7 @@ class _MutableRecentFeatures:
             weighted_goals_for=self.weighted_goals_for,
             weighted_goals_against=self.weighted_goals_against,
             weighted_importance=self.weighted_importance,
+            weighted_opponent_rating=self.weighted_opponent_rating,
             home_matches=self.home_matches,
             away_matches=self.away_matches,
             neutral_matches=self.neutral_matches,
@@ -112,6 +125,7 @@ def _apply_match(
     goals_against: int,
     weight: float,
     importance: float,
+    opponent_rating: float,
     venue_context: str,
     in_current_window: bool,
     listed_home: bool,
@@ -121,10 +135,12 @@ def _apply_match(
     item = accumulators[team]
     item.matches_24m += 1
     item.matches_12m += 1 if in_current_window else 0
-    item.weighted_points += points * weight * importance
-    item.weighted_goals_for += goals_for * weight * importance
-    item.weighted_goals_against += goals_against * weight * importance
-    item.weighted_importance += importance
+    match_weight = weight * importance
+    item.weighted_points += points * match_weight
+    item.weighted_goals_for += goals_for * match_weight
+    item.weighted_goals_against += goals_against * match_weight
+    item.weighted_importance += match_weight
+    item.weighted_opponent_rating += opponent_rating * match_weight
     if venue_context == "neutral":
         item.neutral_matches += 1
     elif listed_home:

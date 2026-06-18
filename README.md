@@ -107,24 +107,24 @@ Co-authored-by: Codex Construtor <codex-agent@openai.com>
 |---|---:|---:|---:|---|
 | Amostras avaliadas<br><sub><em>Partidas do período 2025-06-18 a 2026-06-18; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 407 | - | - | Info |
 | Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 57.25% | 56.27% | +0.98 p.p. | Atenção |
-| Brier score<br><sub><em>Erro probabilístico multiclasses; quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5666 | 0.6018 | -0.0352 | Bom |
-| Log loss<br><sub><em>Pune previsões confiantes e erradas; quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.9599 | 1.0082 | -0.0483 | Bom |
-| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.0851 | - | - | Atenção |
-| MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.1735 | - | - | Atenção |
+| Brier score<br><sub><em>Erro probabilístico multiclasses; quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5654 | 0.6018 | -0.0364 | Bom |
+| Log loss<br><sub><em>Pune previsões confiantes e erradas; quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.9564 | 1.0082 | -0.0518 | Bom |
+| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.0718 | - | - | Atenção |
+| MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.1149 | - | - | Atenção |
 
 ### Comparativo da Alteração do Modelo
 
-<sub><em>Registro automático para auditoria futura: comparação entre `recency_weighted_1x2_baseline` e `recency_normalized_fifa_sum_prior_1x2` usando o backtest rolling-origin salvo anteriormente para o mesmo `run_id`.</em></sub>
+<sub><em>Registro automático para auditoria futura: comparação entre `recency_normalized_fifa_sum_prior_1x2` e `recency_sos_adjusted_fifa_sum_prior_1x2` usando o backtest rolling-origin salvo anteriormente para o mesmo `run_id`.</em></sub>
 
 <sub><em>Amostras avaliadas: antes `407`, agora `407`. Se este número mudar, a leitura deve considerar alteração de base além da alteração do modelo.</em></sub>
 
 | Métrica | Antes | Agora | Delta | Leitura |
 |---|---:|---:|---:|---|
-| Acurácia 1X2 | 57.00% | 57.25% | +0.25 p.p. | Melhorou |
-| Brier score | 0.5876 | 0.5666 | -0.0210 | Melhorou |
-| Log loss | 1.0556 | 0.9599 | -0.0957 | Melhorou |
-| ECE calibração | 0.1011 | 0.0851 | -0.0159 | Melhorou |
-| MCE calibração | 0.2355 | 0.1735 | -0.0620 | Melhorou |
+| Acurácia 1X2 | 57.25% | 57.25% | +0.00 p.p. | Estável |
+| Brier score | 0.5666 | 0.5654 | -0.0012 | Melhorou |
+| Log loss | 0.9599 | 0.9564 | -0.0035 | Melhorou |
+| ECE calibração | 0.0851 | 0.0718 | -0.0134 | Melhorou |
+| MCE calibração | 0.1735 | 0.1149 | -0.0586 | Melhorou |
 
 **Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.
 

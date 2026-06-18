@@ -41,6 +41,7 @@ class RecentFeatureTest(unittest.TestCase):
         self.assertEqual(brazil.matches_24m, 1)
         self.assertEqual(brazil.matches_12m, 1)
         self.assertAlmostEqual(brazil.weighted_points, 1.125)
+        self.assertAlmostEqual(brazil.weighted_importance, 0.375)
         self.assertGreater(brazil.weighted_goal_difference, morocco.weighted_goal_difference)
         self.assertEqual(brazil.neutral_matches, 1)
 

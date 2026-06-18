@@ -265,25 +265,17 @@ def _read_json_if_exists(path: Path) -> dict[str, Any] | None:
 def _compare_backtest_reports(
     *, previous: dict[str, Any], current: dict[str, Any]
 ) -> dict[str, Any]:
-    previous_reference = previous.get("previous_model_comparison")
-    if isinstance(previous_reference, dict) and isinstance(
-        previous_reference.get("previous"), dict
-    ):
-        previous_metrics = previous_reference["previous"]
-        previous_model_name = previous_reference.get("previous_model_name", "unknown")
-        previous_sample_count = previous_reference.get("previous_sample_count")
-    else:
-        previous_metrics = {
-            **previous.get("metrics", {}),
-            "expected_calibration_error": previous.get("calibration", {}).get(
-                "expected_calibration_error"
-            ),
-            "maximum_calibration_error": previous.get("calibration", {}).get(
-                "maximum_calibration_error"
-            ),
-        }
-        previous_model_name = previous.get("model_name", "unknown")
-        previous_sample_count = previous.get("sample_count")
+    previous_metrics = {
+        **previous.get("metrics", {}),
+        "expected_calibration_error": previous.get("calibration", {}).get(
+            "expected_calibration_error"
+        ),
+        "maximum_calibration_error": previous.get("calibration", {}).get(
+            "maximum_calibration_error"
+        ),
+    }
+    previous_model_name = previous.get("model_name", "unknown")
+    previous_sample_count = previous.get("sample_count")
     current_metrics = current.get("metrics", {})
     current_calibration = current.get("calibration", {})
     return {

@@ -18,6 +18,7 @@ from copa_forecast.models.calibration import (
     multiclass_brier_score,
     multiclass_log_loss,
 )
+from copa_forecast.models.strength import adjust_rates_for_schedule_strength
 
 
 MATCH_OUTCOME_LABELS = ("home_win", "draw", "away_win")
@@ -136,6 +137,7 @@ def rolling_origin_backtest(
                 as_of_date=target_date,
                 half_life_days=half_life_days,
                 fifa_sum_prior=fifa_sum_ratings_by_team.get(target.home_team, 1500.0),
+                fifa_sum_ratings_by_team=fifa_sum_ratings_by_team,
             ),
             target.away_team: _team_rating(
                 team=target.away_team,
@@ -143,6 +145,7 @@ def rolling_origin_backtest(
                 as_of_date=target_date,
                 half_life_days=half_life_days,
                 fifa_sum_prior=fifa_sum_ratings_by_team.get(target.away_team, 1500.0),
+                fifa_sum_ratings_by_team=fifa_sum_ratings_by_team,
             ),
         }
         model = three_way_baseline(
@@ -205,7 +208,7 @@ def rolling_origin_backtest(
     )
 
     return {
-        "model_name": "recency_normalized_fifa_sum_prior_1x2",
+        "model_name": "recency_sos_adjusted_fifa_sum_prior_1x2",
         "baseline_name": "equal_strength_1x2_baseline",
         "primary_baseline_name": "fifa_sum_style_elo_baseline",
         "primary_baseline_source": "FIFA/Coca-Cola World Ranking SUM methodology; computed locally from FIFA match records",
@@ -291,11 +294,13 @@ def _team_rating(
     as_of_date: date,
     half_life_days: int,
     fifa_sum_prior: float,
+    fifa_sum_ratings_by_team: dict[str, float],
 ) -> float:
     weighted_points = 0.0
     weighted_goals_for = 0.0
     weighted_goals_against = 0.0
     weighted_goal_difference = 0.0
+    weighted_opponent_rating = 0.0
     weighted_importance = 0.0
     for match in prior_matches:
         if match.home_score is None or match.away_score is None:
@@ -310,9 +315,11 @@ def _team_rating(
         if team == match.home_team:
             scored = match.home_score
             conceded = match.away_score
+            opponent = match.away_team
         else:
             scored = match.away_score
             conceded = match.home_score
+            opponent = match.home_team
         points = _points(scored, conceded)
         goal_difference = scored - conceded
         match_weight = weight * importance
@@ -320,6 +327,9 @@ def _team_rating(
         weighted_goals_for += scored * match_weight
         weighted_goals_against += conceded * match_weight
         weighted_goal_difference += goal_difference * match_weight
+        weighted_opponent_rating += (
+            fifa_sum_ratings_by_team.get(opponent, 1500.0) * match_weight
+        )
         weighted_importance += match_weight
     if weighted_importance <= 0:
         return fifa_sum_prior
@@ -327,11 +337,19 @@ def _team_rating(
     goals_for_per_match = weighted_goals_for / weighted_importance
     goals_against_per_match = weighted_goals_against / weighted_importance
     goal_difference_per_match = weighted_goal_difference / weighted_importance
+    average_opponent_rating = weighted_opponent_rating / weighted_importance
+    adjusted_rates = adjust_rates_for_schedule_strength(
+        points_per_match=points_per_match,
+        goals_for_per_match=goals_for_per_match,
+        goals_against_per_match=goals_against_per_match,
+        goal_difference_per_match=goal_difference_per_match,
+        average_opponent_rating=average_opponent_rating,
+    )
     rating = 1500.0
-    rating += (points_per_match - 1.35) * 60.0
-    rating += goal_difference_per_match * 100.0
-    rating += goals_for_per_match * 8.0
-    rating -= goals_against_per_match * 5.0
+    rating += (adjusted_rates.points_per_match - 1.35) * 60.0
+    rating += adjusted_rates.goal_difference_per_match * 100.0
+    rating += adjusted_rates.goals_for_per_match * 8.0
+    rating -= adjusted_rates.goals_against_per_match * 5.0
     rating += min(weighted_importance, 30.0) * 1.5
     rating += fifa_sum_prior - 1500.0
     return rating
