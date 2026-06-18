@@ -14,8 +14,9 @@ on:
       - "README.md"
       - "pyproject.toml"
   schedule:
-    - cron: "17 4 * * *"
-      timezone: "America/Sao_Paulo"
+    # GitHub Actions cron is UTC-only (no timezone key). 07:17 UTC == 04:17 in
+    # America/Sao_Paulo (UTC-3).
+    - cron: "17 7 * * *"
   workflow_dispatch:
     inputs:
       as_of_date:
@@ -53,6 +54,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
 
+      - name: Lint and test
+        run: |
+          ruff check .
+          pytest -q
+
       - name: Resolve daily identifiers
         shell: bash
         env:
@@ -85,17 +91,19 @@ jobs:
         run: |
           copa-forecast etl-recent-matches --config .generated/fifa.daily.forecast.json
 
-      - name: Generate forecast site
-        run: |
-          copa-forecast forecast \
-            --config .generated/fifa.daily.forecast.json \
-            --recent-matches data/processed/recent_matches/latest_matches.json
-
       - name: Refresh validation statistics
         run: |
           copa-forecast backtest \
             --config .generated/fifa.daily.forecast.json \
             --matches data/processed/recent_matches/latest_matches.json
+
+      - name: Generate forecast site
+        # Runs after the backtest so the published probabilities use the freshly
+        # fitted calibration temperature.
+        run: |
+          copa-forecast forecast \
+            --config .generated/fifa.daily.forecast.json \
+            --recent-matches data/processed/recent_matches/latest_matches.json
 
       - name: Run reviewer quality gate
         run: |
