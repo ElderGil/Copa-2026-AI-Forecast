@@ -112,20 +112,6 @@ Co-authored-by: Codex Construtor <codex-agent@openai.com>
 | ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.0718 | - | - | Atenção |
 | MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.1149 | - | - | Atenção |
 
-### Comparativo da Alteração do Modelo
-
-<sub><em>Registro automático para auditoria futura: comparação entre `recency_normalized_fifa_sum_prior_1x2` e `recency_sos_adjusted_fifa_sum_prior_1x2` usando o backtest rolling-origin salvo anteriormente para o mesmo `run_id`.</em></sub>
-
-<sub><em>Amostras avaliadas: antes `407`, agora `407`. Se este número mudar, a leitura deve considerar alteração de base além da alteração do modelo.</em></sub>
-
-| Métrica | Antes | Agora | Delta | Leitura |
-|---|---:|---:|---:|---|
-| Acurácia 1X2 | 57.25% | 57.25% | +0.00 p.p. | Estável |
-| Brier score | 0.5666 | 0.5654 | -0.0012 | Melhorou |
-| Log loss | 0.9599 | 0.9564 | -0.0035 | Melhorou |
-| ECE calibração | 0.0851 | 0.0718 | -0.0134 | Melhorou |
-| MCE calibração | 0.1735 | 0.1149 | -0.0586 | Melhorou |
-
 **Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.
 
 <sub><em>Baseline principal: FIFA/Coca-Cola World Ranking SUM methodology; computed locally from FIFA match records. Não redistribuímos tabela externa de ranking ou odds; o benchmark é calculado localmente a partir dos registros oficiais FIFA já ingeridos pelo pipeline.</em></sub>
