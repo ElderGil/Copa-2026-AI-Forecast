@@ -1,7 +1,7 @@
 {
   "run_id": "example-2026-06-18",
   "as_of_date": "2026-06-18",
-  "project_github_url": "https://github.com/CHANGE-ME/copa-2026-ai-forecast",
+  "project_github_url": "https://github.com/ElderGil/Copa-2026-AI-Forecast",
   "official_fifa": {
     "raw_output_dir": "data/raw/fifa",
     "allow_cached_payloads": true,

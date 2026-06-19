@@ -88,6 +88,7 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
     updated_friendly = _format_date_friendly(updated_raw)
     model_version = str(latest.get("model_version", ""))
     as_of_date = str(latest.get("as_of_date", ""))
+    calib_badge = _calibration_badge(str(latest.get("calibration_status", "")))
 
     # Seção de favoritos das mídias
     media_section = _render_media_favorites()
@@ -103,6 +104,9 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
   <meta property="og:description" content="Probabilidades de título geradas por IA com dados oficiais da FIFA. Modelo {html.escape(model_version)}.">
   <meta property="og:url" content="https://eldergil.github.io/Copa-2026-AI-Forecast/">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="https://eldergil.github.io/Copa-2026-AI-Forecast/assets/hero-stadium.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>%E2%9A%BD</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -130,11 +134,9 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
             <span class="run-meta-icon">🤖</span>
             Modelo: <strong>{html.escape(model_version)}</strong>
           </span>
-          <span class="run-meta-calib" title="O modelo ainda não passou por calibração probabilística formal. As probabilidades são baseadas em forma recente, nível dos adversários e ranking FIFA/SUM.">
-            <span class="run-meta-icon">⚠️</span>
-            Baseline · não calibrado
-          </span>
+          {calib_badge}
         </div>
+        <p class="hero-note">As probabilidades combinam a força estimada de cada seleção (forma recente, nível dos adversários e prior Elo) com o caminho no chaveamento, simulado 10.000 vezes. Modelo experimental — não é aconselhamento de apostas.</p>
       </div>
       <div class="top-board">
         <div class="podium">{podium}</div>
@@ -206,6 +208,42 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
     (target / "index.html").write_text(markup, encoding="utf-8")
     (target / "styles.css").write_text(_styles(), encoding="utf-8")
     (target / "app.js").write_text(_script(), encoding="utf-8")
+
+
+def _calibration_badge(calibration_status: str) -> str:
+    """Render the calibration chip from the run's actual calibration_status.
+
+    The label is derived from the data instead of being hardcoded so the public
+    page never contradicts ``latest.json`` / the README.
+    """
+    if calibration_status.startswith("temperature_scaled"):
+        temperature = ""
+        if "T=" in calibration_status:
+            temperature = calibration_status.split("T=", 1)[1].strip()
+        label = "Calibrado · temperature scaling"
+        if temperature:
+            label += f" (T={temperature})"
+        tooltip = (
+            "Probabilidades 1X2 calibradas por temperature scaling, ajustado no "
+            "backtest rolling-origin mais recente."
+        )
+        return (
+            f'<span class="run-meta-calib ok" title="{html.escape(tooltip)}">'
+            '<span class="run-meta-icon">✅</span>'
+            f"{html.escape(label)}"
+            "</span>"
+        )
+    tooltip = (
+        "O modelo ainda não passou por calibração probabilística formal. As "
+        "probabilidades são baseadas em forma recente, nível dos adversários e "
+        "prior Elo/SUM."
+    )
+    return (
+        f'<span class="run-meta-calib" title="{html.escape(tooltip)}">'
+        '<span class="run-meta-icon">⚠️</span>'
+        "Baseline · não calibrado"
+        "</span>"
+    )
 
 
 def _format_date_friendly(iso_str: str) -> str:
@@ -351,7 +389,9 @@ h1 { font-size: 58px; line-height:1; margin:0; max-width: 680px; color:#fffaf0; 
 .run-meta-version, .run-meta-calib { display:inline-flex; align-items:center; gap:7px; border:1px solid rgba(247,233,181,.55); border-radius:999px; padding:7px 14px; color:#fffaf0; background:rgba(6,28,21,.6); backdrop-filter:blur(4px); font-size:13px; }
 .run-meta-version strong { font-weight:900; }
 .run-meta-calib { border-color:rgba(251,191,36,.42); background:rgba(120,53,15,.35); font-size:12px; }
+.run-meta-calib.ok { border-color:rgba(134,239,172,.55); background:rgba(20,83,45,.45); }
 .run-meta-icon { font-size:15px; }
+.hero-note { max-width:680px; margin:0; font-size:13px; line-height:1.55; color:#d8e6dd; text-shadow:0 2px 10px rgba(0,0,0,.6); }
 
 /* ── Top Board ── */
 .top-board { display:grid; gap:14px; }

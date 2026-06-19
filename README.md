@@ -54,10 +54,14 @@ Todo o planejamento e pesquisa do projeto estão disponíveis de forma transpare
 ## 🛠️ Como Executar e Validar
 
 ### 1. Configurar o Ambiente Virtual
+> **Requer Python 3.11 ou superior.** Em macOS, `python3` pode apontar para o
+> Python 3.9 do sistema (sem `datetime.UTC` nem `zip(..., strict=...)`), o que
+> quebra os testes — use o binário `python3.11` explicitamente.
 ```bash
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
-pip install -e ".[dev]"   # inclui pytest e ruff
+python --version            # confirme: Python 3.11.x ou superior
+pip install -e ".[dev]"     # inclui pytest e ruff
 ```
 
 ### 2. Rodar a Validação Automatizada (Quality Gate)
@@ -91,19 +95,15 @@ Este repositório foi construído de forma colaborativa por um desenvolvedor hum
 | Contribuidor | Função | Natureza | Provedor |
 | :--- | :--- | :--- | :--- |
 | 🧑‍💻 **Elder Gil** | Human Tech Lead & Product Owner | Humano | Engenharia Geral |
-| 🤖 **Agente Construtor (Codex/Constructor)** | Engenheiro de Software | Agente de IA | OpenAI / Gemini |
-| 🤖 **Agente Revisor (Antigravity/Gemini 3.5)** | Arquiteto de Software & QA Gatekeeper | Agente de IA | Google DeepMind |
-
-
-Co-authored-by: Antigravity Revisor <antigravity-agent@google.com>
-Co-authored-by: Codex Construtor <codex-agent@openai.com>
+| 🤖 **Agente Construtor (Codex)** | Engenheiro de Software | Agente de IA | OpenAI |
+| 🤖 **Agente Revisor (Antigravity)** | Arquiteto de Software & QA Gatekeeper | Agente de IA | Google (Gemini) |
 
 <!-- validation-stats:start -->
 ## Estatísticas da Validação do Modelo
 
 **Última atualização dos dados:** `2026-06-19`
 **Modelo:** `Copa 2026 AI Forecast`
-**Baseline principal:** `Elo local estilo SUM (calculado dos jogos FIFA)`
+**Baseline principal:** `Benchmark local estilo Elo/SUM (calculado dos jogos FIFA — não é ranking oficial)`
 **Calibração:** temperature scaling (T=2.7636)
 
 | Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |
@@ -117,5 +117,5 @@ Co-authored-by: Codex Construtor <codex-agent@openai.com>
 
 **Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.
 
-<sub><em>Baseline principal: FIFA/Coca-Cola World Ranking SUM methodology; computed locally from FIFA match records. Não redistribuímos tabela externa de ranking ou odds; o benchmark é calculado localmente a partir dos registros oficiais FIFA já ingeridos pelo pipeline.</em></sub>
+<sub><em>Baseline principal: benchmark local inspirado na metodologia Elo/SUM da FIFA/Coca-Cola, calculado a partir dos próprios registros de partidas FIFA (não é o ranking oficial publicado). Não redistribuímos tabela externa de ranking ou odds; o benchmark é calculado localmente a partir dos registros oficiais FIFA já ingeridos pelo pipeline.</em></sub>
 <!-- validation-stats:end -->

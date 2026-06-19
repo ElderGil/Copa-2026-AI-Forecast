@@ -5,6 +5,7 @@ __pycache__/
 data/raw/
 data/interim/
 data/processed/
+.generated/
 public/data/
 public/index.html
 public/styles.css

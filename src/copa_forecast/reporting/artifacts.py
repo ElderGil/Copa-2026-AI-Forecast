@@ -261,7 +261,7 @@ def _validation_markdown_section(report: dict[str, Any]) -> str:
     # reports the calibrated probabilistic metrics (accuracy is argmax-invariant).
     calibrated = calibration.get("calibrated_metrics", metrics)
     temperature = calibration.get("temperature")
-    baseline_name = "Elo local estilo SUM (calculado dos jogos FIFA)"
+    baseline_name = "Benchmark local estilo Elo/SUM (calculado dos jogos FIFA — não é ranking oficial)"
     model_name = "Copa 2026 AI Forecast"
     updated_at = report.get("as_of_date", "")
     sample_count = report.get("sample_count", 0)

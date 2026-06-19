@@ -66,6 +66,25 @@ If official FIFA data is unreachable and no cached FIFA payload is available,
 the project may run only in degraded mode. Degraded runs cannot be presented as
 official competition-state forecasts.
 
+## Source Trust Boundary
+
+The FIFA source reader (`src/copa_forecast/data/sources/fifa.py`) accepts three
+kinds of locations: `https://`/`http://` URLs, `file://` URLs, and bare local
+paths. Local paths are intentional and load-bearing: they back the cached-payload
+flow (`data/raw/...`, enabled by `allow_cached_payloads`) for reproducible and
+offline/CI runs, plus the test fixtures used by `configs/example.forecast.json`.
+
+Because local-path reads are a feature, configs are treated as **trusted input**:
+
+- Production configs MUST point their official source URLs to FIFA HTTPS
+  endpoints; local paths in production configs are limited to the pipeline's own
+  `data/raw/` cache.
+- Never feed an untrusted, third-party config into the reader, since a malicious
+  `file://`/local path could read arbitrary files. The reader is not a sandbox.
+- If this project is ever exposed as a service accepting user-supplied configs,
+  add an allow-list (e.g. restrict local reads to `data/raw/` and
+  `tests/fixtures/`) before doing so.
+
 ## Current Pipeline Coverage
 
 The current implemented pipeline uses official FIFA endpoints for:

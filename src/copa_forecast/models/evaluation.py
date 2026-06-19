@@ -230,7 +230,7 @@ def rolling_origin_backtest(
         "model_name": "recency_sos_adjusted_fifa_sum_prior_1x2",
         "baseline_name": "equal_strength_1x2_baseline",
         "primary_baseline_name": "fifa_sum_style_elo_baseline",
-        "primary_baseline_source": "FIFA/Coca-Cola World Ranking SUM methodology; computed locally from FIFA match records",
+        "primary_baseline_source": "benchmark local inspirado na metodologia Elo/SUM da FIFA/Coca-Cola, calculado a partir dos próprios registros de partidas FIFA (não é o ranking oficial publicado)",
         "as_of_date": as_of_date.isoformat(),
         "evaluation_start": evaluation_start.isoformat(),
         "evaluation_months": evaluation_months,
@@ -270,7 +270,7 @@ def rolling_origin_backtest(
             "fifa_sum_style": {
                 "name": "fifa_sum_style_elo_baseline",
                 "role": "primary public benchmark",
-                "source": "FIFA/Coca-Cola World Ranking SUM methodology",
+                "source": "Local Elo/SUM-style benchmark inspired by FIFA/Coca-Cola methodology (not the official published ranking)",
                 "license_policy": "No external table is redistributed; ratings are computed locally from official FIFA match records already stored by the pipeline.",
                 "metrics": fifa_sum_metrics,
                 "comparison": {

@@ -1,7 +1,7 @@
 # Spec: Global Iterative Elo Prior
 
 **Feature ID**: 003-global-elo-prior
-**Status**: In progress
+**Status**: Complete (prior `global_elo_ratings` integrado em `forecast.py`/`evaluation.py`, commit `ed321d6`; todas as tasks concluídas). Resíduo conhecido de validade de face documentado abaixo.
 **Depends on**: `001-copa-forecast`, `002-credibility-remediation`
 **Constitution**: `.specify/memory/constitution.md` (Principles II, IV, VII)
 

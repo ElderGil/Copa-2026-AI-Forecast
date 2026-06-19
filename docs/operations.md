@@ -29,16 +29,22 @@ python scripts/prepare_daily_config.py \
 
 copa-forecast etl-recent-matches --config .generated/fifa.daily.forecast.json
 
-copa-forecast forecast \
-  --config .generated/fifa.daily.forecast.json \
-  --recent-matches data/processed/recent_matches/latest_matches.json
-
 copa-forecast backtest \
   --config .generated/fifa.daily.forecast.json \
   --matches data/processed/recent_matches/latest_matches.json
 
+copa-forecast forecast \
+  --config .generated/fifa.daily.forecast.json \
+  --recent-matches data/processed/recent_matches/latest_matches.json
+
 python scripts/verify_implementation.py
 ```
+
+> A ordem importa: o `backtest` roda **antes** do `forecast` porque é ele quem
+> ajusta a temperatura de calibração no rolling-origin. O `forecast` então
+> publica probabilidades já usando essa temperatura recém-ajustada. Essa é
+> exatamente a ordem do workflow em `.github/workflows/daily-forecast.yml`
+> (ETL → backtest → forecast → quality gate).
 
 ## Garantias da operacao
 
