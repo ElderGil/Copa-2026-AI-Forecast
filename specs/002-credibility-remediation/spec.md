@@ -1,7 +1,7 @@
 # Spec: Model Credibility & Engineering Remediation
 
 **Feature ID**: 002-credibility-remediation
-**Status**: In progress
+**Status**: Complete (entregue no commit `36190f1`; validação registrada em `docs/validation.md`)
 **Owner**: Elder Gil (human tech lead) + Builder/Reviewer agents
 **Depends on**: `001-copa-forecast`
 **Constitution**: `.specify/memory/constitution.md` (v1.1.0)

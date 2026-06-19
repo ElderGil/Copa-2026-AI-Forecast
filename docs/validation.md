@@ -1,6 +1,24 @@
 # Validacao
 
-## 2026-06-18 - Phase 9: remediacao de credibilidade (feature 002)
+## Snapshot de validacao atual
+
+Fonte da verdade ao vivo: o bloco `validation-stats` do `README.md`, regenerado
+pelo `backtest` a cada execucao do workflow. Estado mais recente (modelo
+`mvp-recency-sos-dynamic-draw-v4`, ja com o prior Elo global da feature 003):
+
+- Data dos dados: `2026-06-18`
+- Amostras avaliadas (rolling-origin): `458`
+- Acuracia 1X2: `60.70%` (baseline local `52.84%`)
+- Brier calibrado: `0.5227` (baseline `0.5815`)
+- Log loss calibrado: `0.9097` (baseline `0.9742`)
+- Temperatura de calibracao: `T=2.7941`
+- ECE `0.1474` / MCE `0.2695` (calibracao ainda em monitoramento)
+
+> As secoes abaixo sao **registros historicos** (logs por fase). Os numeros
+> antigos sao preservados de proposito para auditoria; nao representam o estado
+> atual do modelo.
+
+## [Historico] 2026-06-18 - Phase 9: remediacao de credibilidade (feature 002)
 
 Escopo em [specs/002-credibility-remediation/](../specs/002-credibility-remediation/).
 
@@ -19,7 +37,7 @@ Escopo em [specs/002-credibility-remediation/](../specs/002-credibility-remediat
   cold-start, cuja substituicao por um Elo global historico esta listada como
   non-goal da feature 002.
 
-## 2026-06-18 - Phase 8: operacao diaria e publicacao
+## [Historico] 2026-06-18 - Phase 8: operacao diaria e publicacao
 
 Comando executado no projeto real:
 
