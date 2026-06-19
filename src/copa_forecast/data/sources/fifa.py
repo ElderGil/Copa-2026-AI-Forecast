@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import time
 from dataclasses import dataclass
+from http.client import IncompleteRead
 from pathlib import Path
 from typing import Any, Protocol
 from urllib.error import HTTPError, URLError
@@ -82,13 +83,30 @@ class UrlOrFileFifaCrawler:
                 )
                 with urlopen(request, timeout=self._timeout) as response:
                     return response.read()
-            except (HTTPError, URLError, TimeoutError) as exc:
+            except IncompleteRead as exc:
+                # Large chunked FIFA payloads occasionally truncate; the partial
+                # body is usually the full document, so use it if it parses, else
+                # retry.
+                last_error = exc
+                if _looks_like_json(exc.partial):
+                    return exc.partial
+                if attempt + 1 < self._retries:
+                    time.sleep(self._backoff_seconds * (attempt + 1))
+            except (HTTPError, URLError, TimeoutError, OSError) as exc:
                 last_error = exc
                 if attempt + 1 < self._retries:
                     time.sleep(self._backoff_seconds * (attempt + 1))
         raise FifaSourceError(
             f"Failed to fetch FIFA payload after {self._retries} attempts: {url}"
         ) from last_error
+
+
+def _looks_like_json(payload: bytes) -> bool:
+    try:
+        json.loads(payload.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return False
+    return True
 
 
 class JsonFifaParser:
