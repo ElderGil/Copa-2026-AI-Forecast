@@ -34,6 +34,41 @@ class SimulationIntegrationTest(unittest.TestCase):
             32.0,
         )
 
+    def test_simulation_with_resolved_knockout_match_does_not_crash(self) -> None:
+        from copa_forecast.data.contracts import Fixture
+        state = _synthetic_world_cup_2026_state()
+        
+        # Add a resolved knockout fixture: team A1 from group A plays team B1 from group B
+        resolved_knockout = Fixture(
+            match_id="knockout-resolved-test",
+            home_team="A1",
+            away_team="B1",
+            group=None,
+            kickoff="2026-06-28T19:00:00Z",
+            venue=None,
+            status="scheduled",
+        )
+        
+        state_with_knockout = OfficialCompetitionState(
+            as_of_date=state.as_of_date,
+            fifa_extract_ids=state.fifa_extract_ids,
+            teams=state.teams,
+            fixtures=(resolved_knockout,),
+        )
+        
+        strengths = {team.name: 100 + index for index, team in enumerate(state.teams)}
+
+        # This should execute without raising ValueError
+        distribution = simulate_tournament_distribution(
+            state_with_knockout,
+            strengths=strengths,
+            runs=10,
+            seed=20260618,
+            as_of_date=date(2026, 6, 18),
+        )
+        
+        self.assertEqual(len(distribution), 48)
+
     def test_simulate_command_writes_advancement_artifacts(self) -> None:
         fixture = Path("tests/fixtures/fifa/sample_competition_state.json").resolve()
         with tempfile.TemporaryDirectory() as tmp:

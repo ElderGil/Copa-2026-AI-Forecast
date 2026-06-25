@@ -248,10 +248,14 @@ def _teams_from_calendar_results(items: list[dict[str, Any]]) -> tuple[Team, ...
             team_id = _optional_str(team.get("IdTeam"))
             if not name or not team_id:
                 continue
+            existing = teams.get(team_id)
+            group_to_use = group
+            if existing and existing.group and not group:
+                group_to_use = existing.group
             teams[team_id] = Team(
                 team_id=team_id,
                 name=name,
-                group=group,
+                group=group_to_use,
                 flag_code=_optional_str(team.get("IdCountry") or team.get("Abbreviation")),
                 confederation=None,
             )

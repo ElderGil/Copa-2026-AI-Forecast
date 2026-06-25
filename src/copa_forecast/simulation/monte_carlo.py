@@ -399,7 +399,12 @@ def _groups_from_state(state: OfficialCompetitionState) -> dict[str, list[str]]:
         if team.group:
             groups[team.group].append(team.name)
     for fixture in state.fixtures:
-        group = fixture.group or team_group.get(fixture.home_team)
+        group = fixture.group
+        if not group:
+            home_group = team_group.get(fixture.home_team)
+            away_group = team_group.get(fixture.away_team)
+            if home_group and home_group == away_group:
+                group = home_group
         if not group:
             continue
         for team in (fixture.home_team, fixture.away_team):
@@ -419,7 +424,12 @@ def _fixtures_by_group(
         for team_name in team_names
     }
     for fixture in state.fixtures:
-        group = fixture.group or team_group.get(fixture.home_team)
+        group = fixture.group
+        if not group:
+            home_group = team_group.get(fixture.home_team)
+            away_group = team_group.get(fixture.away_team)
+            if home_group and home_group == away_group:
+                group = home_group
         if not group or group not in fixtures:
             continue
         pair = frozenset((fixture.home_team, fixture.away_team))
