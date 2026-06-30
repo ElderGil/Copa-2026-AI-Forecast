@@ -144,4 +144,11 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') closePanel();
+  if (event.key === 'Enter' || event.key === ' ') {
+    const focused = event.target.closest('[data-team]');
+    if (focused) {
+      event.preventDefault();
+      openPanel(focused.dataset.team);
+    }
+  }
 });

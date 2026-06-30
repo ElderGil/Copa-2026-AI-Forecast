@@ -175,6 +175,16 @@ def _parse_fixture(item: dict[str, Any]) -> Fixture:
     )
     home_score = item.get("home_score") if "home_score" in item else item.get("HomeTeamScore")
     away_score = item.get("away_score") if "away_score" in item else item.get("AwayTeamScore")
+    home_penalty = (
+        item.get("home_penalty_score")
+        if "home_penalty_score" in item
+        else item.get("HomeTeamPenaltyScore")
+    )
+    away_penalty = (
+        item.get("away_penalty_score")
+        if "away_penalty_score" in item
+        else item.get("AwayTeamPenaltyScore")
+    )
     return Fixture(
         match_id=match_id,
         fifa_match_id=_optional_str(item.get("fifa_match_id") or item.get("id") or item.get("IdMatch")),
@@ -186,6 +196,13 @@ def _parse_fixture(item: dict[str, Any]) -> Fixture:
         status=str(item.get("status") or _calendar_status(item, home_score=_optional_int(home_score), away_score=_optional_int(away_score))).casefold(),
         home_score=_optional_int(home_score),
         away_score=_optional_int(away_score),
+        home_penalty_score=_optional_int(home_penalty),
+        away_penalty_score=_optional_int(away_penalty),
+        match_number=_optional_int(
+            item.get("match_number")
+            if "match_number" in item
+            else item.get("MatchNumber")
+        ),
     )
 
 

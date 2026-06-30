@@ -60,6 +60,9 @@ class Fixture:
     home_score: int | None = None
     away_score: int | None = None
     fifa_match_id: str | None = None
+    home_penalty_score: int | None = None
+    away_penalty_score: int | None = None
+    match_number: int | None = None
 
 
 @dataclass(frozen=True)

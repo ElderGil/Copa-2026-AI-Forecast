@@ -77,10 +77,12 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
         json.dumps(latest, indent=2, sort_keys=True), encoding="utf-8"
     )
     teams = sorted(latest.get("teams", []), key=lambda row: row["rank"])
-    top = teams[:10]
+    top_n = _top_list_size(latest, total=len(teams))
+    top = teams[:top_n]
     podium = "".join(_team_card(team, large=team["rank"] <= 3) for team in top[:3])
     rest = "".join(_ranking_row(team) for team in top[3:])
     grid = "".join(_team_card(team, large=False) for team in teams)
+    knockout_section = _render_knockout_bracket(latest)
     data = json.dumps(latest, ensure_ascii=False).replace("</", "<\\/")
 
     # Metadados formatados para o header
@@ -128,7 +130,7 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
           <span class="run-stamp-value">{html.escape(updated_friendly)}</span>
           <span class="run-stamp-sub">Dados de {html.escape(as_of_date)}</span>
         </div>
-        <h1>Top 10 probabilidades de título</h1>
+        <h1>Top {top_n} probabilidades de título</h1>
         <div class="run-meta">
           <span class="run-meta-version" title="Versão do modelo preditivo">
             <span class="run-meta-icon">🤖</span>
@@ -143,6 +145,7 @@ def render_static_page(*, latest: dict[str, Any], github_url: str, output_dir: s
         <ol class="top-list">{rest}</ol>
       </div>
     </section>
+    {knockout_section}
     {media_section}
     <section class="all-teams">
       <div class="section-heading">
@@ -297,6 +300,100 @@ def _render_media_favorites() -> str:
     )
 
 
+def _top_list_size(latest: dict[str, Any], *, total: int) -> int:
+    """Number of teams to show in the headline list.
+
+    Top 10 normally, but it shrinks to the teams still alive once the knockout
+    field drops below ten (quarterfinals → 8, semifinals → 4, final → 2).
+    """
+    raw = latest.get("display_count")
+    try:
+        count = int(raw)
+    except (TypeError, ValueError):
+        count = 10
+    count = min(count, 10)
+    return max(1, min(count, total)) if total else count
+
+
+def _render_knockout_bracket(latest: dict[str, Any]) -> str:
+    """Render the live knockout path from the round of 32 onward."""
+    bracket = latest.get("knockout_bracket") or {}
+    rounds = [rnd for rnd in bracket.get("rounds", []) if rnd.get("matches")]
+    if not rounds:
+        return ""
+    cols = ""
+    for rnd in rounds:
+        matches_html = "".join(_bracket_match(match) for match in rnd.get("matches", []))
+        cols += (
+            '<div class="bracket-round">'
+            f'<h3 class="bracket-round-title">{html.escape(str(rnd.get("label", "")))}</h3>'
+            f'<div class="bracket-round-matches">{matches_html}</div>'
+            "</div>"
+        )
+    return (
+        '<section class="knockout">'
+        '<div class="section-heading"><div>'
+        "<h2>Caminho do título — mata-mata</h2>"
+        '<p class="section-sub">Acompanhe o chaveamento da FIFA: confrontos já definidos, vagas ainda a definir e a chance de título de cada seleção que segue viva. Quem é eliminado zera.</p>'
+        "</div></div>"
+        f'<div class="bracket-scroll"><div class="bracket">{cols}</div></div>'
+        "</section>"
+    )
+
+
+def _bracket_match(match: dict[str, Any]) -> str:
+    status = str(match.get("status", ""))
+    winner = match.get("winner")
+    return (
+        f'<div class="bracket-match status-{html.escape(status)}">'
+        f'{_bracket_side(match.get("home"), winner)}'
+        '<span class="bracket-vs">×</span>'
+        f'{_bracket_side(match.get("away"), winner)}'
+        "</div>"
+    )
+
+
+def _bracket_side(side: dict[str, Any] | None, winner: Any) -> str:
+    side = side or {}
+    defined = bool(side.get("defined"))
+    classes = ["bracket-side"]
+    if not defined:
+        classes.append("tbd")
+    if side.get("eliminated"):
+        classes.append("eliminated")
+    if winner and side.get("team") == winner:
+        classes.append("winner")
+
+    if defined:
+        name = str(side.get("display_name") or "")
+        hint = ""
+        prob = side.get("champion_probability")
+        prob_html = (
+            f'<span class="bracket-prob">{prob:.1%}</span>'
+            if isinstance(prob, (int, float))
+            else ""
+        )
+        emoji = str(side.get("flag_emoji") or "")
+        flag_html = f'<span class="bracket-flag">{html.escape(emoji)}</span>'
+    else:
+        name = "A definir"
+        slot = str(side.get("placeholder") or "")
+        hint = f'<span class="bracket-hint">{html.escape(slot)}</span>' if slot else ""
+        prob_html = ""
+        flag_html = '<span class="bracket-flag tbd-flag">⏳</span>'
+
+    attrs = ""
+    if defined and side.get("team"):
+        attrs = f' data-team="{html.escape(str(side["team"]))}" role="button" tabindex="0"'
+    return (
+        f'<div class="{" ".join(classes)}"{attrs}>'
+        f"{flag_html}"
+        f'<span class="bracket-text"><span class="bracket-team">{html.escape(name)}</span>{hint}</span>'
+        f"{prob_html}"
+        "</div>"
+    )
+
+
 def _copy_site_assets(target: Path) -> None:
     assets_source = Path(__file__).with_name("assets")
     hero_source = assets_source / "hero-stadium.png"
@@ -433,6 +530,33 @@ h1 { font-size: 58px; line-height:1; margin:0; max-width: 680px; color:#fffaf0; 
 .media-fav-rank { font-size:13px; font-weight:900; color:#8a9490; min-width:24px; }
 .media-fav-flag { font-size:22px; line-height:1; }
 .media-fav-name { font-size:14px; font-weight:800; color:#17211b; }
+
+/* ── Knockout Bracket ── */
+.knockout { padding: 40px 28px; background:#f4f1ea; border-top:1px solid #ded8ca; }
+.bracket-scroll { overflow-x:auto; padding:8px 2px 14px; margin-top:22px; -webkit-overflow-scrolling:touch; }
+.bracket { display:flex; gap:22px; align-items:stretch; min-width:max-content; }
+.bracket-round { display:flex; flex-direction:column; min-width:210px; flex:1; }
+.bracket-round-title { font-size:13px; font-weight:900; letter-spacing:.04em; text-transform:uppercase; color:#1e5f45; margin:0 0 12px; }
+.bracket-round-matches { display:flex; flex-direction:column; justify-content:space-around; gap:14px; flex:1; }
+.bracket-match { background:#fffdf8; border:1px solid #d8d0bf; border-radius:10px; padding:8px; display:grid; gap:4px; box-shadow:0 4px 12px rgba(23,33,27,.06); position:relative; }
+.bracket-match .bracket-vs { position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:11px; color:#b3aa97; font-weight:800; }
+.bracket-side { display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:7px; background:#fffaf0; border:1px solid transparent; }
+.bracket-side[data-team] { cursor:pointer; transition:background .13s; }
+.bracket-side[data-team]:hover { background:#f7efd9; }
+.bracket-side .bracket-flag { font-size:18px; line-height:1; flex-shrink:0; }
+.bracket-side .bracket-flag.tbd-flag { filter:grayscale(1); opacity:.6; }
+.bracket-side .bracket-text { flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.15; }
+.bracket-side .bracket-team { font-weight:800; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bracket-side .bracket-hint { font-size:11px; color:#a39a86; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bracket-side .bracket-prob { font-weight:900; font-size:13px; color:#8b1e22; flex-shrink:0; }
+.bracket-side.tbd .bracket-team { color:#8a9490; font-weight:700; font-style:italic; }
+.bracket-side.winner { background:linear-gradient(155deg,#1e5f45,#2c7a58); border-color:#1e5f45; }
+.bracket-side.winner .bracket-team { color:#fffaf0; }
+.bracket-side.winner .bracket-prob { color:#f7e9b5; }
+.bracket-side.winner::after { content:"✓"; color:#f7e9b5; font-weight:900; font-size:13px; }
+.bracket-side.eliminated { opacity:.55; }
+.bracket-side.eliminated .bracket-team { text-decoration:line-through; color:#8a9490; }
+.bracket-side.eliminated .bracket-prob { color:#8a9490; }
 
 /* ── All Teams ── */
 .all-teams { padding: 30px 28px 46px; }
@@ -648,5 +772,12 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') closePanel();
+  if (event.key === 'Enter' || event.key === ' ') {
+    const focused = event.target.closest('[data-team]');
+    if (focused) {
+      event.preventDefault();
+      openPanel(focused.dataset.team);
+    }
+  }
 });
 """

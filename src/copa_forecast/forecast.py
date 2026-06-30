@@ -26,9 +26,17 @@ from copa_forecast.models.strength import (
 )
 from copa_forecast.reporting.countries import display_team_name, flag_emoji
 from copa_forecast.reporting.explanations import build_team_explanation
+from copa_forecast.simulation.bracket import (
+    ROUND_LABELS,
+    BracketMatch,
+    build_bracket_state,
+)
+from copa_forecast.simulation.knockout_state import eliminated_knockout_teams
 from copa_forecast.simulation.monte_carlo import (
     simulate_tournament_distribution,
 )
+
+TOP_LIST_LIMIT = 10
 
 MODEL_VERSION = "mvp-recency-sos-dynamic-draw-v4"
 
@@ -122,12 +130,30 @@ def build_latest_forecast(
         for index, team in enumerate(ranked, start=1)
     ]
 
+    eliminated = eliminated_knockout_teams(state, as_of_date=as_of_date)
+    bracket_rounds, groups_complete = build_bracket_state(state, as_of_date=as_of_date)
+    knockout_bracket = _build_knockout_payload(
+        bracket_rounds,
+        state=state,
+        advancement=advancement,
+        eliminated=eliminated,
+    )
+    remaining_count = _remaining_team_count(
+        bracket_rounds,
+        groups_complete=groups_complete,
+        eliminated=eliminated,
+        total_teams=len(state.teams),
+    )
+    display_count = min(TOP_LIST_LIMIT, remaining_count)
+
     return {
         "run_id": config.run_id,
         "updated_at": generated_at.isoformat(),
         "as_of_date": as_of_date.isoformat(),
         "model_version": MODEL_VERSION,
         "calibration_status": calibration_status,
+        "display_count": display_count,
+        "knockout_bracket": knockout_bracket,
         "teams": teams,
         "pillars": [_pillar_payload(pillar, used=pillar in included_pillars) for pillar in pillars],
         "benchmarks": [
@@ -405,6 +431,95 @@ def _teams_with_tournament_path(state: OfficialCompetitionState) -> set[str]:
         names.add(fixture.home_team)
         names.add(fixture.away_team)
     return names
+
+
+def _build_knockout_payload(
+    bracket_rounds: list[tuple[str, list[BracketMatch]]],
+    *,
+    state: OfficialCompetitionState,
+    advancement: dict[str, dict[str, float]],
+    eliminated: set[str],
+) -> dict[str, Any]:
+    team_lookup = {team.name: team for team in state.teams}
+
+    def side(bracket_side: Any) -> dict[str, Any]:
+        if bracket_side.team:
+            team = team_lookup.get(bracket_side.team)
+            flag_code = team.flag_code if team else None
+            return {
+                "team": bracket_side.team,
+                "display_name": display_team_name(bracket_side.team),
+                "flag": flag_code or "",
+                "flag_emoji": flag_emoji(flag_code),
+                "group": team.group if team else None,
+                "champion_probability": round(
+                    advancement.get(bracket_side.team, {}).get("champion", 0.0), 6
+                ),
+                "eliminated": bracket_side.team in eliminated,
+                "defined": True,
+                "placeholder": bracket_side.placeholder,
+            }
+        return {
+            "team": None,
+            "display_name": bracket_side.placeholder,
+            "flag": "",
+            "flag_emoji": "",
+            "group": None,
+            "champion_probability": None,
+            "eliminated": False,
+            "defined": False,
+            "placeholder": bracket_side.placeholder,
+        }
+
+    rounds_payload = [
+        {
+            "key": round_key,
+            "label": ROUND_LABELS.get(round_key, round_key),
+            "matches": [
+                {
+                    "match_number": match.match_number,
+                    "home": side(match.home),
+                    "away": side(match.away),
+                    "winner": match.winner,
+                    "status": _match_status(match),
+                }
+                for match in matches
+            ],
+        }
+        for round_key, matches in bracket_rounds
+    ]
+    return {"rounds": rounds_payload}
+
+
+def _match_status(match: BracketMatch) -> str:
+    if match.winner:
+        return "decided"
+    if match.home.team and match.away.team:
+        return "pending"
+    return "scheduled"
+
+
+def _remaining_team_count(
+    bracket_rounds: list[tuple[str, list[BracketMatch]]],
+    *,
+    groups_complete: bool,
+    eliminated: set[str],
+    total_teams: int,
+) -> int:
+    if not groups_complete:
+        return total_teams
+    r32 = next(
+        (matches for key, matches in bracket_rounds if key == "round_of_32"), []
+    )
+    participants: set[str] = set()
+    for match in r32:
+        if match.home.team:
+            participants.add(match.home.team)
+        if match.away.team:
+            participants.add(match.away.team)
+    if not participants:
+        return total_teams
+    return len(participants - eliminated)
 
 
 def _team_row(

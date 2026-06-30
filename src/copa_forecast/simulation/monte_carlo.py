@@ -13,6 +13,10 @@ from copa_forecast.data.contracts import (
 )
 from copa_forecast.features.leakage import parse_record_date
 from copa_forecast.models.baselines import NEUTRAL_STRENGTH, three_way_baseline
+from copa_forecast.simulation.knockout_state import (
+    known_knockout_winners,
+    official_round_of_32,
+)
 from copa_forecast.simulation.rules import (
     KnockoutMatch,
     build_world_cup_2026_round_of_32_matches,
@@ -84,6 +88,13 @@ def simulate_tournament_distribution(
     # the difference), with no plumbing through the bracket helpers.
     strengths = _temperature_scaled_strengths(strengths, temperature)
     rng = random.Random(seed)
+    # Results that already happened are honoured deterministically so eliminated
+    # teams can never advance past the round they actually lost.
+    known_winners = known_knockout_winners(state, as_of_date=as_of_date)
+    # Once the bracket is drawn, seed it from the official fixtures so the
+    # simulated pairings match reality exactly (the best-third-placed slots in
+    # particular), which is what makes every completed result get honoured.
+    official_r32 = official_round_of_32(state)
     team_names = [team.name for team in state.teams]
     counts: dict[str, Counter[str]] = {
         team: Counter({round_name: 0 for round_name in ADVANCEMENT_ROUNDS})
@@ -91,7 +102,12 @@ def simulate_tournament_distribution(
     }
     for _ in range(runs):
         result = simulate_tournament_once(
-            state, strengths=strengths, rng=rng, as_of_date=as_of_date
+            state,
+            strengths=strengths,
+            rng=rng,
+            as_of_date=as_of_date,
+            known_winners=known_winners,
+            official_r32=official_r32,
         )
         for round_name, teams in result.advancement.items():
             for team in teams:
@@ -111,11 +127,14 @@ def simulate_tournament_once(
     strengths: dict[str, float],
     rng: random.Random,
     as_of_date: date,
+    known_winners: dict[frozenset[str], str] | None = None,
+    official_r32: dict[int, tuple[str, str]] | None = None,
 ) -> TournamentRunResult:
+    known_winners = known_winners or {}
     group_tables = simulate_group_tables(
         state, strengths=strengths, rng=rng, as_of_date=as_of_date
     )
-    initial_matches = build_initial_knockout_matches(group_tables)
+    initial_matches = _initial_knockout_matches(group_tables, official_r32)
     r32_teams = tuple(
         team for match in initial_matches for team in (match.home_team, match.away_team)
     )
@@ -131,6 +150,7 @@ def simulate_tournament_once(
             rng=rng,
             resolved=resolved,
             knockout_results=knockout_results,
+            known_winners=known_winners,
         )
         advancement["round_of_16"] = _winners_for_matches(resolved, range(73, 89))
         _play_official_round(
@@ -140,6 +160,7 @@ def simulate_tournament_once(
             rng=rng,
             resolved=resolved,
             knockout_results=knockout_results,
+            known_winners=known_winners,
         )
         advancement["quarterfinal"] = _winners_for_matches(resolved, range(89, 97))
         _play_official_round(
@@ -149,6 +170,7 @@ def simulate_tournament_once(
             rng=rng,
             resolved=resolved,
             knockout_results=knockout_results,
+            known_winners=known_winners,
         )
         advancement["semifinal"] = _winners_for_matches(resolved, range(97, 101))
         _play_official_round(
@@ -158,6 +180,7 @@ def simulate_tournament_once(
             rng=rng,
             resolved=resolved,
             knockout_results=knockout_results,
+            known_winners=known_winners,
         )
         advancement["final"] = _winners_for_matches(resolved, range(101, 103))
         _play_official_round(
@@ -167,6 +190,7 @@ def simulate_tournament_once(
             rng=rng,
             resolved=resolved,
             knockout_results=knockout_results,
+            known_winners=known_winners,
         )
         champion = resolved[104]
     else:
@@ -176,6 +200,7 @@ def simulate_tournament_once(
             rng=rng,
             advancement=advancement,
             knockout_results=knockout_results,
+            known_winners=known_winners,
         )
 
     advancement["champion"] = (champion,)
@@ -221,6 +246,29 @@ def simulate_group_tables(
     return tables
 
 
+def _initial_knockout_matches(
+    group_tables: dict[str, list[TeamStanding]],
+    official_r32: dict[int, tuple[str, str]] | None,
+) -> list[KnockoutMatch]:
+    """Round-of-32 matches, seeded from the official draw when it is complete.
+
+    The official pairings (keyed by FIFA match number 73-88) override the
+    derived bracket so the simulated slots match reality; otherwise we fall back
+    to deriving them from the (possibly simulated) group tables.
+    """
+
+    if (
+        official_r32
+        and is_world_cup_2026_group_structure(group_tables)
+        and all(number in official_r32 for number in range(73, 89))
+    ):
+        return [
+            KnockoutMatch(number, home, away, "official", "official")
+            for number, (home, away) in sorted(official_r32.items())
+        ]
+    return build_initial_knockout_matches(group_tables)
+
+
 def build_initial_knockout_matches(
     group_tables: dict[str, list[TeamStanding]]
 ) -> list[KnockoutMatch]:
@@ -250,10 +298,15 @@ def _play_match_list(
     rng: random.Random,
     resolved: dict[int, str],
     knockout_results: list[SimulatedKnockoutResult],
+    known_winners: dict[frozenset[str], str] | None = None,
 ) -> None:
     for match in matches:
         winner, decided_by = _knockout_winner(
-            match.home_team, match.away_team, strengths=strengths, rng=rng
+            match.home_team,
+            match.away_team,
+            strengths=strengths,
+            rng=rng,
+            known_winners=known_winners,
         )
         resolved[match.match_number] = winner
         knockout_results.append(
@@ -276,6 +329,7 @@ def _play_official_round(
     rng: random.Random,
     resolved: dict[int, str],
     knockout_results: list[SimulatedKnockoutResult],
+    known_winners: dict[frozenset[str], str] | None = None,
 ) -> None:
     matches = [
         KnockoutMatch(
@@ -294,6 +348,7 @@ def _play_official_round(
         rng=rng,
         resolved=resolved,
         knockout_results=knockout_results,
+        known_winners=known_winners,
     )
 
 
@@ -304,6 +359,7 @@ def _play_generic_knockout(
     rng: random.Random,
     advancement: dict[str, tuple[str, ...]],
     knockout_results: list[SimulatedKnockoutResult],
+    known_winners: dict[frozenset[str], str] | None = None,
 ) -> str:
     current = list(matches)
     round_names = ["round_of_32", "round_of_16", "quarterfinal", "semifinal", "final"]
@@ -318,6 +374,7 @@ def _play_generic_knockout(
             rng=rng,
             resolved=resolved,
             knockout_results=knockout_results,
+            known_winners=known_winners,
         )
         winners = [resolved[match.match_number] for match in current]
         if len(winners) == 1:
@@ -353,8 +410,17 @@ def _resolve_group_fixture(
 
 
 def _knockout_winner(
-    home_team: str, away_team: str, *, strengths: dict[str, float], rng: random.Random
+    home_team: str,
+    away_team: str,
+    *,
+    strengths: dict[str, float],
+    rng: random.Random,
+    known_winners: dict[frozenset[str], str] | None = None,
 ) -> tuple[str, str]:
+    if known_winners:
+        decided = known_winners.get(frozenset((home_team, away_team)))
+        if decided in (home_team, away_team):
+            return decided, "actual_result"
     outcome = _sample_three_way(home_team, away_team, strengths, rng)
     if outcome == "home":
         return home_team, "regulation"
