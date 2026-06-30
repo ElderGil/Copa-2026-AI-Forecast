@@ -27,6 +27,7 @@ src/copa_forecast/
   * *Diretriz*: Implementar o padrão **Adapter (ou Strategy)** em `src/copa_forecast/data/sources/fifa.py`, separando o crawler (que busca e persiste o payload) do parser. Deve ser fácil injetar um novo adaptador de parsing sem tocar no motor de ingestão e normalização.
 * **Complexidade do Novo Regulamento da Copa 2026 (48 seleções)**: O torneio terá 12 grupos de 4 times, classificando os 2 primeiros de cada grupo + os **8 melhores terceiros colocados** para a fase de 32 avos (Round of 32). A lógica de desempate e mapeamento de chaves entre diferentes grupos é complexa.
   * *Diretriz*: Escrever testes unitários em `tests/unit/test_rules.py` cobrindo cenários limite de comparação de terceiros colocados (critérios de cartões amarelos/Fair Play, saldo de gols e sorteio).
+  * *Diretriz implementada*: Quando o sorteio do mata-mata já está publicado, a simulação **semeia os 32 avos diretamente dos confrontos oficiais** (via `MatchNumber` da FIFA, em `simulation/knockout_state.py`), em vez de depender do backtracking de terceiros colocados. Isso garante que a chave simulada e a exibida (`simulation/bracket.py`) batam exatamente com a real; o backtracking permanece como fallback enquanto o sorteio não saiu.
 
 ---
 
@@ -48,6 +49,7 @@ A premissa esportiva do modelo está muito bem fundamentada e contorna o viés c
   * *Diretriz implementada*: A versão `mvp-recency-normalized-sum-v2` normaliza pontos, saldo, gols marcados e gols sofridos por peso de partida, mantém apenas um ganho limitado de confiança por volume amostral e adiciona um prior FIFA/SUM calculado localmente a partir dos mesmos registros FIFA. O backtest rolling-origin registra o comparativo contra a versão anterior no README para evitar regressão silenciosa.
 * **O Impacto de Empates e Decisão por Pênaltis**: O mata-mata da Copa do Mundo se estende para prorrogação e pênaltis. Simular apenas o tempo regulamentar é insuficiente.
   * *Diretriz*: O modelo de partida em `match_model.py` deve estimar as probabilidades do tempo regulamentar ($p_W, p_D, p_L$). Se a simulação de mata-mata indicar empate, deve-se aplicar uma probabilidade de vitória de prorrogação/pênalti derivada de atributos de resiliência defensiva e histórico de penalidades (ou uma distribuição simplificada baseada em ranking de força).
+  * *Diretriz implementada*: Para confrontos **já disputados**, a simulação não estima nada — ela honra o resultado real, inclusive **disputas por pênaltis** (decididas pelo placar de pênaltis ingerido), forçando o vencedor de fato. Logo, uma seleção eliminada cai imediatamente a **0% de chance de título** e nas fases seguintes (`simulation/knockout_state.py` + `simulation/monte_carlo.py`). O resultado por pênaltis ainda *simulado* (jogo futuro) segue a distribuição baseada em força — o algoritmo estatístico permanece inalterado.
 
 ---
 

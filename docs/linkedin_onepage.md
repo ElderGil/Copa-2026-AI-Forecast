@@ -28,6 +28,7 @@ A maioria das previsões de futebol falha por dois motivos:
 ### 4. Simulação de Chaveamento Real via Monte Carlo (10,000+ Runs)
 * **Decisão**: Não fazemos um ranking linear estático. O algoritmo simula a Copa do Mundo de ponta a ponta 10.000 vezes, incluindo a nova regra complexa da Copa 2026 (48 times, 12 grupos, com classificação dos 8 melhores terceiros colocados) e resoluções de prorrogação/pênaltis no mata-mata.
 * **Justificativa**: Um time de menor força média pode ter um caminho muito aberto no chaveamento e alcançar uma semifinal com maior probabilidade que um favorito enfrentando chaves pesadas.
+* **Acompanhamento ao vivo**: Conforme o mata-mata avança, os resultados reais (incluindo pênaltis) são respeitados — seleções eliminadas zeram a chance de título na hora — e a página exibe o caminho do título atualizado (16-avos → final, com vagas "A definir").
 
 ### 5. Rigor Científico: Calibração de Probabilidades e Zero-Leakage
 * **Decisão**: Modelos de classificação não promovem previsões brutas. Aplicamos calibração (Platt Scaling ou Isotonic Regression) e validamos a assertividade usando métricas probabilísticas estritas: **Log Loss** e **Brier Score**.
