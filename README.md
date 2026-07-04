@@ -102,18 +102,18 @@ Este repositório foi construído de forma colaborativa por um desenvolvedor hum
 <!-- validation-stats:start -->
 ## Estatísticas da Validação do Modelo
 
-**Última atualização dos dados:** `2026-07-03`
+**Última atualização dos dados:** `2026-07-04`
 **Modelo:** `Copa 2026 AI Forecast`
 **Baseline principal:** `Benchmark local estilo Elo/SUM (calculado dos jogos FIFA — não é ranking oficial)`
-**Calibração:** temperature scaling (T=2.4892)
+**Calibração:** temperature scaling (T=2.4872)
 
 | Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |
 |---|---:|---:|---:|---|
-| Amostras avaliadas<br><sub><em>Partidas do período 2025-07-03 a 2026-07-03; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 501 | - | - | Info |
-| Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 62.28% | 53.09% | +9.18 p.p. | Bom |
-| Brier score<br><sub><em>Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5099 | 0.5805 | -0.0706 | Bom |
-| Log loss<br><sub><em>Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.8929 | 0.9731 | -0.0802 | Bom |
-| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.1238 | - | - | Atenção |
+| Amostras avaliadas<br><sub><em>Partidas do período 2025-07-04 a 2026-07-04; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 503 | - | - | Info |
+| Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 62.23% | 53.08% | +9.15 p.p. | Bom |
+| Brier score<br><sub><em>Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5102 | 0.5806 | -0.0705 | Bom |
+| Log loss<br><sub><em>Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.8932 | 0.9734 | -0.0802 | Bom |
+| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.1230 | - | - | Atenção |
 | MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.2249 | - | - | Atenção |
 
 **Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.
