@@ -1,5 +1,5 @@
 {
-  "as_of_date": "2026-07-08",
+  "as_of_date": "2026-07-09",
   "benchmarks": [
     {
       "key": "fifa_power_rankings_aramco",
@@ -74,7 +74,7 @@
           },
           {
             "away": {
-              "champion_probability": 0.0888,
+              "champion_probability": 0.0887,
               "defined": true,
               "display_name": "Marrocos",
               "eliminated": false,
@@ -220,7 +220,7 @@
               "team": "Congo DR"
             },
             "home": {
-              "champion_probability": 0.1298,
+              "champion_probability": 0.1299,
               "defined": true,
               "display_name": "Inglaterra",
               "eliminated": false,
@@ -458,7 +458,7 @@
         "matches": [
           {
             "away": {
-              "champion_probability": 0.0888,
+              "champion_probability": 0.0887,
               "defined": true,
               "display_name": "Marrocos",
               "eliminated": false,
@@ -539,7 +539,7 @@
           },
           {
             "away": {
-              "champion_probability": 0.1298,
+              "champion_probability": 0.1299,
               "defined": true,
               "display_name": "Inglaterra",
               "eliminated": false,
@@ -691,7 +691,7 @@
               "team": "France"
             },
             "home": {
-              "champion_probability": 0.0888,
+              "champion_probability": 0.0887,
               "defined": true,
               "display_name": "Marrocos",
               "eliminated": false,
@@ -734,7 +734,7 @@
           },
           {
             "away": {
-              "champion_probability": 0.1298,
+              "champion_probability": 0.1299,
               "defined": true,
               "display_name": "Inglaterra",
               "eliminated": false,
@@ -884,25 +884,25 @@
     ]
   },
   "metadata": {
-    "as_of_date": "2026-07-08",
+    "as_of_date": "2026-07-09",
     "feature_windows": {
       "current_months": 12,
       "decay_half_life_days": 180,
       "max_months": 24
     },
-    "generated_at": "2026-07-08T09:40:06.867672+00:00",
+    "generated_at": "2026-07-09T10:34:45.657761+00:00",
     "model_version": "mvp-recency-sos-dynamic-draw-v4",
     "official_state": {
       "degraded": false,
       "fifa_extract_ids": [
-        "fifa-world-cup-2026-calendar-20260708T094006Z"
+        "fifa-world-cup-2026-calendar-20260709T103445Z"
       ],
       "fixture_count": 100,
       "is_official": true,
       "recent_match_count": 3225,
       "team_count": 48
     },
-    "run_id": "fifa-real-2026-07-08",
+    "run_id": "fifa-real-2026-07-09",
     "simulation": {
       "bracket_model": "fifa_2026_round_of_32_slots_with_deterministic_third_assignment",
       "match_probability_temperature": 2.4551,
@@ -1036,7 +1036,7 @@
       "total_teams": 48
     }
   ],
-  "run_id": "fifa-real-2026-07-08",
+  "run_id": "fifa-real-2026-07-09",
   "teams": [
     {
       "advancement_probabilities": {
@@ -1059,7 +1059,7 @@
         "saldo_por_jogo_24m_ajustado_sos=2.24",
         "media_rating_adversarios_24m=1637.4",
         "prior_fifa_sum=2006.1",
-        "forca_modelo=2573.62"
+        "forca_modelo=2573.54"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1081,16 +1081,16 @@
         "sos_adjusted_goals_against_per_match": 0.6185,
         "sos_adjusted_goals_for_per_match": 2.7909,
         "sos_adjusted_points_per_match": 2.9408,
-        "weighted_goal_difference": 28.4966,
+        "weighted_goal_difference": 28.3871,
         "weighted_goal_difference_per_match": 1.9664,
-        "weighted_goals_against": 9.9586,
-        "weighted_goals_for": 38.4552,
-        "weighted_importance": 14.4921,
-        "weighted_opponent_rating": 23728.7656,
-        "weighted_points": 40.8765,
+        "weighted_goals_against": 9.9203,
+        "weighted_goals_for": 38.3074,
+        "weighted_importance": 14.4364,
+        "weighted_opponent_rating": 23637.5661,
+        "weighted_points": 40.7194,
         "weighted_points_per_match": 2.8206
       },
-      "strength": 2573.621,
+      "strength": 2573.5375,
       "summary": "Argentina: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Argentina",
       "team_id": "43922",
@@ -1135,7 +1135,7 @@
         "saldo_por_jogo_24m_ajustado_sos=2.13",
         "media_rating_adversarios_24m=1703.6",
         "prior_fifa_sum=2054.8",
-        "forca_modelo=2612.53"
+        "forca_modelo=2612.45"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1157,16 +1157,16 @@
         "sos_adjusted_goals_against_per_match": 0.6638,
         "sos_adjusted_goals_for_per_match": 2.7271,
         "sos_adjusted_points_per_match": 2.7624,
-        "weighted_goal_difference": 27.3918,
+        "weighted_goal_difference": 27.2865,
         "weighted_goal_difference_per_match": 1.8533,
-        "weighted_goals_against": 10.8454,
-        "weighted_goals_for": 38.2372,
-        "weighted_importance": 14.7799,
-        "weighted_opponent_rating": 25178.8592,
-        "weighted_points": 39.0181,
+        "weighted_goals_against": 10.8037,
+        "weighted_goals_for": 38.0902,
+        "weighted_importance": 14.7231,
+        "weighted_opponent_rating": 25082.0865,
+        "weighted_points": 38.8681,
         "weighted_points_per_match": 2.6399
       },
-      "strength": 2612.5307,
+      "strength": 2612.4455,
       "summary": "France: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "France",
       "team_id": "43946",
@@ -1193,17 +1193,17 @@
     {
       "advancement_probabilities": {
         "champion": 0.1473,
-        "final": 0.2724,
+        "final": 0.2725,
         "quarterfinal": 1.0,
         "round_of_16": 1.0,
         "round_of_32": 1.0,
-        "semifinal": 0.5336
+        "semifinal": 0.5337
       },
       "champion_probability": 0.1473,
       "display_name": "Espanha",
       "drivers": [
         "chance_titulo=0.1473",
-        "chance_final=0.2724",
+        "chance_final=0.2725",
         "pontos_torneio=13",
         "saldo_gols=9",
         "jogos_24m=27",
@@ -1211,7 +1211,7 @@
         "saldo_por_jogo_24m_ajustado_sos=2.09",
         "media_rating_adversarios_24m=1698.9",
         "prior_fifa_sum=2024.5",
-        "forca_modelo=2525.06"
+        "forca_modelo=2524.98"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1233,16 +1233,16 @@
         "sos_adjusted_goals_against_per_match": 0.2954,
         "sos_adjusted_goals_for_per_match": 2.3136,
         "sos_adjusted_points_per_match": 2.5651,
-        "weighted_goal_difference": 26.944,
+        "weighted_goal_difference": 26.8404,
         "weighted_goal_difference_per_match": 1.8082,
-        "weighted_goals_against": 5.4449,
-        "weighted_goals_for": 32.3889,
-        "weighted_importance": 14.9008,
-        "weighted_opponent_rating": 25314.4597,
-        "weighted_points": 36.396,
+        "weighted_goals_against": 5.4239,
+        "weighted_goals_for": 32.2644,
+        "weighted_importance": 14.8435,
+        "weighted_opponent_rating": 25217.1658,
+        "weighted_points": 36.2561,
         "weighted_points_per_match": 2.4426
       },
-      "strength": 2525.0626,
+      "strength": 2524.9767,
       "summary": "Spain: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Spain",
       "team_id": "43969",
@@ -1268,17 +1268,17 @@
     },
     {
       "advancement_probabilities": {
-        "champion": 0.1298,
+        "champion": 0.1299,
         "final": 0.2799,
         "quarterfinal": 1.0,
         "round_of_16": 1.0,
         "round_of_32": 1.0,
         "semifinal": 0.5774
       },
-      "champion_probability": 0.1298,
+      "champion_probability": 0.1299,
       "display_name": "Inglaterra",
       "drivers": [
-        "chance_titulo=0.1298",
+        "chance_titulo=0.1299",
         "chance_final=0.2799",
         "pontos_torneio=13",
         "saldo_gols=6",
@@ -1287,7 +1287,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.76",
         "media_rating_adversarios_24m=1650.4",
         "prior_fifa_sum=1929.2",
-        "forca_modelo=2389.19"
+        "forca_modelo=2389.11"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1309,16 +1309,16 @@
         "sos_adjusted_goals_against_per_match": 0.6117,
         "sos_adjusted_goals_for_per_match": 2.2994,
         "sos_adjusted_points_per_match": 2.6161,
-        "weighted_goal_difference": 22.1267,
+        "weighted_goal_difference": 22.0416,
         "weighted_goal_difference_per_match": 1.4776,
-        "weighted_goals_against": 10.2085,
-        "weighted_goals_for": 32.3352,
-        "weighted_importance": 14.9744,
-        "weighted_opponent_rating": 24713.7006,
-        "weighted_points": 37.3398,
+        "weighted_goals_against": 10.1693,
+        "weighted_goals_for": 32.2109,
+        "weighted_importance": 14.9169,
+        "weighted_opponent_rating": 24618.7157,
+        "weighted_points": 37.1963,
         "weighted_points_per_match": 2.4936
       },
-      "strength": 2389.192,
+      "strength": 2389.1057,
       "summary": "England: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "England",
       "team_id": "43942",
@@ -1345,17 +1345,17 @@
     {
       "advancement_probabilities": {
         "champion": 0.116,
-        "final": 0.2224,
+        "final": 0.2223,
         "quarterfinal": 1.0,
         "round_of_16": 1.0,
         "round_of_32": 1.0,
-        "semifinal": 0.4664
+        "semifinal": 0.4663
       },
       "champion_probability": 0.116,
       "display_name": "B\u00e9lgica",
       "drivers": [
         "chance_titulo=0.1160",
-        "chance_final=0.2224",
+        "chance_final=0.2223",
         "pontos_torneio=11",
         "saldo_gols=8",
         "jogos_24m=25",
@@ -1363,7 +1363,7 @@
         "saldo_por_jogo_24m_ajustado_sos=2.30",
         "media_rating_adversarios_24m=1682.9",
         "prior_fifa_sum=1933.6",
-        "forca_modelo=2427.25"
+        "forca_modelo=2427.16"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1385,16 +1385,16 @@
         "sos_adjusted_goals_against_per_match": 0.8396,
         "sos_adjusted_goals_for_per_match": 3.0664,
         "sos_adjusted_points_per_match": 2.3488,
-        "weighted_goal_difference": 29.9101,
+        "weighted_goal_difference": 29.7951,
         "weighted_goal_difference_per_match": 2.0168,
-        "weighted_goals_against": 13.4903,
-        "weighted_goals_for": 43.4004,
-        "weighted_importance": 14.8307,
-        "weighted_opponent_rating": 24958.0298,
-        "weighted_points": 33.0169,
+        "weighted_goals_against": 13.4385,
+        "weighted_goals_for": 43.2336,
+        "weighted_importance": 14.7737,
+        "weighted_opponent_rating": 24862.1058,
+        "weighted_points": 32.89,
         "weighted_points_per_match": 2.2263
       },
-      "strength": 2427.2485,
+      "strength": 2427.163,
       "summary": "Belgium: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Belgium",
       "team_id": "43935",
@@ -1420,17 +1420,17 @@
     },
     {
       "advancement_probabilities": {
-        "champion": 0.0888,
+        "champion": 0.0887,
         "final": 0.1754,
         "quarterfinal": 1.0,
         "round_of_16": 1.0,
         "round_of_32": 1.0,
         "semifinal": 0.3848
       },
-      "champion_probability": 0.0888,
+      "champion_probability": 0.0887,
       "display_name": "Marrocos",
       "drivers": [
-        "chance_titulo=0.0888",
+        "chance_titulo=0.0887",
         "chance_final=0.1754",
         "pontos_torneio=11",
         "saldo_gols=6",
@@ -1439,7 +1439,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.75",
         "media_rating_adversarios_24m=1636.6",
         "prior_fifa_sum=1891.7",
-        "forca_modelo=2329.34"
+        "forca_modelo=2329.22"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1461,16 +1461,16 @@
         "sos_adjusted_goals_against_per_match": 0.4376,
         "sos_adjusted_goals_for_per_match": 2.116,
         "sos_adjusted_points_per_match": 2.4513,
-        "weighted_goal_difference": 32.5355,
+        "weighted_goal_difference": 32.4105,
         "weighted_goal_difference_per_match": 1.4735,
-        "weighted_goals_against": 11.1703,
-        "weighted_goals_for": 43.7058,
-        "weighted_importance": 22.0802,
-        "weighted_opponent_rating": 36136.7234,
-        "weighted_points": 51.4856,
+        "weighted_goals_against": 11.1274,
+        "weighted_goals_for": 43.5378,
+        "weighted_importance": 21.9954,
+        "weighted_opponent_rating": 35997.8351,
+        "weighted_points": 51.2877,
         "weighted_points_per_match": 2.3318
       },
-      "strength": 2329.344,
+      "strength": 2329.2167,
       "summary": "Morocco: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Morocco",
       "team_id": "43872",
@@ -1515,7 +1515,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.45",
         "media_rating_adversarios_24m=1696.8",
         "prior_fifa_sum=1844.2",
-        "forca_modelo=2217.04"
+        "forca_modelo=2216.96"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1537,16 +1537,16 @@
         "sos_adjusted_goals_against_per_match": 0.7386,
         "sos_adjusted_goals_for_per_match": 2.1141,
         "sos_adjusted_points_per_match": 2.1096,
-        "weighted_goal_difference": 17.1146,
+        "weighted_goal_difference": 17.0488,
         "weighted_goal_difference_per_match": 1.1655,
-        "weighted_goals_against": 11.8731,
-        "weighted_goals_for": 28.9877,
-        "weighted_importance": 14.6843,
-        "weighted_opponent_rating": 24915.5842,
-        "weighted_points": 29.1784,
+        "weighted_goals_against": 11.8275,
+        "weighted_goals_for": 28.8763,
+        "weighted_importance": 14.6278,
+        "weighted_opponent_rating": 24819.8233,
+        "weighted_points": 29.0663,
         "weighted_points_per_match": 1.9871
       },
-      "strength": 2217.0445,
+      "strength": 2216.9599,
       "summary": "Switzerland: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Switzerland",
       "team_id": "43971",
@@ -1591,7 +1591,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.52",
         "media_rating_adversarios_24m=1755.4",
         "prior_fifa_sum=1779.9",
-        "forca_modelo=2181.52"
+        "forca_modelo=2181.43"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1613,16 +1613,16 @@
         "sos_adjusted_goals_against_per_match": 1.2611,
         "sos_adjusted_goals_for_per_match": 2.7113,
         "sos_adjusted_points_per_match": 2.3847,
-        "weighted_goal_difference": 18.274,
+        "weighted_goal_difference": 18.2038,
         "weighted_goal_difference_per_match": 1.2402,
-        "weighted_goals_against": 19.6137,
-        "weighted_goals_for": 37.8877,
-        "weighted_importance": 14.7347,
-        "weighted_opponent_rating": 25865.3211,
-        "weighted_points": 33.3331,
+        "weighted_goals_against": 19.5383,
+        "weighted_goals_for": 37.7421,
+        "weighted_importance": 14.6781,
+        "weighted_opponent_rating": 25765.91,
+        "weighted_points": 33.205,
         "weighted_points_per_match": 2.2622
       },
-      "strength": 2181.5181,
+      "strength": 2181.4331,
       "summary": "Norway: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Norway",
       "team_id": "43961",
@@ -1667,7 +1667,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.11",
         "media_rating_adversarios_24m=1650.7",
         "prior_fifa_sum=1759.5",
-        "forca_modelo=1973.47"
+        "forca_modelo=1973.37"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1689,16 +1689,16 @@
         "sos_adjusted_goals_against_per_match": 1.0171,
         "sos_adjusted_goals_for_per_match": 2.0532,
         "sos_adjusted_points_per_match": 2.052,
-        "weighted_goal_difference": 14.5214,
+        "weighted_goal_difference": 14.4656,
         "weighted_goal_difference_per_match": 0.8261,
-        "weighted_goals_against": 19.1082,
-        "weighted_goals_for": 33.6297,
-        "weighted_importance": 17.5776,
-        "weighted_opponent_rating": 29014.5651,
-        "weighted_points": 33.9154,
+        "weighted_goals_against": 19.0348,
+        "weighted_goals_for": 33.5004,
+        "weighted_importance": 17.5101,
+        "weighted_opponent_rating": 28903.0501,
+        "weighted_points": 33.7851,
         "weighted_points_per_match": 1.9295
       },
-      "strength": 1973.4705,
+      "strength": 1973.3691,
       "summary": "Algeria: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Algeria",
       "team_id": "43843",
@@ -1743,7 +1743,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.56",
         "media_rating_adversarios_24m=1695.1",
         "prior_fifa_sum=1738.5",
-        "forca_modelo=1889.49"
+        "forca_modelo=1889.42"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1765,16 +1765,16 @@
         "sos_adjusted_goals_against_per_match": 0.758,
         "sos_adjusted_goals_for_per_match": 1.251,
         "sos_adjusted_points_per_match": 1.593,
-        "weighted_goal_difference": 3.6517,
+        "weighted_goal_difference": 3.6377,
         "weighted_goal_difference_per_match": 0.283,
-        "weighted_goals_against": 10.6826,
-        "weighted_goals_for": 14.3343,
-        "weighted_importance": 12.9021,
-        "weighted_opponent_rating": 21870.2613,
-        "weighted_points": 18.973,
+        "weighted_goals_against": 10.6415,
+        "weighted_goals_for": 14.2792,
+        "weighted_importance": 12.8525,
+        "weighted_opponent_rating": 21786.2049,
+        "weighted_points": 18.9,
         "weighted_points_per_match": 1.4705
       },
-      "strength": 1889.4899,
+      "strength": 1889.4155,
       "summary": "Australia: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Australia",
       "team_id": "43976",
@@ -1819,7 +1819,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.85",
         "media_rating_adversarios_24m=1711.4",
         "prior_fifa_sum=1761.5",
-        "forca_modelo=1935.18"
+        "forca_modelo=1935.11"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1841,16 +1841,16 @@
         "sos_adjusted_goals_against_per_match": 1.3023,
         "sos_adjusted_goals_for_per_match": 2.0849,
         "sos_adjusted_points_per_match": 1.8277,
-        "weighted_goal_difference": 7.087,
+        "weighted_goal_difference": 7.0598,
         "weighted_goal_difference_per_match": 0.5726,
-        "weighted_goals_against": 16.9859,
-        "weighted_goals_for": 24.0729,
-        "weighted_importance": 12.3775,
-        "weighted_opponent_rating": 21183.1591,
-        "weighted_points": 21.106,
+        "weighted_goals_against": 16.9206,
+        "weighted_goals_for": 23.9804,
+        "weighted_importance": 12.33,
+        "weighted_opponent_rating": 21101.7435,
+        "weighted_points": 21.0249,
         "weighted_points_per_match": 1.7052
       },
-      "strength": 1935.1786,
+      "strength": 1935.1072,
       "summary": "Austria: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Austria",
       "team_id": "43934",
@@ -1895,7 +1895,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.12",
         "media_rating_adversarios_24m=1645.5",
         "prior_fifa_sum=1617.3",
-        "forca_modelo=1679.80"
+        "forca_modelo=1679.72"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1917,16 +1917,16 @@
         "sos_adjusted_goals_against_per_match": 1.4051,
         "sos_adjusted_goals_for_per_match": 1.4512,
         "sos_adjusted_points_per_match": 1.3077,
-        "weighted_goal_difference": -2.1112,
+        "weighted_goal_difference": -2.1031,
         "weighted_goal_difference_per_match": -0.1639,
-        "weighted_goals_against": 18.9981,
-        "weighted_goals_for": 16.8869,
-        "weighted_importance": 12.8789,
-        "weighted_opponent_rating": 21192.4743,
-        "weighted_points": 15.2638,
+        "weighted_goals_against": 18.9251,
+        "weighted_goals_for": 16.822,
+        "weighted_importance": 12.8294,
+        "weighted_opponent_rating": 21111.0228,
+        "weighted_points": 15.2051,
         "weighted_points_per_match": 1.1852
       },
-      "strength": 1679.7971,
+      "strength": 1679.7229,
       "summary": "Bosnia and Herzegovina: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Bosnia and Herzegovina",
       "team_id": "44037",
@@ -1971,7 +1971,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.47",
         "media_rating_adversarios_24m=1750.7",
         "prior_fifa_sum=1982.7",
-        "forca_modelo=2350.83"
+        "forca_modelo=2350.74"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -1993,16 +1993,16 @@
         "sos_adjusted_goals_against_per_match": 0.8988,
         "sos_adjusted_goals_for_per_match": 2.3014,
         "sos_adjusted_points_per_match": 2.118,
-        "weighted_goal_difference": 17.4177,
+        "weighted_goal_difference": 17.3508,
         "weighted_goal_difference_per_match": 1.1926,
-        "weighted_goals_against": 14.1502,
-        "weighted_goals_for": 31.5679,
-        "weighted_importance": 14.6054,
-        "weighted_opponent_rating": 25570.183,
-        "weighted_points": 29.1457,
+        "weighted_goals_against": 14.0958,
+        "weighted_goals_for": 31.4466,
+        "weighted_importance": 14.5493,
+        "weighted_opponent_rating": 25471.9063,
+        "weighted_points": 29.0337,
         "weighted_points_per_match": 1.9955
       },
-      "strength": 2350.8265,
+      "strength": 2350.7423,
       "summary": "Brazil: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Brazil",
       "team_id": "43924",
@@ -2047,7 +2047,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.74",
         "media_rating_adversarios_24m=1694.9",
         "prior_fifa_sum=1646.9",
-        "forca_modelo=1788.30"
+        "forca_modelo=1788.22"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2069,16 +2069,16 @@
         "sos_adjusted_goals_against_per_match": 0.9889,
         "sos_adjusted_goals_for_per_match": 1.6619,
         "sos_adjusted_points_per_match": 1.5114,
-        "weighted_goal_difference": 5.8707,
+        "weighted_goal_difference": 5.8481,
         "weighted_goal_difference_per_match": 0.463,
-        "weighted_goals_against": 13.428,
-        "weighted_goals_for": 19.2986,
-        "weighted_importance": 12.6807,
-        "weighted_opponent_rating": 21492.0448,
-        "weighted_points": 17.6123,
+        "weighted_goals_against": 13.3764,
+        "weighted_goals_for": 19.2245,
+        "weighted_importance": 12.6319,
+        "weighted_opponent_rating": 21409.442,
+        "weighted_points": 17.5446,
         "weighted_points_per_match": 1.3889
       },
-      "strength": 1788.2961,
+      "strength": 1788.223,
       "summary": "Cabo Verde: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Cabo Verde",
       "team_id": "43850",
@@ -2123,7 +2123,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.99",
         "media_rating_adversarios_24m=1652.8",
         "prior_fifa_sum=1746.5",
-        "forca_modelo=1998.13"
+        "forca_modelo=1998.04"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2145,16 +2145,16 @@
         "sos_adjusted_goals_against_per_match": 0.797,
         "sos_adjusted_goals_for_per_match": 1.715,
         "sos_adjusted_points_per_match": 1.7446,
-        "weighted_goal_difference": 11.2969,
+        "weighted_goal_difference": 11.2534,
         "weighted_goal_difference_per_match": 0.708,
-        "weighted_goals_against": 13.8333,
-        "weighted_goals_for": 25.1301,
-        "weighted_importance": 15.9554,
-        "weighted_opponent_rating": 26370.2377,
-        "weighted_points": 25.8812,
+        "weighted_goals_against": 13.7801,
+        "weighted_goals_for": 25.0335,
+        "weighted_importance": 15.894,
+        "weighted_opponent_rating": 26268.886,
+        "weighted_points": 25.7817,
         "weighted_points_per_match": 1.6221
       },
-      "strength": 1998.1282,
+      "strength": 1998.0362,
       "summary": "Canada: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Canada",
       "team_id": "43899",
@@ -2199,7 +2199,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.15",
         "media_rating_adversarios_24m=1719.3",
         "prior_fifa_sum=1905.6",
-        "forca_modelo=2233.64"
+        "forca_modelo=2233.56"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2221,16 +2221,16 @@
         "sos_adjusted_goals_against_per_match": 0.5528,
         "sos_adjusted_goals_for_per_match": 1.6289,
         "sos_adjusted_points_per_match": 2.139,
-        "weighted_goal_difference": 12.8937,
+        "weighted_goal_difference": 12.8441,
         "weighted_goal_difference_per_match": 0.8661,
-        "weighted_goals_against": 9.2722,
-        "weighted_goals_for": 22.1659,
-        "weighted_importance": 14.8872,
-        "weighted_opponent_rating": 25594.8801,
-        "weighted_points": 30.0199,
+        "weighted_goals_against": 9.2365,
+        "weighted_goals_for": 22.0807,
+        "weighted_importance": 14.83,
+        "weighted_opponent_rating": 25496.5084,
+        "weighted_points": 29.9045,
         "weighted_points_per_match": 2.0165
       },
-      "strength": 2233.6416,
+      "strength": 2233.5557,
       "summary": "Colombia: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Colombia",
       "team_id": "43926",
@@ -2275,7 +2275,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.75",
         "media_rating_adversarios_24m=1665.4",
         "prior_fifa_sum=1621.6",
-        "forca_modelo=1799.14"
+        "forca_modelo=1799.04"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2297,16 +2297,16 @@
         "sos_adjusted_goals_against_per_match": 0.7473,
         "sos_adjusted_goals_for_per_match": 1.4299,
         "sos_adjusted_points_per_match": 1.7369,
-        "weighted_goal_difference": 7.5295,
+        "weighted_goal_difference": 7.5006,
         "weighted_goal_difference_per_match": 0.4726,
-        "weighted_goals_against": 13.0212,
-        "weighted_goals_for": 20.5507,
-        "weighted_importance": 15.9319,
-        "weighted_opponent_rating": 26532.6983,
-        "weighted_points": 25.7197,
+        "weighted_goals_against": 12.9712,
+        "weighted_goals_for": 20.4717,
+        "weighted_importance": 15.8706,
+        "weighted_opponent_rating": 26430.7222,
+        "weighted_points": 25.6209,
         "weighted_points_per_match": 1.6144
       },
-      "strength": 1799.1363,
+      "strength": 1799.0445,
       "summary": "Congo DR: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Congo DR",
       "team_id": "20014",
@@ -2351,7 +2351,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.64",
         "media_rating_adversarios_24m=1728.6",
         "prior_fifa_sum=1874.6",
-        "forca_modelo=2063.54"
+        "forca_modelo=2063.47"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2373,16 +2373,16 @@
         "sos_adjusted_goals_against_per_match": 1.3434,
         "sos_adjusted_goals_for_per_match": 1.911,
         "sos_adjusted_points_per_match": 1.9121,
-        "weighted_goal_difference": 4.7422,
+        "weighted_goal_difference": 4.724,
         "weighted_goal_difference_per_match": 0.3576,
-        "weighted_goals_against": 18.7426,
-        "weighted_goals_for": 23.4849,
-        "weighted_importance": 13.2608,
-        "weighted_opponent_rating": 22922.056,
-        "weighted_points": 23.7311,
+        "weighted_goals_against": 18.6706,
+        "weighted_goals_for": 23.3946,
+        "weighted_importance": 13.2098,
+        "weighted_opponent_rating": 22833.957,
+        "weighted_points": 23.6399,
         "weighted_points_per_match": 1.7896
       },
-      "strength": 2063.5448,
+      "strength": 2063.4684,
       "summary": "Croatia: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Croatia",
       "team_id": "43938",
@@ -2427,7 +2427,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-0.32",
         "media_rating_adversarios_24m=1644.4",
         "prior_fifa_sum=1458.0",
-        "forca_modelo=1399.75"
+        "forca_modelo=1399.67"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2449,16 +2449,16 @@
         "sos_adjusted_goals_against_per_match": 1.8991,
         "sos_adjusted_goals_for_per_match": 1.5105,
         "sos_adjusted_points_per_match": 1.1644,
-        "weighted_goal_difference": -7.4405,
+        "weighted_goal_difference": -7.4119,
         "weighted_goal_difference_per_match": -0.5986,
-        "weighted_goals_against": 24.4759,
-        "weighted_goals_for": 17.0354,
-        "weighted_importance": 12.43,
-        "weighted_opponent_rating": 20439.5434,
-        "weighted_points": 12.9503,
+        "weighted_goals_against": 24.3818,
+        "weighted_goals_for": 16.9699,
+        "weighted_importance": 12.3822,
+        "weighted_opponent_rating": 20360.9858,
+        "weighted_points": 12.9005,
         "weighted_points_per_match": 1.0419
       },
-      "strength": 1399.7463,
+      "strength": 1399.6746,
       "summary": "Cura\u00e7ao: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Cura\u00e7ao",
       "team_id": "1895293",
@@ -2503,7 +2503,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.30",
         "media_rating_adversarios_24m=1609.7",
         "prior_fifa_sum=1641.2",
-        "forca_modelo=1690.48"
+        "forca_modelo=1690.42"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2525,16 +2525,16 @@
         "sos_adjusted_goals_against_per_match": 1.4202,
         "sos_adjusted_goals_for_per_match": 1.6679,
         "sos_adjusted_points_per_match": 1.4504,
-        "weighted_goal_difference": 0.9859,
+        "weighted_goal_difference": 0.9821,
         "weighted_goal_difference_per_match": 0.0832,
-        "weighted_goals_against": 17.4875,
-        "weighted_goals_for": 18.4734,
-        "weighted_importance": 11.8558,
-        "weighted_opponent_rating": 19084.5563,
-        "weighted_points": 16.0576,
+        "weighted_goals_against": 17.4203,
+        "weighted_goals_for": 18.4024,
+        "weighted_importance": 11.8102,
+        "weighted_opponent_rating": 19011.2065,
+        "weighted_points": 15.9959,
         "weighted_points_per_match": 1.3544
       },
-      "strength": 1690.4838,
+      "strength": 1690.4154,
       "summary": "Czechia: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Czechia",
       "team_id": "43995",
@@ -2579,7 +2579,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.20",
         "media_rating_adversarios_24m=1661.8",
         "prior_fifa_sum=1755.0",
-        "forca_modelo=2024.07"
+        "forca_modelo=2023.99"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2601,16 +2601,16 @@
         "sos_adjusted_goals_against_per_match": 0.7087,
         "sos_adjusted_goals_for_per_match": 1.8437,
         "sos_adjusted_points_per_match": 2.0764,
-        "weighted_goal_difference": 13.7408,
+        "weighted_goal_difference": 13.688,
         "weighted_goal_difference_per_match": 0.925,
-        "weighted_goals_against": 11.5679,
-        "weighted_goals_for": 25.3087,
-        "weighted_importance": 14.8554,
-        "weighted_opponent_rating": 24686.1131,
-        "weighted_points": 29.0261,
+        "weighted_goals_against": 11.5234,
+        "weighted_goals_for": 25.2115,
+        "weighted_importance": 14.7983,
+        "weighted_opponent_rating": 24591.2341,
+        "weighted_points": 28.9145,
         "weighted_points_per_match": 1.9539
       },
-      "strength": 2024.0714,
+      "strength": 2023.9858,
       "summary": "C\u00f4te d'Ivoire: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "C\u00f4te d'Ivoire",
       "team_id": "43854",
@@ -2655,7 +2655,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.47",
         "media_rating_adversarios_24m=1724.5",
         "prior_fifa_sum=1780.9",
-        "forca_modelo=1898.38"
+        "forca_modelo=1898.31"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2677,16 +2677,16 @@
         "sos_adjusted_goals_against_per_match": 0.6441,
         "sos_adjusted_goals_for_per_match": 1.0465,
         "sos_adjusted_points_per_match": 1.5923,
-        "weighted_goal_difference": 2.5115,
+        "weighted_goal_difference": 2.5018,
         "weighted_goal_difference_per_match": 0.1924,
-        "weighted_goals_against": 9.3241,
-        "weighted_goals_for": 11.8356,
-        "weighted_importance": 13.0564,
-        "weighted_opponent_rating": 22516.1328,
-        "weighted_points": 19.1898,
+        "weighted_goals_against": 9.2883,
+        "weighted_goals_for": 11.7901,
+        "weighted_importance": 13.0062,
+        "weighted_opponent_rating": 22429.594,
+        "weighted_points": 19.1161,
         "weighted_points_per_match": 1.4698
       },
-      "strength": 1898.3822,
+      "strength": 1898.307,
       "summary": "Ecuador: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Ecuador",
       "team_id": "43927",
@@ -2731,7 +2731,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.68",
         "media_rating_adversarios_24m=1692.0",
         "prior_fifa_sum=1716.0",
-        "forca_modelo=1919.06"
+        "forca_modelo=1918.94"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2753,16 +2753,16 @@
         "sos_adjusted_goals_against_per_match": 0.9193,
         "sos_adjusted_goals_for_per_match": 1.5341,
         "sos_adjusted_points_per_match": 1.6975,
-        "weighted_goal_difference": 8.1132,
+        "weighted_goal_difference": 8.082,
         "weighted_goal_difference_per_match": 0.4047,
-        "weighted_goals_against": 19.8308,
-        "weighted_goals_for": 27.944,
-        "weighted_importance": 20.0452,
-        "weighted_opponent_rating": 33917.2599,
-        "weighted_points": 31.5719,
+        "weighted_goals_against": 19.7545,
+        "weighted_goals_for": 27.8366,
+        "weighted_importance": 19.9681,
+        "weighted_opponent_rating": 33786.9018,
+        "weighted_points": 31.4505,
         "weighted_points_per_match": 1.575
       },
-      "strength": 1919.0582,
+      "strength": 1918.9427,
       "summary": "Egypt: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Egypt",
       "team_id": "43855",
@@ -2807,7 +2807,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.92",
         "media_rating_adversarios_24m=1646.7",
         "prior_fifa_sum=1883.1",
-        "forca_modelo=2280.00"
+        "forca_modelo=2279.92"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2829,16 +2829,16 @@
         "sos_adjusted_goals_against_per_match": 1.011,
         "sos_adjusted_goals_for_per_match": 2.8622,
         "sos_adjusted_points_per_match": 2.2974,
-        "weighted_goal_difference": 21.4569,
+        "weighted_goal_difference": 21.3744,
         "weighted_goal_difference_per_match": 1.6412,
-        "weighted_goals_against": 14.1337,
-        "weighted_goals_for": 35.5905,
-        "weighted_importance": 13.0742,
-        "weighted_opponent_rating": 21529.5429,
-        "weighted_points": 28.4351,
+        "weighted_goals_against": 14.0793,
+        "weighted_goals_for": 35.4537,
+        "weighted_importance": 13.0239,
+        "weighted_opponent_rating": 21446.7959,
+        "weighted_points": 28.3258,
         "weighted_points_per_match": 2.1749
       },
-      "strength": 2279.9977,
+      "strength": 2279.9223,
       "summary": "Germany: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Germany",
       "team_id": "43948",
@@ -2883,7 +2883,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.07",
         "media_rating_adversarios_24m=1739.4",
         "prior_fifa_sum=1595.5",
-        "forca_modelo=1649.51"
+        "forca_modelo=1649.44"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2905,16 +2905,16 @@
         "sos_adjusted_goals_against_per_match": 1.049,
         "sos_adjusted_goals_for_per_match": 1.0485,
         "sos_adjusted_points_per_match": 1.1549,
-        "weighted_goal_difference": -2.6209,
+        "weighted_goal_difference": -2.6108,
         "weighted_goal_difference_per_match": -0.2105,
-        "weighted_goals_against": 13.9298,
-        "weighted_goals_for": 11.3089,
-        "weighted_importance": 12.4481,
-        "weighted_opponent_rating": 21652.1645,
-        "weighted_points": 12.8516,
+        "weighted_goals_against": 13.8762,
+        "weighted_goals_for": 11.2654,
+        "weighted_importance": 12.4002,
+        "weighted_opponent_rating": 21568.9463,
+        "weighted_points": 12.8022,
         "weighted_points_per_match": 1.0324
       },
-      "strength": 1649.5087,
+      "strength": 1649.437,
       "summary": "Ghana: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Ghana",
       "team_id": "43860",
@@ -2959,7 +2959,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.02",
         "media_rating_adversarios_24m=1652.6",
         "prior_fifa_sum=1521.1",
-        "forca_modelo=1495.41"
+        "forca_modelo=1495.34"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -2981,16 +2981,16 @@
         "sos_adjusted_goals_against_per_match": 1.5943,
         "sos_adjusted_goals_for_per_match": 1.5419,
         "sos_adjusted_points_per_match": 1.0597,
-        "weighted_goal_difference": -3.2616,
+        "weighted_goal_difference": -3.2491,
         "weighted_goal_difference_per_match": -0.2624,
-        "weighted_goals_against": 20.6859,
-        "weighted_goals_for": 17.4243,
-        "weighted_importance": 12.4294,
-        "weighted_opponent_rating": 20540.8257,
-        "weighted_points": 11.6484,
+        "weighted_goals_against": 20.6064,
+        "weighted_goals_for": 17.3573,
+        "weighted_importance": 12.3817,
+        "weighted_opponent_rating": 20461.8788,
+        "weighted_points": 11.6036,
         "weighted_points_per_match": 0.9372
       },
-      "strength": 1495.413,
+      "strength": 1495.3414,
       "summary": "Haiti: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Haiti",
       "team_id": "43908",
@@ -3035,7 +3035,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.01",
         "media_rating_adversarios_24m=1617.7",
         "prior_fifa_sum=1791.4",
-        "forca_modelo=1973.32"
+        "forca_modelo=1973.25"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3057,16 +3057,16 @@
         "sos_adjusted_goals_against_per_match": 0.7497,
         "sos_adjusted_goals_for_per_match": 1.7005,
         "sos_adjusted_points_per_match": 1.6913,
-        "weighted_goal_difference": 8.3019,
+        "weighted_goal_difference": 8.27,
         "weighted_goal_difference_per_match": 0.7743,
-        "weighted_goals_against": 8.6687,
-        "weighted_goals_for": 16.9706,
-        "weighted_importance": 10.7215,
-        "weighted_opponent_rating": 17343.6207,
-        "weighted_points": 17.0291,
+        "weighted_goals_against": 8.6353,
+        "weighted_goals_for": 16.9054,
+        "weighted_importance": 10.6803,
+        "weighted_opponent_rating": 17276.962,
+        "weighted_points": 16.9637,
         "weighted_points_per_match": 1.5883
       },
-      "strength": 1973.3153,
+      "strength": 1973.2535,
       "summary": "IR Iran: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "IR Iran",
       "team_id": "43817",
@@ -3111,7 +3111,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-0.92",
         "media_rating_adversarios_24m=1685.2",
         "prior_fifa_sum=1592.7",
-        "forca_modelo=1447.01"
+        "forca_modelo=1446.93"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3133,16 +3133,16 @@
         "sos_adjusted_goals_against_per_match": 1.8844,
         "sos_adjusted_goals_for_per_match": 0.8959,
         "sos_adjusted_points_per_match": 1.2258,
-        "weighted_goal_difference": -16.3176,
+        "weighted_goal_difference": -16.2549,
         "weighted_goal_difference_per_match": -1.1985,
-        "weighted_goals_against": 26.6087,
-        "weighted_goals_for": 10.2912,
-        "weighted_importance": 13.6146,
-        "weighted_opponent_rating": 22943.8338,
-        "weighted_points": 15.0204,
+        "weighted_goals_against": 26.5065,
+        "weighted_goals_for": 10.2516,
+        "weighted_importance": 13.5622,
+        "weighted_opponent_rating": 22855.6512,
+        "weighted_points": 14.9627,
         "weighted_points_per_match": 1.1033
       },
-      "strength": 1447.0106,
+      "strength": 1446.9321,
       "summary": "Iraq: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Iraq",
       "team_id": "43818",
@@ -3187,7 +3187,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.31",
         "media_rating_adversarios_24m=1751.3",
         "prior_fifa_sum=1861.9",
-        "forca_modelo=2131.70"
+        "forca_modelo=2131.63"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3209,16 +3209,16 @@
         "sos_adjusted_goals_against_per_match": 0.7701,
         "sos_adjusted_goals_for_per_match": 2.0071,
         "sos_adjusted_points_per_match": 1.9309,
-        "weighted_goal_difference": 12.3253,
+        "weighted_goal_difference": 12.2779,
         "weighted_goal_difference_per_match": 1.0271,
-        "weighted_goals_against": 10.0812,
-        "weighted_goals_for": 22.4065,
-        "weighted_importance": 12.0006,
-        "weighted_opponent_rating": 21016.7163,
-        "weighted_points": 21.7025,
+        "weighted_goals_against": 10.0424,
+        "weighted_goals_for": 22.3203,
+        "weighted_importance": 11.9545,
+        "weighted_opponent_rating": 20935.9404,
+        "weighted_points": 21.6191,
         "weighted_points_per_match": 1.8084
       },
-      "strength": 2131.7038,
+      "strength": 2131.6346,
       "summary": "Japan: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Japan",
       "team_id": "43819",
@@ -3263,7 +3263,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-0.29",
         "media_rating_adversarios_24m=1690.6",
         "prior_fifa_sum=1583.9",
-        "forca_modelo=1532.87"
+        "forca_modelo=1532.78"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3285,16 +3285,16 @@
         "sos_adjusted_goals_against_per_match": 1.7738,
         "sos_adjusted_goals_for_per_match": 1.416,
         "sos_adjusted_points_per_match": 0.9947,
-        "weighted_goal_difference": -8.3503,
+        "weighted_goal_difference": -8.3182,
         "weighted_goal_difference_per_match": -0.5678,
-        "weighted_goals_against": 27.1154,
-        "weighted_goals_for": 18.7651,
-        "weighted_importance": 14.7063,
-        "weighted_opponent_rating": 24863.1232,
-        "weighted_points": 12.8268,
+        "weighted_goals_against": 27.0112,
+        "weighted_goals_for": 18.693,
+        "weighted_importance": 14.6498,
+        "weighted_opponent_rating": 24767.564,
+        "weighted_points": 12.7775,
         "weighted_points_per_match": 0.8722
       },
-      "strength": 1532.8674,
+      "strength": 1532.7826,
       "summary": "Jordan: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Jordan",
       "team_id": "43820",
@@ -3339,7 +3339,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.58",
         "media_rating_adversarios_24m=1653.7",
         "prior_fifa_sum=1731.0",
-        "forca_modelo=1861.57"
+        "forca_modelo=1861.50"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3361,16 +3361,16 @@
         "sos_adjusted_goals_against_per_match": 0.9203,
         "sos_adjusted_goals_for_per_match": 1.435,
         "sos_adjusted_points_per_match": 1.7045,
-        "weighted_goal_difference": 3.4453,
+        "weighted_goal_difference": 3.432,
         "weighted_goal_difference_per_match": 0.3046,
-        "weighted_goals_against": 11.1999,
-        "weighted_goals_for": 14.6451,
-        "weighted_importance": 11.3093,
-        "weighted_opponent_rating": 18702.1849,
-        "weighted_points": 17.891,
+        "weighted_goals_against": 11.1568,
+        "weighted_goals_for": 14.5888,
+        "weighted_importance": 11.2658,
+        "weighted_opponent_rating": 18630.3047,
+        "weighted_points": 17.8222,
         "weighted_points_per_match": 1.582
       },
-      "strength": 1861.5651,
+      "strength": 1861.4999,
       "summary": "Korea Republic: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Korea Republic",
       "team_id": "43822",
@@ -3415,7 +3415,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.43",
         "media_rating_adversarios_24m=1707.3",
         "prior_fifa_sum=1810.0",
-        "forca_modelo=2216.31"
+        "forca_modelo=2216.20"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3437,16 +3437,16 @@
         "sos_adjusted_goals_against_per_match": 0.5652,
         "sos_adjusted_goals_for_per_match": 1.9266,
         "sos_adjusted_points_per_match": 2.348,
-        "weighted_goal_difference": 21.2544,
+        "weighted_goal_difference": 21.1727,
         "weighted_goal_difference_per_match": 1.1514,
-        "weighted_goals_against": 11.7248,
-        "weighted_goals_for": 32.9791,
-        "weighted_importance": 18.4595,
-        "weighted_opponent_rating": 31515.52,
-        "weighted_points": 41.0818,
+        "weighted_goals_against": 11.6797,
+        "weighted_goals_for": 32.8524,
+        "weighted_importance": 18.3885,
+        "weighted_opponent_rating": 31394.3928,
+        "weighted_points": 40.9239,
         "weighted_points_per_match": 2.2255
       },
-      "strength": 2216.3107,
+      "strength": 2216.2043,
       "summary": "Mexico: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Mexico",
       "team_id": "43911",
@@ -3491,7 +3491,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.70",
         "media_rating_adversarios_24m=1708.7",
         "prior_fifa_sum=1921.1",
-        "forca_modelo=2293.00"
+        "forca_modelo=2292.92"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3513,16 +3513,16 @@
         "sos_adjusted_goals_against_per_match": 0.9697,
         "sos_adjusted_goals_for_per_match": 2.5988,
         "sos_adjusted_points_per_match": 2.1094,
-        "weighted_goal_difference": 18.8625,
+        "weighted_goal_difference": 18.79,
         "weighted_goal_difference_per_match": 1.4191,
-        "weighted_goals_against": 13.8197,
-        "weighted_goals_for": 32.6822,
-        "weighted_importance": 13.2917,
-        "weighted_opponent_rating": 22711.236,
-        "weighted_points": 26.4095,
+        "weighted_goals_against": 13.7666,
+        "weighted_goals_for": 32.5566,
+        "weighted_importance": 13.2406,
+        "weighted_opponent_rating": 22623.9473,
+        "weighted_points": 26.308,
         "weighted_points_per_match": 1.9869
       },
-      "strength": 2293.0,
+      "strength": 2292.9234,
       "summary": "Netherlands: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Netherlands",
       "team_id": "43960",
@@ -3567,7 +3567,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-0.70",
         "media_rating_adversarios_24m=1718.1",
         "prior_fifa_sum=1566.6",
-        "forca_modelo=1458.45"
+        "forca_modelo=1458.38"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3589,16 +3589,16 @@
         "sos_adjusted_goals_against_per_match": 2.2487,
         "sos_adjusted_goals_for_per_match": 1.4771,
         "sos_adjusted_points_per_match": 0.7606,
-        "weighted_goal_difference": -11.0008,
+        "weighted_goal_difference": -10.9585,
         "weighted_goal_difference_per_match": -0.9816,
-        "weighted_goals_against": 25.985,
-        "weighted_goals_for": 14.9842,
-        "weighted_importance": 11.2068,
-        "weighted_opponent_rating": 19254.1285,
-        "weighted_points": 7.1512,
+        "weighted_goals_against": 25.8851,
+        "weighted_goals_for": 14.9266,
+        "weighted_importance": 11.1637,
+        "weighted_opponent_rating": 19180.127,
+        "weighted_points": 7.1237,
         "weighted_points_per_match": 0.6381
       },
-      "strength": 1458.4453,
+      "strength": 1458.3807,
       "summary": "New Zealand: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "New Zealand",
       "team_id": "43978",
@@ -3643,7 +3643,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.12",
         "media_rating_adversarios_24m=1658.9",
         "prior_fifa_sum=1623.2",
-        "forca_modelo=1636.52"
+        "forca_modelo=1636.44"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3665,16 +3665,16 @@
         "sos_adjusted_goals_against_per_match": 1.3477,
         "sos_adjusted_goals_for_per_match": 1.3943,
         "sos_adjusted_points_per_match": 1.3329,
-        "weighted_goal_difference": -2.428,
+        "weighted_goal_difference": -2.4186,
         "weighted_goal_difference_per_match": -0.1634,
-        "weighted_goals_against": 21.0678,
-        "weighted_goals_for": 18.6398,
-        "weighted_importance": 14.8602,
-        "weighted_opponent_rating": 24651.3771,
-        "weighted_points": 17.9863,
+        "weighted_goals_against": 20.9869,
+        "weighted_goals_for": 18.5682,
+        "weighted_importance": 14.8031,
+        "weighted_opponent_rating": 24556.6317,
+        "weighted_points": 17.9171,
         "weighted_points_per_match": 1.2104
       },
-      "strength": 1636.5242,
+      "strength": 1636.4385,
       "summary": "Panama: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Panama",
       "team_id": "43914",
@@ -3719,7 +3719,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.25",
         "media_rating_adversarios_24m=1781.0",
         "prior_fifa_sum=1715.2",
-        "forca_modelo=1807.54"
+        "forca_modelo=1807.46"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3741,16 +3741,16 @@
         "sos_adjusted_goals_against_per_match": 0.957,
         "sos_adjusted_goals_for_per_match": 1.1339,
         "sos_adjusted_points_per_match": 1.4534,
-        "weighted_goal_difference": -0.4538,
+        "weighted_goal_difference": -0.452,
         "weighted_goal_difference_per_match": -0.033,
-        "weighted_goals_against": 14.1119,
-        "weighted_goals_for": 13.6581,
-        "weighted_importance": 13.7414,
-        "weighted_opponent_rating": 24473.3838,
-        "weighted_points": 18.288,
+        "weighted_goals_against": 14.0576,
+        "weighted_goals_for": 13.6056,
+        "weighted_importance": 13.6885,
+        "weighted_opponent_rating": 24379.3224,
+        "weighted_points": 18.2178,
         "weighted_points_per_match": 1.3309
       },
-      "strength": 1807.5407,
+      "strength": 1807.4615,
       "summary": "Paraguay: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Paraguay",
       "team_id": "43928",
@@ -3795,7 +3795,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.48",
         "media_rating_adversarios_24m=1710.8",
         "prior_fifa_sum=1940.3",
-        "forca_modelo=2278.13"
+        "forca_modelo=2278.04"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3817,16 +3817,16 @@
         "sos_adjusted_goals_against_per_match": 0.6863,
         "sos_adjusted_goals_for_per_match": 2.0986,
         "sos_adjusted_points_per_match": 2.0507,
-        "weighted_goal_difference": 17.7606,
+        "weighted_goal_difference": 17.6923,
         "weighted_goal_difference_per_match": 1.2023,
-        "weighted_goals_against": 11.1715,
-        "weighted_goals_for": 28.9321,
-        "weighted_importance": 14.7719,
-        "weighted_opponent_rating": 25272.4627,
-        "weighted_points": 28.4832,
+        "weighted_goals_against": 11.1286,
+        "weighted_goals_for": 28.8209,
+        "weighted_importance": 14.7151,
+        "weighted_opponent_rating": 25175.3302,
+        "weighted_points": 28.3737,
         "weighted_points_per_match": 1.9282
       },
-      "strength": 2278.1251,
+      "strength": 2278.0399,
       "summary": "Portugal: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Portugal",
       "team_id": "43963",
@@ -3871,7 +3871,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-1.22",
         "media_rating_adversarios_24m=1609.7",
         "prior_fifa_sum=1566.6",
-        "forca_modelo=1385.27"
+        "forca_modelo=1385.20"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3893,16 +3893,16 @@
         "sos_adjusted_goals_against_per_match": 2.1202,
         "sos_adjusted_goals_for_per_match": 0.843,
         "sos_adjusted_points_per_match": 0.7217,
-        "weighted_goal_difference": -16.7972,
+        "weighted_goal_difference": -16.7326,
         "weighted_goal_difference_per_match": -1.4418,
-        "weighted_goals_against": 25.3396,
-        "weighted_goals_for": 8.5425,
-        "weighted_importance": 11.65,
-        "weighted_opponent_rating": 18753.3347,
-        "weighted_points": 7.2892,
+        "weighted_goals_against": 25.2423,
+        "weighted_goals_for": 8.5096,
+        "weighted_importance": 11.6052,
+        "weighted_opponent_rating": 18681.2579,
+        "weighted_points": 7.2612,
         "weighted_points_per_match": 0.6257
       },
-      "strength": 1385.2714,
+      "strength": 1385.2042,
       "summary": "Qatar: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Qatar",
       "team_id": "43834",
@@ -3947,7 +3947,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-0.08",
         "media_rating_adversarios_24m=1681.8",
         "prior_fifa_sum=1621.3",
-        "forca_modelo=1635.99"
+        "forca_modelo=1635.89"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -3969,16 +3969,16 @@
         "sos_adjusted_goals_against_per_match": 1.1728,
         "sos_adjusted_goals_for_per_match": 1.0211,
         "sos_adjusted_points_per_match": 1.3063,
-        "weighted_goal_difference": -6.1918,
+        "weighted_goal_difference": -6.168,
         "weighted_goal_difference_per_match": -0.3617,
-        "weighted_goals_against": 21.2747,
-        "weighted_goals_for": 15.0829,
-        "weighted_importance": 17.1184,
-        "weighted_opponent_rating": 28789.8588,
-        "weighted_points": 20.2648,
+        "weighted_goals_against": 21.193,
+        "weighted_goals_for": 15.025,
+        "weighted_importance": 17.0526,
+        "weighted_opponent_rating": 28679.2074,
+        "weighted_points": 20.187,
         "weighted_points_per_match": 1.1838
       },
-      "strength": 1635.9901,
+      "strength": 1635.8914,
       "summary": "Saudi Arabia: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Saudi Arabia",
       "team_id": "43835",
@@ -4023,7 +4023,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.53",
         "media_rating_adversarios_24m=1662.2",
         "prior_fifa_sum=1711.0",
-        "forca_modelo=1817.46"
+        "forca_modelo=1817.40"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4045,16 +4045,16 @@
         "sos_adjusted_goals_against_per_match": 1.0987,
         "sos_adjusted_goals_for_per_match": 1.5584,
         "sos_adjusted_points_per_match": 1.6125,
-        "weighted_goal_difference": 2.8776,
+        "weighted_goal_difference": 2.8665,
         "weighted_goal_difference_per_match": 0.2497,
-        "weighted_goals_against": 13.4677,
-        "weighted_goals_for": 16.3452,
-        "weighted_importance": 11.5237,
-        "weighted_opponent_rating": 19155.1598,
-        "weighted_points": 17.1702,
+        "weighted_goals_against": 13.4159,
+        "weighted_goals_for": 16.2824,
+        "weighted_importance": 11.4794,
+        "weighted_opponent_rating": 19081.5386,
+        "weighted_points": 17.1042,
         "weighted_points_per_match": 1.49
       },
-      "strength": 1817.4623,
+      "strength": 1817.3958,
       "summary": "Scotland: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Scotland",
       "team_id": "43967",
@@ -4099,7 +4099,7 @@
         "saldo_por_jogo_24m_ajustado_sos=1.34",
         "media_rating_adversarios_24m=1682.8",
         "prior_fifa_sum=1809.8",
-        "forca_modelo=2060.92"
+        "forca_modelo=2060.82"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4121,16 +4121,16 @@
         "sos_adjusted_goals_against_per_match": 1.1334,
         "sos_adjusted_goals_for_per_match": 2.3987,
         "sos_adjusted_points_per_match": 1.8265,
-        "weighted_goal_difference": 18.6494,
+        "weighted_goal_difference": 18.5777,
         "weighted_goal_difference_per_match": 1.0553,
-        "weighted_goals_against": 21.2661,
-        "weighted_goals_for": 39.9155,
-        "weighted_importance": 17.6722,
-        "weighted_opponent_rating": 29739.2798,
-        "weighted_points": 30.1133,
+        "weighted_goals_against": 21.1844,
+        "weighted_goals_for": 39.7621,
+        "weighted_importance": 17.6042,
+        "weighted_opponent_rating": 29624.9795,
+        "weighted_points": 29.9976,
         "weighted_points_per_match": 1.704
       },
-      "strength": 2060.9181,
+      "strength": 2060.8163,
       "summary": "Senegal: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Senegal",
       "team_id": "43879",
@@ -4175,7 +4175,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.29",
         "media_rating_adversarios_24m=1616.1",
         "prior_fifa_sum=1628.2",
-        "forca_modelo=1722.21"
+        "forca_modelo=1722.13"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4197,16 +4197,16 @@
         "sos_adjusted_goals_against_per_match": 0.85,
         "sos_adjusted_goals_for_per_match": 1.0808,
         "sos_adjusted_points_per_match": 1.4805,
-        "weighted_goal_difference": 0.8241,
+        "weighted_goal_difference": 0.821,
         "weighted_goal_difference_per_match": 0.0566,
-        "weighted_goals_against": 13.2309,
-        "weighted_goals_for": 14.055,
-        "weighted_importance": 14.5706,
-        "weighted_opponent_rating": 23548.1945,
-        "weighted_points": 20.0906,
+        "weighted_goals_against": 13.18,
+        "weighted_goals_for": 14.001,
+        "weighted_importance": 14.5146,
+        "weighted_opponent_rating": 23457.689,
+        "weighted_points": 20.0134,
         "weighted_points_per_match": 1.3788
       },
-      "strength": 1722.2097,
+      "strength": 1722.1257,
       "summary": "South Africa: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "South Africa",
       "team_id": "43883",
@@ -4251,7 +4251,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-0.10",
         "media_rating_adversarios_24m=1715.9",
         "prior_fifa_sum=1753.7",
-        "forca_modelo=1798.88"
+        "forca_modelo=1798.80"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4273,16 +4273,16 @@
         "sos_adjusted_goals_against_per_match": 2.0703,
         "sos_adjusted_goals_for_per_match": 1.9005,
         "sos_adjusted_points_per_match": 1.3115,
-        "weighted_goal_difference": -5.1013,
+        "weighted_goal_difference": -5.0817,
         "weighted_goal_difference_per_match": -0.3798,
-        "weighted_goals_against": 28.7487,
-        "weighted_goals_for": 23.6474,
-        "weighted_importance": 13.4322,
-        "weighted_opponent_rating": 23047.6161,
-        "weighted_points": 15.9707,
+        "weighted_goals_against": 28.6382,
+        "weighted_goals_for": 23.5565,
+        "weighted_importance": 13.3806,
+        "weighted_opponent_rating": 22959.0346,
+        "weighted_points": 15.9094,
         "weighted_points_per_match": 1.189
       },
-      "strength": 1798.8782,
+      "strength": 1798.8008,
       "summary": "Sweden: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Sweden",
       "team_id": "43970",
@@ -4327,7 +4327,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-0.42",
         "media_rating_adversarios_24m=1672.1",
         "prior_fifa_sum=1659.5",
-        "forca_modelo=1580.39"
+        "forca_modelo=1580.30"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4349,16 +4349,16 @@
         "sos_adjusted_goals_against_per_match": 1.9007,
         "sos_adjusted_goals_for_per_match": 1.4071,
         "sos_adjusted_points_per_match": 1.2663,
-        "weighted_goal_difference": -11.0125,
+        "weighted_goal_difference": -10.9702,
         "weighted_goal_difference_per_match": -0.7036,
-        "weighted_goals_against": 30.846,
-        "weighted_goals_for": 19.8334,
-        "weighted_importance": 15.6525,
-        "weighted_opponent_rating": 26172.4805,
-        "weighted_points": 17.9032,
+        "weighted_goals_against": 30.7274,
+        "weighted_goals_for": 19.7572,
+        "weighted_importance": 15.5923,
+        "weighted_opponent_rating": 26071.8889,
+        "weighted_points": 17.8344,
         "weighted_points_per_match": 1.1438
       },
-      "strength": 1580.3894,
+      "strength": 1580.2992,
       "summary": "Tunisia: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Tunisia",
       "team_id": "43888",
@@ -4403,7 +4403,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.85",
         "media_rating_adversarios_24m=1640.8",
         "prior_fifa_sum=1729.1",
-        "forca_modelo=1908.28"
+        "forca_modelo=1908.21"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4425,16 +4425,16 @@
         "sos_adjusted_goals_against_per_match": 1.1504,
         "sos_adjusted_goals_for_per_match": 1.9324,
         "sos_adjusted_points_per_match": 2.083,
-        "weighted_goal_difference": 6.7998,
+        "weighted_goal_difference": 6.7737,
         "weighted_goal_difference_per_match": 0.572,
-        "weighted_goals_against": 14.5084,
-        "weighted_goals_for": 21.3082,
-        "weighted_importance": 11.888,
-        "weighted_opponent_rating": 19505.6368,
-        "weighted_points": 23.3067,
+        "weighted_goals_against": 14.4526,
+        "weighted_goals_for": 21.2263,
+        "weighted_importance": 11.8423,
+        "weighted_opponent_rating": 19430.6686,
+        "weighted_points": 23.2172,
         "weighted_points_per_match": 1.9605
       },
-      "strength": 1908.2753,
+      "strength": 1908.2067,
       "summary": "T\u00fcrkiye: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "T\u00fcrkiye",
       "team_id": "43972",
@@ -4479,7 +4479,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.12",
         "media_rating_adversarios_24m=1732.8",
         "prior_fifa_sum=1845.4",
-        "forca_modelo=1883.17"
+        "forca_modelo=1883.11"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4501,16 +4501,16 @@
         "sos_adjusted_goals_against_per_match": 0.9923,
         "sos_adjusted_goals_for_per_match": 1.0448,
         "sos_adjusted_points_per_match": 1.1601,
-        "weighted_goal_difference": -1.5762,
+        "weighted_goal_difference": -1.5701,
         "weighted_goal_difference_per_match": -0.1576,
-        "weighted_goals_against": 10.6266,
-        "weighted_goals_for": 9.0504,
-        "weighted_importance": 10.0031,
-        "weighted_opponent_rating": 17333.0509,
-        "weighted_points": 10.3791,
+        "weighted_goals_against": 10.5857,
+        "weighted_goals_for": 9.0156,
+        "weighted_importance": 9.9646,
+        "weighted_opponent_rating": 17266.4328,
+        "weighted_points": 10.3392,
         "weighted_points_per_match": 1.0376
       },
-      "strength": 1883.1685,
+      "strength": 1883.1108,
       "summary": "Uruguay: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Uruguay",
       "team_id": "43930",
@@ -4555,7 +4555,7 @@
         "saldo_por_jogo_24m_ajustado_sos=0.57",
         "media_rating_adversarios_24m=1750.2",
         "prior_fifa_sum=1766.0",
-        "forca_modelo=1999.15"
+        "forca_modelo=1999.05"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4577,16 +4577,16 @@
         "sos_adjusted_goals_against_per_match": 1.6004,
         "sos_adjusted_goals_for_per_match": 2.0998,
         "sos_adjusted_points_per_match": 1.7574,
-        "weighted_goal_difference": 4.7239,
+        "weighted_goal_difference": 4.7058,
         "weighted_goal_difference_per_match": 0.2894,
-        "weighted_goals_against": 27.266,
-        "weighted_goals_for": 31.9899,
-        "weighted_importance": 16.3227,
-        "weighted_opponent_rating": 28567.7912,
-        "weighted_points": 26.6852,
+        "weighted_goals_against": 27.1612,
+        "weighted_goals_for": 31.8669,
+        "weighted_importance": 16.26,
+        "weighted_opponent_rating": 28457.9933,
+        "weighted_points": 26.5826,
         "weighted_points_per_match": 1.6349
       },
-      "strength": 1999.1485,
+      "strength": 1999.0544,
       "summary": "USA: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "USA",
       "team_id": "43921",
@@ -4631,7 +4631,7 @@
         "saldo_por_jogo_24m_ajustado_sos=-0.86",
         "media_rating_adversarios_24m=1729.4",
         "prior_fifa_sum=1636.1",
-        "forca_modelo=1489.08"
+        "forca_modelo=1489.01"
       ],
       "excluded_pillars": [
         "squad_context"
@@ -4653,16 +4653,16 @@
         "sos_adjusted_goals_against_per_match": 1.9922,
         "sos_adjusted_goals_for_per_match": 1.0657,
         "sos_adjusted_points_per_match": 0.929,
-        "weighted_goal_difference": -12.3872,
+        "weighted_goal_difference": -12.3396,
         "weighted_goal_difference_per_match": -1.1365,
-        "weighted_goals_against": 22.4763,
-        "weighted_goals_for": 10.0891,
-        "weighted_importance": 10.899,
-        "weighted_opponent_rating": 18848.5636,
-        "weighted_points": 8.7902,
+        "weighted_goals_against": 22.3899,
+        "weighted_goals_for": 10.0504,
+        "weighted_importance": 10.8571,
+        "weighted_opponent_rating": 18776.1208,
+        "weighted_points": 8.7564,
         "weighted_points_per_match": 0.8065
       },
-      "strength": 1489.0751,
+      "strength": 1489.0123,
       "summary": "Uzbekistan: 10 pilares usados; 1 pilares excluidos por cobertura ou ausencia.",
       "team": "Uzbekistan",
       "team_id": "44005",
@@ -4687,5 +4687,5 @@
       ]
     }
   ],
-  "updated_at": "2026-07-08T09:40:06.867672+00:00"
+  "updated_at": "2026-07-09T10:34:45.657761+00:00"
 }
