@@ -102,14 +102,14 @@ Este repositório foi construído de forma colaborativa por um desenvolvedor hum
 <!-- validation-stats:start -->
 ## Estatísticas da Validação do Modelo
 
-**Última atualização dos dados:** `2026-07-16`
+**Última atualização dos dados:** `2026-07-17`
 **Modelo:** `Copa 2026 AI Forecast`
 **Baseline principal:** `Benchmark local estilo Elo/SUM (calculado dos jogos FIFA — não é ranking oficial)`
 **Calibração:** temperature scaling (T=2.4386)
 
 | Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |
 |---|---:|---:|---:|---|
-| Amostras avaliadas<br><sub><em>Partidas do período 2025-07-16 a 2026-07-16; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 517 | - | - | Info |
+| Amostras avaliadas<br><sub><em>Partidas do período 2025-07-17 a 2026-07-17; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 517 | - | - | Info |
 | Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 62.86% | 52.80% | +10.06 p.p. | Bom |
 | Brier score<br><sub><em>Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5090 | 0.5824 | -0.0734 | Bom |
 | Log loss<br><sub><em>Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.8919 | 0.9760 | -0.0841 | Bom |
