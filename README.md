@@ -102,19 +102,19 @@ Este repositório foi construído de forma colaborativa por um desenvolvedor hum
 <!-- validation-stats:start -->
 ## Estatísticas da Validação do Modelo
 
-**Última atualização dos dados:** `2026-07-19`
+**Última atualização dos dados:** `2026-07-20`
 **Modelo:** `Copa 2026 AI Forecast`
 **Baseline principal:** `Benchmark local estilo Elo/SUM (calculado dos jogos FIFA — não é ranking oficial)`
-**Calibração:** temperature scaling (T=2.4491)
+**Calibração:** temperature scaling (T=2.4433)
 
 | Métrica | Copa 2026 AI Forecast | Baseline principal | Delta | Status |
 |---|---:|---:|---:|---|
-| Amostras avaliadas<br><sub><em>Partidas do período 2025-07-19 a 2026-07-19; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 517 | - | - | Info |
-| Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 62.67% | 52.61% | +10.06 p.p. | Bom |
-| Brier score<br><sub><em>Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5106 | 0.5828 | -0.0722 | Bom |
-| Log loss<br><sub><em>Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.8941 | 0.9766 | -0.0825 | Bom |
-| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.1134 | - | - | Atenção |
-| MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.2137 | - | - | Atenção |
+| Amostras avaliadas<br><sub><em>Partidas do período 2025-07-20 a 2026-07-20; cada previsão usa apenas jogos anteriores à partida avaliada.</em></sub> | 519 | - | - | Info |
+| Acurácia 1X2<br><sub><em>Percentual de vezes em que o resultado mais provável foi o resultado real: vitória mandante, empate ou vitória visitante.</em></sub> | 62.62% | 52.60% | +10.02 p.p. | Bom |
+| Brier score<br><sub><em>Erro probabilístico multiclasses (após calibração); quanto menor, melhor. Zero seria uma previsão perfeita.</em></sub> | 0.5099 | 0.5831 | -0.0731 | Bom |
+| Log loss<br><sub><em>Pune previsões confiantes e erradas (após calibração); quanto menor, melhor. É mais severo que o Brier.</em></sub> | 0.8932 | 0.9770 | -0.0838 | Bom |
+| ECE calibração<br><sub><em>Expected Calibration Error; mede se a confiança prevista combina com a frequência real observada.</em></sub> | 0.1132 | - | - | Atenção |
+| MCE calibração<br><sub><em>Maximum Calibration Error; pior desvio de calibração entre as faixas de confiança.</em></sub> | 0.2249 | - | - | Atenção |
 
 **Legenda:** `Bom` melhora o baseline principal ou está em faixa saudável; `Atenção` indica ganho pequeno ou calibração a monitorar; `Ruim` indica resultado pior que o benchmark ou calibração fraca.
 
